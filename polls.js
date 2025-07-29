@@ -36,6 +36,13 @@ const addOptionBtn = document.getElementById('add-option-btn');
 const pollsList = document.getElementById('polls-list');
 const pollStatusMessage = document.getElementById('poll-status-message');
 
+// Modal Elements
+const signupModal = document.getElementById('signup-modal');
+const modalSignupBtn = document.getElementById('modal-signup-btn');
+const modalLoginBtn = document.getElementById('modal-login-btn');
+const modalCancelBtn = document.getElementById('modal-cancel-btn');
+
+
 // --- Helper Functions ---
 
 // Function to format timestamp to "X [unit] ago"
@@ -76,6 +83,37 @@ function getInitials(name) {
     }
     return '??';
 }
+
+// --- MODAL FUNCTIONS ---
+function showSignupModal() {
+    if (signupModal) {
+        signupModal.classList.remove('hidden');
+    }
+}
+
+function hideSignupModal() {
+    if (signupModal) {
+        signupModal.classList.add('hidden');
+    }
+}
+
+// --- MODAL EVENT LISTENERS ---
+if (modalSignupBtn) {
+    modalSignupBtn.addEventListener('click', () => {
+        window.location.href = 'index.html'; // Redirect to signup/login page
+    });
+}
+
+if (modalLoginBtn) {
+    modalLoginBtn.addEventListener('click', () => {
+        window.location.href = 'index.html'; // Redirect to signup/login page
+    });
+}
+
+if (modalCancelBtn) {
+    modalCancelBtn.addEventListener('click', hideSignupModal);
+}
+
 
 // --- AUTHENTICATION CHECK ---
 onAuthStateChanged(auth, async (user) => {
@@ -275,14 +313,17 @@ function fetchAndDisplayPolls() {
             pollsList.appendChild(pollElement);
 
             // Add event listeners for voting
-            if (!userHasVoted && currentLoggedInUser) { // Only allow voting if not already voted and logged in
-                pollElement.querySelectorAll('.poll-option').forEach(optionElement => {
-                    optionElement.addEventListener('click', () => {
-                        const optionIndex = parseInt(optionElement.dataset.optionIndex);
+            pollElement.querySelectorAll('.poll-option').forEach(optionElement => {
+                optionElement.addEventListener('click', () => {
+                    const optionIndex = parseInt(optionElement.dataset.optionIndex);
+                    // Check if user is logged in BEFORE calling handleVote
+                    if (!currentLoggedInUser) {
+                        showSignupModal(); // Show modal if not logged in
+                    } else if (!userHasVoted) { // Only allow voting if logged in and not already voted
                         handleVote(pollId, optionIndex);
-                    });
+                    }
                 });
-            }
+            });
         });
     }, (error) => {
         console.error("Error fetching polls:", error);
@@ -292,9 +333,9 @@ function fetchAndDisplayPolls() {
 
 // --- HANDLE VOTE ---
 async function handleVote(pollId, optionIndex) {
+    // This check is now also done in fetchAndDisplayPolls, but kept here for robustness
     if (!currentLoggedInUser) {
-        alert("You must be logged in to vote.");
-        // Consider redirecting to login or showing a custom login prompt
+        showSignupModal(); // Show modal if not logged in
         return;
     }
 
@@ -320,7 +361,7 @@ async function handleVote(pollId, optionIndex) {
         }
 
         if (alreadyVoted) {
-            alert("You have already voted in this poll.");
+            alert("You have already voted in this poll."); // Using alert here as it's a specific user action feedback
             return;
         }
 
