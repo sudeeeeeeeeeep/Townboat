@@ -113,7 +113,8 @@ if (createPostForm) {
             await addDoc(collection(db, "posts"), {
                 content: content,
                 authorId: currentLoggedInUser.uid,
-                authorName: currentLoggedInUser.displayName || currentLoggedInUser.email || 'Anonymous User', // Robust fallback
+                // Modified to prioritize displayName, then fallback to a generic 'Anonymous User'
+                authorName: currentLoggedInUser.displayName || 'Anonymous User', 
                 createdAt: serverTimestamp(),
                 upvotes: 0, // Initialize upvotes
                 upvotedBy: [] // Initialize empty array for users who upvoted
@@ -145,16 +146,14 @@ async function toggleUpvote(postId, upvotedByArray, upvoteButton) {
                 upvotes: increment(-1), 
                 upvotedBy: arrayRemove(userId)
             });
-            upvoteButton.classList.remove('text-black'); // Change to black for active
-            upvoteButton.classList.add('text-black', 'opacity-75'); // Back to normal for inactive
+            upvoteButton.classList.remove('active'); // Remove active class
         } else {
             // User has not upvoted, so upvote
             await updateDoc(postRef, {
                 upvotes: increment(1), 
                 upvotedBy: arrayUnion(userId)
             });
-            upvoteButton.classList.remove('opacity-75');
-            upvoteButton.classList.add('text-black'); // Indicate active upvote with pure black
+            upvoteButton.classList.add('active'); // Add active class
         }
     } catch (error) {
         console.error("Error toggling upvote: ", error);
@@ -170,7 +169,7 @@ function fetchAndDisplayPosts() {
     onSnapshot(postsQuery, (snapshot) => {
         feedContainer.innerHTML = ''; // Clear existing posts
         if (snapshot.empty) {
-            feedContainer.innerHTML = '<p class="text-black opacity-75 text-center text-lg mt-12">No posts yet. Be the first to share your town\'s vibe!</p>';
+            feedContainer.innerHTML = '<p class="text-gray-500 text-center text-lg mt-12">No posts yet. Be the first to share your town\'s vibe!</p>';
             return;
         }
 
@@ -186,45 +185,45 @@ function fetchAndDisplayPosts() {
             const isUpvotedByCurrentUser = currentLoggedInUser && upvotedBy.includes(currentLoggedInUser.uid);
 
             const postElement = document.createElement('div');
-            postElement.classList.add('bg-white', 'rounded-xl', 'shadow-lg', 'border', 'border-black', 'mb-6', 'overflow-hidden');
+            postElement.classList.add('post-card', 'mb-6'); // Apply base card styles
             
             // Initial classes for upvote button based on current user's state
-            const upvoteButtonClass = isUpvotedByCurrentUser ? 'text-black' : 'text-black opacity-75';
+            const upvoteButtonClass = isUpvotedByCurrentUser ? 'active' : '';
 
             postElement.innerHTML = `
-                <div class="flex items-center p-4 border-b border-black">
-                    <div class="w-10 h-10 bg-black rounded-full mr-3 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                <div class="post-header">
+                    <div class="author-avatar">
                         ${authorInitials}
                     </div>
-                    <div>
-                        <p class="font-bold text-black">${authorName}</p>
-                        <p class="text-black opacity-60 text-xs">${timeAgo}</p>
+                    <div class="post-author-info">
+                        <p class="post-author-name">${authorName}</p>
+                        <p class="post-time-ago">${timeAgo}</p>
                     </div>
                 </div>
 
-                <div class="p-4">
-                    <p class="text-black whitespace-pre-wrap">${post.content || ''}</p>
+                <div class="post-body">
+                    <p class="post-text">${post.content || ''}</p>
+                    ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post Image" class="post-image">` : ''}
                 </div>
 
-                <div class="flex items-center px-4 py-3 border-t border-black text-black opacity-75">
-                    <button class="upvote-btn flex items-center mr-4 text-sm hover:opacity-100 transition duration-200 ${upvoteButtonClass}" data-post-id="${postId}">
+                <div class="post-actions">
+                    <button class="upvote-btn action-button ${upvoteButtonClass}" data-post-id="${postId}">
                         <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
                         <span class="upvote-count font-semibold">${upvotedBy.length}</span>
                     </button>
                     
-                    <button class="comment-toggle-btn flex items-center text-sm hover:opacity-100 transition duration-200" data-post-id="${postId}">
+                    <button class="comment-toggle-btn action-button" data-post-id="${postId}">
                         <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3 1h8v4H5V6zm4 11v-3h2v3h-2z"></path></svg>
                         Comments (<span class="comment-count">0</span>)
                     </button>
                 </div>
 
-                <div class="comments-section p-4 border-t border-black hidden">
+                <div class="comments-section hidden">
                     <div class="comments-list mb-4">
-                        <p class="text-black opacity-60 text-sm text-center">No comments yet.</p>
-                    </div>
+                        </div>
                     <form class="add-comment-form flex items-center" data-post-id="${postId}">
-                        <input type="text" placeholder="Add a comment..." class="comment-input w-full p-2 bg-white border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black text-black text-sm placeholder-black/50 mr-2">
-                        <button type="submit" class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:opacity-80 transition duration-200">Post</button>
+                        <input type="text" placeholder="Add a comment..." class="comment-input flex-grow p-2 border rounded-lg mr-2 bg-gray-100 border-gray-200 text-gray-900">
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm">Post</button>
                     </form>
                 </div>
             `;
@@ -270,7 +269,7 @@ function fetchAndDisplayPosts() {
                     await addDoc(collection(db, `posts/${postId}/comments`), {
                         content: commentContent,
                         authorId: currentLoggedInUser.uid,
-                        authorName: currentLoggedInUser.displayName || currentLoggedInUser.email || 'Anonymous User',
+                        authorName: currentLoggedInUser.displayName || 'Anonymous User', // Use displayName or generic
                         createdAt: serverTimestamp()
                     });
                     commentInput.value = ''; // Clear input
@@ -286,7 +285,7 @@ function fetchAndDisplayPosts() {
         });
     }, (error) => {
         console.error("Error fetching posts: ", error);
-        feedContainer.innerHTML = '<p class="text-black opacity-75 text-center text-lg mt-12">Failed to load posts. Please try again.</p>';
+        feedContainer.innerHTML = '<p class="text-gray-500 text-center text-lg mt-12">Failed to load posts. Please try again.</p>';
     });
 }
 
@@ -299,7 +298,7 @@ function fetchAndDisplayComments(postId, commentsListElement, commentCountSpanEl
         commentCountSpanElement.textContent = snapshot.size; // Update comment count
 
         if (snapshot.empty) {
-            commentsListElement.innerHTML = '<p class="text-black opacity-60 text-sm text-center">No comments yet.</p>';
+            commentsListElement.innerHTML = '<p class="text-gray-500 text-sm text-center mt-1">No comments yet.</p>';
             return;
         }
 
@@ -307,24 +306,24 @@ function fetchAndDisplayComments(postId, commentsListElement, commentCountSpanEl
             const comment = commentDoc.data();
             const commentId = commentDoc.id;
             const commentElement = document.createElement('div');
-            commentElement.classList.add('mb-2', 'pb-2', 'border-b', 'border-black', 'border-opacity-10', 'last:border-b-0', 'last:pb-0', 'ml-0'); 
+            commentElement.classList.add('comment-item'); 
 
             const commentAuthorName = comment.authorName || 'Anonymous User';
             const commentTimeAgo = comment.createdAt ? formatTimeAgo(comment.createdAt) : 'Just now';
 
             commentElement.innerHTML = `
-                <div class="flex items-center text-xs text-black opacity-80 mb-1">
-                    <span class="font-bold">${commentAuthorName}</span>
-                    <span class="ml-2 opacity-60">${commentTimeAgo}</span>
+                <div class="comment-author-info">
+                    <span class="comment-author-name">${commentAuthorName}</span>
+                    <span class="comment-time-ago">${commentTimeAgo}</span>
                 </div>
-                <p class="text-black text-sm">${comment.content || ''}</p>
-                <button class="reply-toggle-btn text-xs text-black opacity-75 hover:opacity-100 mt-1" data-comment-id="${commentId}">Reply</button>
-                <div class="replies-section mt-2 pl-4 border-l border-black border-opacity-20 hidden">
+                <p class="comment-text">${comment.content || ''}</p>
+                <button class="reply-toggle-btn" data-comment-id="${commentId}">Reply</button>
+                <div class="replies-section hidden">
                     <div class="replies-list">
                         </div>
                     <form class="add-reply-form flex items-center mt-2" data-comment-id="${commentId}">
-                        <input type="text" placeholder="Write a reply..." class="reply-input w-full p-1 bg-white border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black text-black text-xs placeholder-black/50 mr-2">
-                        <button type="submit" class="bg-black text-white px-3 py-1 rounded-lg text-xs hover:opacity-80 transition duration-200">Reply</button>
+                        <input type="text" placeholder="Write a reply..." class="reply-input flex-grow p-1 border rounded-lg mr-2 bg-gray-100 border-gray-200 text-gray-900">
+                        <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded-lg text-xs">Reply</button>
                     </form>
                 </div>
             `;
@@ -362,7 +361,7 @@ function fetchAndDisplayComments(postId, commentsListElement, commentCountSpanEl
                     await addDoc(collection(db, `posts/${postId}/comments/${commentId}/replies`), {
                         content: replyContent,
                         authorId: currentLoggedInUser.uid,
-                        authorName: currentLoggedInUser.displayName || currentLoggedInUser.email || 'Anonymous User',
+                        authorName: currentLoggedInUser.displayName || 'Anonymous User', // Use displayName or generic
                         createdAt: serverTimestamp()
                     });
                     replyInput.value = ''; // Clear input
@@ -378,42 +377,7 @@ function fetchAndDisplayComments(postId, commentsListElement, commentCountSpanEl
         });
     }, (error) => {
         console.error("Error fetching comments: ", error);
-        commentsListElement.innerHTML = '<p class="text-black opacity-75 text-sm text-center">Failed to load comments.</p>';
-    });
-}
-
-// --- FETCH AND DISPLAY REPLIES ---
-function fetchAndDisplayReplies(postId, commentId, repliesListElement) {
-    const repliesQuery = query(collection(db, `posts/${postId}/comments/${commentId}/replies`), orderBy("createdAt", "asc"));
-
-    onSnapshot(repliesQuery, (snapshot) => {
-        repliesListElement.innerHTML = ''; // Clear existing replies
-
-        if (snapshot.empty) {
-            repliesListElement.innerHTML = '<p class="text-black opacity-60 text-xs mt-1">No replies yet.</p>';
-            return;
-        }
-
-        snapshot.forEach((replyDoc) => {
-            const reply = replyDoc.data();
-            const replyElement = document.createElement('div');
-            replyElement.classList.add('mt-1', 'pb-1', 'border-b', 'border-black', 'border-opacity-5', 'last:border-b-0', 'last:pb-0'); // Lighter separator for replies
-
-            const replyAuthorName = reply.authorName || 'Anonymous User';
-            const replyTimeAgo = reply.createdAt ? formatTimeAgo(reply.createdAt) : 'Just now';
-
-            replyElement.innerHTML = `
-                <div class="flex items-center text-xs text-black opacity-70 mb-0.5">
-                    <span class="font-bold">${replyAuthorName}</span>
-                    <span class="ml-2 opacity-50">${replyTimeAgo}</span>
-                </div>
-                <p class="text-black text-sm">${reply.content || ''}</p>
-            `;
-            repliesListElement.appendChild(replyElement);
-        });
-    }, (error) => {
-        console.error("Error fetching replies: ", error);
-        repliesListElement.innerHTML = '<p class="text-black opacity-75 text-xs text-center">Failed to load replies.</p>';
+        commentsListElement.innerHTML = '<p class="text-gray-500 text-xs mt-1">Failed to load replies.</p>';
     });
 }
 
