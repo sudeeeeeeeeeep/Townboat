@@ -29,14 +29,13 @@ const logoutButton = document.getElementById('logout-btn'); // Ensure this is co
 
 let currentBusinessId = null;
 let userHometown = ''; // To store the user's hometown from their profile
+let currentLoggedInUser = null; // To store the current authenticated user
 
 // --- AUTHENTICATION CHECK ---
 onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-        // No user is signed in, redirect to login page
-        console.log("No user logged in, redirecting to index.html");
-        window.location.href = 'index.html';
-    } else {
+    currentLoggedInUser = user; // Set currentLoggedInUser regardless of login status
+
+    if (user) {
         console.log("User logged in:", user.uid);
 
         // Fetch user's hometown to ensure they have one set
@@ -59,6 +58,9 @@ onAuthStateChanged(auth, async (user) => {
             window.location.href = 'set-hometown.html'; 
             return;
         }
+    } else {
+        console.log("No user logged in. Displaying public content.");
+        initBusinessDetailsPage(); // Still initialize page for public viewing
     }
 });
 
@@ -92,9 +94,12 @@ async function fetchBusinessDetails(businessId) {
             // Increment view count (optional, can be done once per session or on page load)
             // Note: This simple increment might lead to rapid updates if many users visit.
             // For production, consider debouncing or server-side increments.
-            await updateDoc(businessDocRef, {
-                views: (business.views || 0) + 1
-            });
+            // Only increment if a user is logged in to avoid anonymous view count inflation
+            if (currentLoggedInUser) {
+                await updateDoc(businessDocRef, {
+                    views: (business.views || 0) + 1
+                });
+            }
 
             const imageUrl = business.imageUrl || 'images/placeholder.jpeg'; // Placeholder for business image
             const displayImage = `<img src="${imageUrl}" alt="${business.name} Image" class="large-business-image mx-auto">`;
@@ -125,9 +130,8 @@ async function fetchBusinessDetails(businessId) {
             const bookmarkBtn = document.getElementById('bookmark-btn');
             if (bookmarkBtn) {
                 // Check if already bookmarked and set initial text
-                const currentUser = auth.currentUser;
-                if (currentUser) {
-                    let bookmarks = JSON.parse(localStorage.getItem(`bookmarks_${currentUser.uid}`)) || [];
+                if (currentLoggedInUser) { // Only check if user is logged in
+                    let bookmarks = JSON.parse(localStorage.getItem(`bookmarks_${currentLoggedInUser.uid}`)) || [];
                     if (bookmarks.includes(businessId)) {
                         bookmarkBtn.textContent = '⭐ Bookmarked';
                     }
@@ -148,13 +152,13 @@ async function fetchBusinessDetails(businessId) {
 
 // --- BOOKMARK TOGGLE LOGIC ---
 function toggleBookmark(businessId, buttonElement) {
-    const currentUser = auth.currentUser;
-    if (!currentUser) {
+    if (!currentLoggedInUser) {
         alert("You must be logged in to bookmark businesses."); // Using alert for simplicity, consider a custom modal
+        window.location.href = 'login.html'; // Redirect to login
         return;
     }
 
-    let bookmarks = JSON.parse(localStorage.getItem(`bookmarks_${currentUser.uid}`)) || [];
+    let bookmarks = JSON.parse(localStorage.getItem(`bookmarks_${currentLoggedInUser.uid}`)) || [];
     const isBookmarked = bookmarks.includes(businessId);
 
     if (isBookmarked) {
@@ -168,7 +172,7 @@ function toggleBookmark(businessId, buttonElement) {
         buttonElement.textContent = '⭐ Bookmarked';
         alert("Business bookmarked successfully!");
     }
-    localStorage.setItem(`bookmarks_${currentUser.uid}`, JSON.stringify(bookmarks));
+    localStorage.setItem(`bookmarks_${currentLoggedInUser.uid}`, JSON.stringify(bookmarks));
     // Note: Bookmarks are stored locally for MVP. For persistent bookmarks across devices,
     // you'd save them in Firestore under a user's document or a dedicated 'bookmarks' collection.
 }
@@ -228,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutBtn.addEventListener('click', () => {
             signOut(auth).then(() => {
                 console.log("User signed out.");
-                window.location.href = 'index.html'; // Redirect to the main login page
+                window.location.href = 'login.html'; // Redirect to the main login page
             }).catch((error) => {
                 console.error("Error signing out:", error);
                 alert("Failed to log out. Please try again."); // Using alert for simplicity

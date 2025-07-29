@@ -32,10 +32,10 @@ let logoutButton;
 
 // --- AUTHENTICATION CHECK ---
 onAuthStateChanged(auth, async (user) => { // Made async to await Firestore calls
-    if (!user) {
-        window.location.href = 'index.html'; // Redirect if not logged in
-    } else {
-        currentLoggedInUser = user; // Store the user object
+    currentLoggedInUser = user; // Store the user object
+
+    if (user) {
+        console.log("User logged in:", user.uid);
 
         // --- FETCH USER'S HOMETOWN ---
         const userDocRef = doc(db, "users", user.uid);
@@ -58,26 +58,28 @@ onAuthStateChanged(auth, async (user) => { // Made async to await Firestore call
             // Even if there's an error fetching hometown, proceed, but without a default filter
             // You might want a more robust error handling here, e.g., show a message.
         }
+    } else {
+        console.log("No user logged in. Displaying public content.");
+    }
 
-        // --- PROCEED WITH PAGE-SPECIFIC LOGIC ---
-        const urlParams = new URLSearchParams(window.location.search);
-        const category = urlParams.get('category');
-        if (category) {
-            currentCategory = category; // Set current category
-            // Initialize DOM elements here if not already, then set values
-            if (categoryHeading) categoryHeading.textContent = `Businesses in ${currentCategory}`;
-            if (pageTitle) pageTitle.textContent = `${currentCategory} - TownBoat`;
+    // --- PROCEED WITH PAGE-SPECIFIC LOGIC ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get('category');
+    if (category) {
+        currentCategory = category; // Set current category
+        // Initialize DOM elements here if not already, then set values
+        if (categoryHeading) categoryHeading.textContent = `Businesses in ${currentCategory}`;
+        if (pageTitle) pageTitle.textContent = `${currentCategory} - TownBoat`;
 
-            populateTownsForFilter(); // Populate towns for the filter dropdown
-            fetchAndFilterBusinesses(); // Fetch businesses based on initial category (and later, town)
-        } else {
-            if (businessListContainer) {
-                businessListContainer.innerHTML = `<p class="text-center text-gray-500">Please select a category from the <a href="discover.html" class="text-white hover:underline">Discover page</a>.</p>`;
-            }
-            // Hide search and town filter if no category is selected
-            if (searchInput && searchInput.parentElement) searchInput.parentElement.style.display = 'none';
-            if (townFilterSelect && townFilterSelect.parentElement) townFilterSelect.parentElement.style.display = 'none';
+        populateTownsForFilter(); // Populate towns for the filter dropdown
+        fetchAndFilterBusinesses(); // Fetch businesses based on initial category (and later, town)
+    } else {
+        if (businessListContainer) {
+            businessListContainer.innerHTML = `<p class="text-center text-gray-500">Please select a category from the <a href="discover.html" class="text-white hover:underline">Discover page</a>.</p>`;
         }
+        // Hide search and town filter if no category is selected
+        if (searchInput && searchInput.parentElement) searchInput.parentElement.style.display = 'none';
+        if (townFilterSelect && townFilterSelect.parentElement) townFilterSelect.parentElement.style.display = 'none';
     }
 });
 
@@ -150,7 +152,6 @@ function renderBusinesses(businessesToDisplay) {
                             data-business-id="${businessId}"
                             class="upvote-btn flex items-center transition duration-300 px-3 py-1 rounded-full
                                 ${hasUpvoted ? 'text-red-500 bg-red-900/20' : 'hover:bg-gray-200/50'}"
-                            ${hasUpvoted ? 'disabled' : ''}
                         >
                             <span class="text-xl mr-2">${hasUpvoted ? '❤️' : '🤍'}</span>
                             <span class="text-sm font-medium">${currentUpvotes}</span>
@@ -167,6 +168,7 @@ function renderBusinesses(businessesToDisplay) {
                 upvoteButton.addEventListener('click', async () => {
                     if (!currentLoggedInUser) {
                         alert("You must be logged in to upvote.");
+                        window.location.href = 'login.html'; // Redirect to login
                         return;
                     }
 
@@ -204,8 +206,9 @@ function renderBusinesses(businessesToDisplay) {
 
 // --- FETCH AND LISTEN FOR BUSINESSES ---
 function fetchAndFilterBusinesses() {
-    if (!currentLoggedInUser || !currentCategory) {
-        console.log("User not logged in or category not set, deferring business fetch.");
+    // This function can now be called even if !currentLoggedInUser
+    if (!currentCategory) {
+        console.log("Category not set, deferring business fetch.");
         return;
     }
 
@@ -217,8 +220,9 @@ function fetchAndFilterBusinesses() {
     );
 
     // Determine the active town filter: manual selection overrides user's hometown
-    const activeTownForQuery = currentTownFilter || userHometown; 
-
+    // Only apply userHometown if user is logged in
+    const activeTownForQuery = currentTownFilter || (currentLoggedInUser ? userHometown : ''); 
+    
     if (activeTownForQuery) {
         q = query(q, where("town", "==", activeTownForQuery));
     }

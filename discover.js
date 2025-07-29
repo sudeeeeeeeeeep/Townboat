@@ -9,8 +9,16 @@ const auth = getAuth(app);
 
 // --- AUTHENTICATION CHECK ---
 onAuthStateChanged(auth, (user) => {
-    if (!user) {
-        window.location.href = 'index.html'; // Redirect if not logged in
+    // This block previously contained:
+    // if (!user) {
+    //     window.location.href = 'index.html'; // Redirect if not logged in
+    // }
+    // This line has been removed.
+    // Now, the page will simply load for all users, regardless of their login status.
+    if (user) {
+        console.log("User logged in:", user.uid);
+    } else {
+        console.log("No user logged in. Allowing public view of Discover page.");
     }
 });
 

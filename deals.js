@@ -31,6 +31,7 @@ let currentFilters = {
     category: ''
 };
 let userHometown = ''; // To store the user's hometown from their profile
+let currentLoggedInUser = null; // To store the current authenticated user
 
 // --- DOM CONTENT LOADED ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -43,10 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- AUTHENTICATION CHECK ---
     onAuthStateChanged(auth, async (user) => {
-        if (!user) {
-            console.log("No user logged in, redirecting to index.html");
-            window.location.href = 'index.html';
-        } else {
+        currentLoggedInUser = user; // Set currentLoggedInUser regardless of login status
+
+        if (user) {
             console.log("User logged in:", user.uid);
 
             // Fetch user's hometown
@@ -72,8 +72,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Error fetching user hometown:", error);
                 await populateTownFilter(); // Populate anyway
             }
-            fetchDeals(); // Fetch deals based on filters
+        } else {
+            console.log("No user logged in. Displaying public content.");
+            populateTownFilter(); // Populate filter for public users
         }
+        fetchDeals(); // Always fetch deals, regardless of login status
     });
 
     // --- EVENT LISTENERS FOR FILTERS ---
@@ -96,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutButton.addEventListener('click', () => {
             signOut(auth).then(() => {
                 console.log("User signed out.");
-                window.location.href = 'index.html';
+                window.location.href = 'login.html';
             }).catch((error) => {
                 console.error("Error signing out:", error);
                 alert("Failed to log out. Please try again.");
