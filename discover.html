@@ -82,6 +82,10 @@
                 <a href="deals.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
                     <i class="fas fa-tags md:hidden"></i><span class="hidden md:inline">Deals</span>
                 </a>
+                <!-- NEW: Polls link for desktop -->
+                <a href="polls.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-poll md:hidden"></i><span class="hidden md:inline">Polls</span>
+                </a>
             </div>
 
             <button id="logout-btn" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-600 transition duration-300">
@@ -102,6 +106,10 @@
             <!-- NEW: Deals link for mobile dropdown -->
             <a href="deals.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
                 <i class="fas fa-tags"></i> <span>Deals</span>
+            </a>
+            <!-- NEW: Polls link for mobile dropdown -->
+            <a href="polls.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-poll"></i> <span>Polls</span>
             </a>
         </div>
     </header>
@@ -150,7 +158,7 @@
         </p>
     </main>
 
-    <script type="module" src="./js/discover.js"></script>
+    <script type="module" src="discover.js"></script>
     <script>
         // JavaScript for mobile menu toggle
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
@@ -160,4 +168,3 @@
     </script>
 </body>
 </html>
-
