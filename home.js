@@ -29,6 +29,19 @@ const db = getFirestore(app);
 
 let currentLoggedInUser = null; // Store the current authenticated user
 
+// --- DOM Elements ---
+const postContentInput = document.getElementById('post-content');
+const createPostForm = document.getElementById('create-post-form');
+const feedContainer = document.getElementById('feed-container');
+const logoutButton = document.getElementById('logout-btn');
+
+// Modal Elements
+const signupModal = document.getElementById('signup-modal');
+const modalSignupBtn = document.getElementById('modal-signup-btn');
+const modalLoginBtn = document.getElementById('modal-login-btn');
+const modalCancelBtn = document.getElementById('modal-cancel-btn');
+
+
 // --- Helper Functions ---
 
 // Function to format timestamp to "X [unit] ago"
@@ -70,27 +83,50 @@ function getInitials(name) {
     return '??';
 }
 
+// --- MODAL FUNCTIONS ---
+function showSignupModal() {
+    if (signupModal) {
+        signupModal.classList.remove('hidden');
+    }
+}
+
+function hideSignupModal() {
+    if (signupModal) {
+        signupModal.classList.add('hidden');
+    }
+}
+
+// --- MODAL EVENT LISTENERS ---
+if (modalSignupBtn) {
+    modalSignupBtn.addEventListener('click', () => {
+        window.location.href = 'index.html'; // Redirect to signup/login page
+    });
+}
+
+if (modalLoginBtn) {
+    modalLoginBtn.addEventListener('click', () => {
+        window.location.href = 'index.html'; // Redirect to signup/login page
+    });
+}
+
+if (modalCancelBtn) {
+    modalCancelBtn.addEventListener('click', hideSignupModal);
+}
+
 
 // --- AUTHENTICATION CHECK ---
 onAuthStateChanged(auth, (user) => {
+    currentLoggedInUser = user; // Set currentLoggedInUser regardless of login status
     if (user) {
-        // User is signed in
-        currentLoggedInUser = user;
         console.log("User logged in:", user.uid, user.displayName || user.email);
-        fetchAndDisplayPosts(); // Fetch posts only if user is logged in
+        // Only fetch and display posts if user is logged in, otherwise public view is handled by fetchAndDisplayPosts
+        fetchAndDisplayPosts(); 
     } else {
-        // No user is signed in, redirect to login page
-        console.log("No user logged in, redirecting to index.html");
-        window.location.href = 'index.html';
+        console.log("No user logged in. Displaying public feed.");
+        // Still fetch and display posts for public users, but interactive features will be disabled/modal prompted
+        fetchAndDisplayPosts();
     }
 });
-
-// --- DOM ELEMENTS ---
-const postContentInput = document.getElementById('post-content');
-const createPostForm = document.getElementById('create-post-form');
-const feedContainer = document.getElementById('feed-container');
-const logoutButton = document.getElementById('logout-btn');
-
 
 // --- HANDLE POST CREATION ---
 if (createPostForm) {
@@ -100,12 +136,12 @@ if (createPostForm) {
         const content = postContentInput.value.trim();
 
         if (!currentLoggedInUser) {
-            alert("You must be logged in to create a post.");
+            showSignupModal(); // Show modal if not logged in
             return;
         }
 
         if (content === "") {
-            alert("Post content cannot be empty.");
+            alert("Post content cannot be empty."); // Keep alert for empty content
             return;
         }
 
@@ -113,14 +149,13 @@ if (createPostForm) {
             await addDoc(collection(db, "posts"), {
                 content: content,
                 authorId: currentLoggedInUser.uid,
-                // Modified to prioritize displayName, then fallback to a generic 'Anonymous User'
                 authorName: currentLoggedInUser.displayName || 'Anonymous User', 
                 createdAt: serverTimestamp(),
-                upvotes: 0, // Initialize upvotes
-                upvotedBy: [] // Initialize empty array for users who upvoted
+                upvotes: 0, 
+                upvotedBy: [] 
             });
 
-            postContentInput.value = ""; // Clear the textarea
+            postContentInput.value = ""; 
             console.log("Post created successfully!");
         } catch (error) {
             console.error("Error adding document: ", error);
@@ -132,7 +167,7 @@ if (createPostForm) {
 // --- UPVOTE LOGIC ---
 async function toggleUpvote(postId, upvotedByArray, upvoteButton) {
     if (!currentLoggedInUser) {
-        alert("You must be logged in to upvote posts.");
+        showSignupModal(); // Show modal if not logged in
         return;
     }
 
@@ -141,19 +176,17 @@ async function toggleUpvote(postId, upvotedByArray, upvoteButton) {
 
     try {
         if (upvotedByArray.includes(userId)) {
-            // User has already upvoted, so un-upvote
             await updateDoc(postRef, {
                 upvotes: increment(-1), 
                 upvotedBy: arrayRemove(userId)
             });
-            upvoteButton.classList.remove('active'); // Remove active class
+            upvoteButton.classList.remove('active'); 
         } else {
-            // User has not upvoted, so upvote
             await updateDoc(postRef, {
                 upvotes: increment(1), 
                 upvotedBy: arrayUnion(userId)
             });
-            upvoteButton.classList.add('active'); // Add active class
+            upvoteButton.classList.add('active'); 
         }
     } catch (error) {
         console.error("Error toggling upvote: ", error);
@@ -165,9 +198,8 @@ async function toggleUpvote(postId, upvotedByArray, upvoteButton) {
 function fetchAndDisplayPosts() {
     const postsQuery = query(collection(db, "posts"), orderBy("createdAt", "desc"));
 
-    // Use onSnapshot to get real-time updates for posts
     onSnapshot(postsQuery, (snapshot) => {
-        feedContainer.innerHTML = ''; // Clear existing posts
+        feedContainer.innerHTML = ''; 
         if (snapshot.empty) {
             feedContainer.innerHTML = '<p class="text-gray-500 text-center text-lg mt-12">No posts yet. Be the first to share your town\'s vibe!</p>';
             return;
@@ -177,7 +209,6 @@ function fetchAndDisplayPosts() {
             const post = docSnap.data();
             const postId = docSnap.id;
             
-            // Ensure data integrity before rendering
             const timeAgo = post.createdAt ? formatTimeAgo(post.createdAt) : 'Just now';
             const authorName = post.authorName || 'Anonymous User';
             const authorInitials = getInitials(authorName);
@@ -185,9 +216,8 @@ function fetchAndDisplayPosts() {
             const isUpvotedByCurrentUser = currentLoggedInUser && upvotedBy.includes(currentLoggedInUser.uid);
 
             const postElement = document.createElement('div');
-            postElement.classList.add('post-card', 'mb-6'); // Apply base card styles
+            postElement.classList.add('post-card', 'mb-6'); 
             
-            // Initial classes for upvote button based on current user's state
             const upvoteButtonClass = isUpvotedByCurrentUser ? 'active' : '';
 
             postElement.innerHTML = `
@@ -246,7 +276,6 @@ function fetchAndDisplayPosts() {
             commentToggleBtn.addEventListener('click', () => {
                 commentsSection.classList.toggle('hidden');
                 if (!commentsSection.classList.contains('hidden')) {
-                    // Fetch and display comments when section is opened
                     fetchAndDisplayComments(postId, commentsList, commentCountSpan);
                 }
             });
@@ -257,7 +286,7 @@ function fetchAndDisplayPosts() {
                 const commentContent = commentInput.value.trim();
 
                 if (!currentLoggedInUser) {
-                    alert("You must be logged in to comment.");
+                    showSignupModal(); // Show modal if not logged in
                     return;
                 }
                 if (commentContent === "") {
@@ -269,18 +298,16 @@ function fetchAndDisplayPosts() {
                     await addDoc(collection(db, `posts/${postId}/comments`), {
                         content: commentContent,
                         authorId: currentLoggedInUser.uid,
-                        authorName: currentLoggedInUser.displayName || 'Anonymous User', // Use displayName or generic
+                        authorName: currentLoggedInUser.displayName || 'Anonymous User', 
                         createdAt: serverTimestamp()
                     });
-                    commentInput.value = ''; // Clear input
+                    commentInput.value = ''; 
                 } catch (error) {
                     console.error("Error adding comment: ", error);
                     alert("Failed to add comment. Please try again.");
                 }
             });
 
-            // Initial fetch of comments count
-            // We'll use a snapshot listener to keep comment count and list real-time
             fetchAndDisplayComments(postId, commentsList, commentCountSpan);
         });
     }, (error) => {
@@ -294,8 +321,8 @@ function fetchAndDisplayComments(postId, commentsListElement, commentCountSpanEl
     const commentsQuery = query(collection(db, `posts/${postId}/comments`), orderBy("createdAt", "asc"));
 
     onSnapshot(commentsQuery, (snapshot) => {
-        commentsListElement.innerHTML = ''; // Clear existing comments
-        commentCountSpanElement.textContent = snapshot.size; // Update comment count
+        commentsListElement.innerHTML = ''; 
+        commentCountSpanElement.textContent = snapshot.size; 
 
         if (snapshot.empty) {
             commentsListElement.innerHTML = '<p class="text-gray-500 text-sm text-center mt-1">No comments yet.</p>';
@@ -349,7 +376,7 @@ function fetchAndDisplayComments(postId, commentsListElement, commentCountSpanEl
                 const replyContent = replyInput.value.trim();
 
                 if (!currentLoggedInUser) {
-                    alert("You must be logged in to reply.");
+                    showSignupModal(); // Show modal if not logged in
                     return;
                 }
                 if (replyContent === "") {
@@ -361,10 +388,10 @@ function fetchAndDisplayComments(postId, commentsListElement, commentCountSpanEl
                     await addDoc(collection(db, `posts/${postId}/comments/${commentId}/replies`), {
                         content: replyContent,
                         authorId: currentLoggedInUser.uid,
-                        authorName: currentLoggedInUser.displayName || 'Anonymous User', // Use displayName or generic
+                        authorName: currentLoggedInUser.displayName || 'Anonymous User', 
                         createdAt: serverTimestamp()
                     });
-                    replyInput.value = ''; // Clear input
+                    replyInput.value = ''; 
                 } catch (error) {
                     console.error("Error adding reply: ", error);
                     alert("Failed to add reply. Please try again.");
@@ -387,7 +414,7 @@ if (logoutButton) {
     logoutButton.addEventListener('click', () => {
         signOut(auth).then(() => {
             console.log("User signed out.");
-            window.location.href = 'index.html'; // Redirect to the main login page
+            window.location.href = 'index.html'; 
         }).catch((error) => {
             console.error("Error signing out:", error);
             alert("Failed to log out. Please try again.");
