@@ -38,6 +38,7 @@
 
         /* Specific background images for each category */
         .category-restaurants { background-image: url('restaurants.jpeg'); } /* Placeholder if you have a restaurant image */
+        .category-fashion { background-image: url('fashion.jpeg'); }
         .category-retail { background-image: url('retail.jpeg'); }
         .category-services { background-image: url('services.jpeg'); }
         .category-healthcare { background-image: url('healthcare.jpeg'); }
@@ -112,6 +113,9 @@
             <a href="business-list.html?category=Restaurants" class="category-card category-restaurants block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
                 <h3 class="font-semibold text-2xl">Restaurants</h3>
             </a>
+            <a href="business-list.html?category=Fashion class="category-card category-fashion block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+                <h3 class="font-semibold text-2xl">Fashion</h3>
+            </a>
             <a href="business-list.html?category=Retail" class="category-card category-retail block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
                 <h3 class="font-semibold text-2xl">Retail</h3>
             </a>
@@ -146,7 +150,7 @@
         </p>
     </main>
 
-    <script type="module" src="discover.js"></script>
+    <script type="module" src="./js/discover.js"></script>
     <script>
         // JavaScript for mobile menu toggle
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
@@ -156,3 +160,4 @@
     </script>
 </body>
 </html>
+
