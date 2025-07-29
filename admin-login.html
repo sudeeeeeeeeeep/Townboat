@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - TownBoat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5); /* Emerald focus ring */
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+    <div class="min-h-screen flex flex-col justify-center items-center p-4">
+        
+        <div class="bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-sm border border-gray-700">
+
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-white">TownBoat Admin</h1>
+                <p class="text-gray-400 mt-2">Login or Sign Up to manage businesses</p>
+            </div>
+
+            <!-- Admin Login Form -->
+            <form id="admin-login-form">
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none"
+                        placeholder="admin@example.com"
+                        required
+                    >
+                </div>
+
+                <div class="mb-6">
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none"
+                        placeholder="********"
+                        required
+                    >
+                </div>
+
+                <p id="admin-login-error-message" class="text-red-500 text-center text-sm mb-4"></p>
+
+                <button 
+                    type="submit" 
+                    id="login-btn" 
+                    class="w-full bg-emerald-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-300"
+                >
+                    Login
+                </button>
+            </form>
+
+            <!-- Admin Signup Form (Initially Hidden) -->
+            <form id="admin-signup-form" class="hidden">
+                <div class="mb-4">
+                    <label for="signup-email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                    <input 
+                        type="email" 
+                        id="signup-email" 
+                        name="signup-email" 
+                        class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none"
+                        placeholder="newadmin@example.com"
+                        required
+                    >
+                </div>
+
+                <div class="mb-4">
+                    <label for="signup-password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                    <input 
+                        type="password" 
+                        id="signup-password" 
+                        name="signup-password" 
+                        class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none"
+                        placeholder="********"
+                        required
+                    >
+                </div>
+
+                <div class="mb-6">
+                    <label for="signup-confirm-password" class="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
+                    <input 
+                        type="password" 
+                        id="signup-confirm-password" 
+                        name="signup-confirm-password" 
+                        class="w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none"
+                        placeholder="********"
+                        required
+                    >
+                </div>
+
+                <p id="admin-signup-error-message" class="text-red-500 text-center text-sm mb-4"></p>
+
+                <button 
+                    type="submit" 
+                    id="signup-btn" 
+                    class="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300"
+                >
+                    Sign Up
+                </button>
+            </form>
+
+            <div class="text-center mt-6">
+                <a href="#" id="toggle-form-link" class="text-gray-400 hover:text-white text-sm">Switch to Sign Up</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module" src="./js/admin.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover - TownBoat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        /* Hide scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        body {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* Category Card Specific Styles */
+        .category-card {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            overflow: hidden;
+            color: white; /* Ensure text is visible on images */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 120px; /* Ensure cards have a minimum height */
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7); /* Add text shadow for readability */
+        }
+
+        /* Specific background images for each category */
+        .category-restaurants { background-image: url('restaurants.jpeg'); } /* Placeholder if you have a restaurant image */
+        .category-retail { background-image: url('retail.jpeg'); }
+        .category-services { background-image: url('services.jpeg'); }
+        .category-healthcare { background-image: url('healthcare.jpeg'); }
+        .category-education { background-image: url('education.jpeg'); }
+        .category-home-services { background-image: url('homeservices.jpeg'); }
+        .category-beauty-spa { background-image: url('beautyspa.jpeg'); }
+        .category-finance { background-image: url('finance.jpeg'); }
+        .category-groceries { background-image: url('grocery.jpeg'); }
+        .category-auto-taxi { background-image: url('autotaxi.png'); }
+        /* Add more category styles as needed for other images */
+
+        .category-card:hover {
+            transform: scale(1.03);
+            transition: transform 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <header class="bg-black sticky top-0 border-b border-gray-700 z-50">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="home.html" class="text-white text-xl font-bold">TownBoat</a>
+            
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+
+            <div id="nav-links" class="hidden md:flex space-x-4 items-center">
+                <a href="home.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-home md:hidden"></i><span class="hidden md:inline">Feed</span>
+                </a>
+                <a href="discover.html" class="text-white font-semibold flex items-center space-x-1">
+                    <i class="fas fa-compass md:hidden"></i><span class="hidden md:inline">Discover</span>
+                </a>
+                <a href="leaderboard.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-trophy md:hidden"></i><span class="hidden md:inline">Leaderboard</span>
+                </a>
+                <!-- NEW: Deals link for desktop -->
+                <a href="deals.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-tags md:hidden"></i><span class="hidden md:inline">Deals</span>
+                </a>
+            </div>
+
+            <button id="logout-btn" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-600 transition duration-300">
+                <i class="fas fa-sign-out-alt md:hidden"></i><span class="hidden md:inline">Logout</span>
+            </button>
+        </nav>
+
+        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-800 border-t border-gray-700 py-2">
+            <a href="home.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-home"></i> <span>Feed</span>
+            </a>
+            <a href="discover.html" class="block px-4 py-2 text-white hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-compass"></i> <span>Discover</span>
+            </a>
+            <a href="leaderboard.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-trophy"></i> <span>Leaderboard</span>
+            </a>
+            <!-- NEW: Deals link for mobile dropdown -->
+            <a href="deals.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-tags"></i> <span>Deals</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 py-8 max-w-4xl">
+        <h1 class="text-3xl font-bold text-center mb-8">Discover Businesses & Services</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <a href="business-list.html?category=Restaurants" class="category-card category-restaurants block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+                <h3 class="font-semibold text-2xl">Restaurants</h3>
+            </a>
+            <a href="business-list.html?category=Retail" class="category-card category-retail block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+                <h3 class="font-semibold text-2xl">Retail</h3>
+            </a>
+            <a href="business-list.html?category=Services" class="category-card category-services block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+                <h3 class="font-semibold text-2xl">Services</h3>
+            </a>
+            <a href="business-list.html?category=Healthcare" class="category-card category-healthcare block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+                <h3 class="font-semibold text-2xl">Healthcare</h3>
+            </a>
+            <a href="business-list.html?category=Education" class="category-card category-education block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+                <h3 class="font-semibold text-2xl">Education</h3>
+            </a>
+            <a href="business-list.html?category=Home Services" class="category-card category-home-services block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+                <h3 class="font-semibold text-2xl">Home Services</h3>
+            </a>
+            <a href="business-list.html?category=Beauty & Spa" class="category-card category-beauty-spa block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+                <h3 class="font-semibold text-2xl">Beauty & Spa</h3>
+            </a>
+            <a href="business-list.html?category=Finance" class="category-card category-finance block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+                <h3 class="font-semibold text-2xl">Finance</h3>
+            </a>
+            <a href="business-list.html?category=Groceries" class="category-card category-groceries block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+                <h3 class="font-semibold text-2xl">Groceries</h3>
+            </a>
+            <a href="autotaxi.html" class="category-card category-auto-taxi block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+                <h3 class="font-semibold text-2xl">Auto/Taxi</h3>
+            </a>
+            </div>
+
+        <p class="text-center text-gray-500 mt-8">
+            Want to list your business? <a href="business-login.html" class="text-emerald-400 hover:underline">Click here</a>.
+        </p>
+    </main>
+
+    <script type="module" src="./js/discover.js"></script>
+    <script>
+        // JavaScript for mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu-dropdown');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

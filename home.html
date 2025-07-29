@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - TownBoat</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        textarea::placeholder {
+            color: #6b7280;
+        }
+        .post-card {
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .post-card .text-gray-300,
+        .post-card .text-gray-500 {
+            color: #374151 !important;
+        }
+        /* Hide scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        body {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <header class="bg-black sticky top-0 border-b border-gray-700 z-50">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="home.html" class="text-white text-xl font-bold">TownBoat</a>
+            
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+
+            <div id="nav-links" class="hidden md:flex space-x-4 items-center">
+                <a href="home.html" class="text-white font-semibold flex items-center space-x-1">
+                    <i class="fas fa-home md:hidden"></i><span class="hidden md:inline">Feed</span>
+                </a>
+                <a href="discover.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-compass md:hidden"></i><span class="hidden md:inline">Discover</span>
+                </a>
+                <a href="leaderboard.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-trophy md:hidden"></i><span class="hidden md:inline">Leaderboard</span>
+                </a>
+                <!-- NEW: Deals link for desktop -->
+                <a href="deals.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-tags md:hidden"></i><span class="hidden md:inline">Deals</span>
+                </a>
+            </div>
+
+            <button id="logout-btn" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-600 transition duration-300">
+                <i class="fas fa-sign-out-alt md:hidden"></i><span class="hidden md:inline">Logout</span>
+            </button>
+        </nav>
+
+        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-800 border-t border-gray-700 py-2">
+            <a href="home.html" class="block px-4 py-2 text-white hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-home"></i> <span>Feed</span>
+            </a>
+            <a href="discover.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-compass"></i> <span>Discover</span>
+            </a>
+            <a href="leaderboard.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-trophy"></i> <span>Leaderboard</span>
+            </a>
+            <!-- NEW: Deals link for mobile dropdown -->
+            <a href="deals.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-tags"></i> <span>Deals</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 py-8 max-w-2xl">
+        <div class="bg-gray-900 p-6 rounded-lg shadow-lg border border-gray-700 mb-6">
+            <h2 class="text-xl font-bold text-white mb-4">What's happening in your town?</h2>
+            <form id="create-post-form">
+                <textarea 
+                    id="post-content" 
+                    class="w-full p-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 text-white placeholder-gray-500" 
+                    rows="3" 
+                    placeholder="Share an update or ask a question..."
+                ></textarea>
+                <div class="flex justify-between items-center mt-3">
+                    <button type="button" class="text-gray-400 hover:text-emerald-400 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span>Add Image</span>
+                    </button>
+                    <button type="submit" class="bg-emerald-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-emerald-700 transition duration-300">
+                        Post
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="feed-container">
+            <div class="post-card p-4 rounded-lg mb-4">
+                <p class="font-semibold text-black">TownBoat Official</p>
+                <p class="text-gray-800 my-2">Welcome to TownBoat! Share local news, events, and discover businesses in your community. Let's make our town thrive together! ✨</p>
+                <div class="flex items-center text-gray-600 text-sm">
+                    <button class="mr-4 hover:text-red-500 flex items-center space-x-1">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                        <span>15 Upvotes</span>
+                    </button>
+                    <button class="hover:text-emerald-600 flex items-center space-x-1">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 13.5V10a2 2 0 00-2-2h-3.5L7.4 3.395a1 1 0 00-1.6-.39L3 5.4V16.5A1.5 1.5 0 004.5 18h11a1.5 1.5 0 001.5-1.5V13.5zM12 4a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg>
+                        <span>3 Comments</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="post-card p-4 rounded-lg mb-4">
+                <p class="font-semibold text-black">Local Gardener 🌿</p>
+                <p class="text-gray-800 my-2">My rose bushes are blooming beautifully this season! Anyone else seeing a lot of flowers around town? Share your garden pics! 🌸</p>
+                <img src="https://via.placeholder.com/400x200?text=Garden+Image" alt="Garden Image" class="rounded-lg mt-3 mb-2 w-full object-cover">
+                <div class="flex items-center text-gray-600 text-sm">
+                    <button class="mr-4 hover:text-red-500 flex items-center space-x-1">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                        <span>8 Upvotes</span>
+                    </button>
+                    <button class="hover:text-emerald-600 flex items-center space-x-1">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 13.5V10a2 2 0 00-2-2h-3.5L7.4 3.395a1 1 0 00-1.6-.39L3 5.4V16.5A1.5 1.5 0 004.5 18h11a1.5 1.5 0 001.5-1.5V13.5zM12 4a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg>
+                        <span>2 Comments</span>
+                    </button>
+                </div>
+            </div>
+
+            </div>
+    </main>
+
+    <script type="module" src="./js/home.js"></script>
+    <script>
+        // JavaScript for mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu-dropdown');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

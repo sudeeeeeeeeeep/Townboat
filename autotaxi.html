@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto/Taxi Listings - TownBoat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        /* Hide scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        body {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .listing-card {
+            background-color: #ffffff; /* White background */
+            color: #000000; /* Black text */
+            border: 1px solid #e5e7eb; /* Light gray border */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            transition: transform 0.2s ease-in-out;
+        }
+        .listing-card:hover {
+            transform: translateY(-5px);
+        }
+        
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <header class="bg-black sticky top-0 border-b border-gray-700 z-50">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="home.html" class="text-white text-xl font-bold">TownBoat</a>
+            
+            <!-- Mobile Menu Button (Hamburger) -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+
+            <!-- Navigation Links (Hidden on small screens, visible on md and up) -->
+            <div id="nav-links" class="hidden md:flex space-x-4 items-center">
+                <a href="home.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-home md:hidden"></i><span class="hidden md:inline">Feed</span>
+                </a>
+                <a href="discover.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-compass md:hidden"></i><span class="hidden md:inline">Discover</span>
+                </a>
+                <a href="leaderboard.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-trophy md:hidden"></i><span class="hidden md:inline">Leaderboard</span>
+                </a>
+                <a href="deals.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-tags md:hidden"></i><span class="hidden md:inline">Deals</span>
+                </a>
+            </div>
+
+            <!-- Logout Button (Always visible) -->
+            <button id="logout-btn" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-600 transition duration-300">
+                <i class="fas fa-sign-out-alt md:hidden"></i><span class="hidden md:inline">Logout</span>
+            </button>
+        </nav>
+
+        <!-- Mobile Menu Dropdown (Hidden by default) -->
+        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-800 border-t border-gray-700 py-2">
+            <a href="home.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-home"></i> <span>Feed</span>
+            </a>
+            <a href="discover.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-compass"></i> <span>Discover</span>
+            </a>
+            <a href="leaderboard.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-trophy"></i> <span>Leaderboard</span>
+            </a>
+            <a href="deals.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-tags"></i> <span>Deals</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-6 text-center">Auto/Taxi Services</h1>
+
+        <!-- Filters Section -->
+        <section class="bg-gray-900 p-6 rounded-lg shadow-xl mb-8">
+            <h2 class="text-2xl font-bold mb-4">Filter Listings</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="listing-town-filter" class="block text-gray-300 text-sm font-bold mb-2">Filter by Town:</label>
+                    <select id="listing-town-filter" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="">All Towns</option>
+                        <!-- Towns will be populated by JS -->
+                    </select>
+                </div>
+                <div>
+                    <label for="vehicle-type-filter" class="block text-gray-300 text-sm font-bold mb-2">Filter by Vehicle Type:</label>
+                    <select id="vehicle-type-filter" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="">All Types</option>
+                        <option value="Auto Rickshaw">Auto Rickshaw</option>
+                        <option value="Taxi">Taxi</option>
+                        <option value="Bike Taxi">Bike Taxi</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Listings List Container -->
+        <div id="autotaxi-listings-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <p class="text-gray-400 text-center col-span-full" id="no-listings-message">Loading auto/taxi listings...</p>
+        </div>
+    </main>
+
+    <script type="module" src="./js/autotaxi.js"></script>
+    <script>
+        // JavaScript for mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu-dropdown');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

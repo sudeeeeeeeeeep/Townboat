@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Auto/Taxi - TownBoat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        textarea { resize: vertical; }
+        .listing-image-preview {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #4a4a4a; /* Darker border for preview */
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <header class="bg-black sticky top-0 border-b border-gray-700 z-50">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="home.html" class="text-white text-xl font-bold">TownBoat</a>
+            
+            <!-- Mobile Menu Button (Hamburger) -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+
+            <!-- Navigation Links (Hidden on small screens, visible on md and up) -->
+            <div id="nav-links" class="hidden md:flex space-x-4 items-center">
+                <a href="home.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-home md:hidden"></i><span class="hidden md:inline">Feed</span>
+                </a>
+                <a href="discover.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-compass md:hidden"></i><span class="hidden md:inline">Discover</span>
+                </a>
+                <a href="leaderboard.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-trophy md:hidden"></i><span class="hidden md:inline">Leaderboard</span>
+                </a>
+                <a href="deals.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-tags md:hidden"></i><span class="hidden md:inline">Deals</span>
+                </a>
+            </div>
+
+            <!-- Logout Button (Always visible) -->
+            <button id="logout-btn" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-600 transition duration-300">
+                <i class="fas fa-sign-out-alt md:hidden"></i><span class="hidden md:inline">Logout</span>
+            </button>
+        </nav>
+
+        <!-- Mobile Menu Dropdown (Hidden by default) -->
+        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-800 border-t border-gray-700 py-2">
+            <a href="home.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-home"></i> <span>Feed</span>
+            </a>
+            <a href="discover.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-compass"></i> <span>Discover</span>
+            </a>
+            <a href="leaderboard.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-trophy"></i> <span>Leaderboard</span>
+            </a>
+            <a href="deals.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-tags"></i> <span>Deals</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-6 text-center">List Your Auto/Taxi Service</h1>
+
+        <div id="autotaxi-listing-section" class="bg-gray-900 p-6 rounded-lg shadow-lg max-w-2xl mx-auto mb-8">
+            <p class="text-gray-300 mb-6 text-center">Provide details about your auto/taxi service to get listed.</p>
+            <p id="autotaxi-status-message" class="text-center text-sm mb-4"></p>
+
+            <form id="autotaxi-listing-form" class="space-y-4">
+                <div>
+                    <label for="vehicle-type" class="block text-gray-300 text-sm font-bold mb-2">Vehicle Type:</label>
+                    <select id="vehicle-type" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
+                        <option value="">Select Vehicle Type</option>
+                        <option value="Auto Rickshaw">Auto Rickshaw</option>
+                        <option value="Taxi">Taxi</option>
+                        <option value="Bike Taxi">Bike Taxi</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="vehicle-model" class="block text-gray-300 text-sm font-bold mb-2">Vehicle Model (Optional):</label>
+                    <input type="text" id="vehicle-model" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="e.g., Maruti Suzuki Dzire, Bajaj RE">
+                </div>
+                <div>
+                    <label for="license-plate" class="block text-gray-300 text-sm font-bold mb-2">License Plate Number:</label>
+                    <input type="text" id="license-plate" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="e.g., KA01AB1234" required>
+                </div>
+                <div>
+                    <label for="driver-name" class="block text-gray-300 text-sm font-bold mb-2">Driver Name:</label>
+                    <input type="text" id="driver-name" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="Your Name" required>
+                </div>
+                <div>
+                    <label for="contact-phone" class="block text-gray-300 text-sm font-bold mb-2">Contact Phone Number:</label>
+                    <input type="tel" id="contact-phone" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="e.g., 9876543210" maxlength="10" required>
+                </div>
+                <div>
+                    <label for="service-description" class="block text-gray-300 text-sm font-bold mb-2">Service Description:</label>
+                    <textarea id="service-description" rows="4" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="Describe your service, e.g., 'Available for local rides, outstation trips, 24/7 service.'" required></textarea>
+                </div>
+                <div>
+                    <label for="service-town" class="block text-gray-300 text-sm font-bold mb-2">Primary Operating Town:</label>
+                    <select id="service-town" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
+                        <option value="">Select a Town</option>
+                        <!-- Towns will be populated by JS -->
+                    </select>
+                </div>
+                <button type="submit" id="submit-autotaxi-listing-btn" class="w-full bg-emerald-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-300">
+                    Submit Listing
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script type="module" src="./js/list-autotaxi.js"></script>
+    <script>
+        // JavaScript for mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu-dropdown');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

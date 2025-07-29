@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Actor/Singer - TownBoat (Admin)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        textarea { resize: vertical; }
+        .listing-image-preview {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #4a4a4a; /* Darker border for preview */
+        }
+        /* Banner specific styles */
+        .banner-section {
+            background-image: url('admin-banner.jpeg'); /* Placeholder image, replace with your actual banner image */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: white;
+            padding: 4rem 1rem; /* Responsive padding */
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .banner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay for text readability */
+            z-index: 1;
+        }
+        .banner-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <header class="bg-black sticky top-0 border-b border-gray-700 z-50">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="admin-panel.html" class="text-white text-xl font-bold">TownBoat Admin</a>
+            
+            <!-- Mobile Menu Button (Hamburger) -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+
+            <!-- Navigation Links (Hidden on small screens, visible on md and up) -->
+            <div id="nav-links" class="hidden md:flex space-x-4 items-center">
+                <a href="admin-panel.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-tachometer-alt md:hidden"></i><span class="hidden md:inline">Dashboard</span>
+                </a>
+                <!-- You can add other admin-specific navigation links here if needed -->
+            </div>
+
+            <!-- Logout Button (Admin-specific, if needed directly on this page, otherwise handled by admin-panel) -->
+            <!-- Removed as per admin context, assuming logout is handled from admin-panel.html -->
+        </nav>
+
+        <!-- Mobile Menu Dropdown (Hidden by default) -->
+        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-800 border-t border-gray-700 py-2">
+            <a href="admin-panel.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+            </a>
+            <!-- Other mobile admin links -->
+        </div>
+    </header>
+
+    <!-- Banner Section -->
+    <section class="banner-section">
+        <div class="banner-overlay"></div>
+        <div class="banner-content">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">Admin Hub: Manage Profiles</h2>
+            <p class="text-lg md:text-xl text-gray-200">Effortlessly add new actors and singers to the TownBoat leaderboards.</p>
+        </div>
+    </section>
+
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-6 text-center">Add Actor or Singer Profile</h1>
+
+        <div id="actor-singer-listing-section" class="bg-gray-900 p-6 rounded-lg shadow-lg max-w-2xl mx-auto mb-8">
+            <p class="text-gray-300 mb-6 text-center">Fill out the form below to add a new Actor or Singer profile to the leaderboard.</p>
+            <p id="actor-singer-status-message" class="text-center text-sm mb-4"></p>
+
+            <form id="actor-singer-listing-form" class="space-y-4">
+                <div>
+                    <label for="profile-type" class="block text-gray-300 text-sm font-bold mb-2">Profile Type:</label>
+                    <select id="profile-type" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
+                        <option value="">Select Profile Type</option>
+                        <option value="actor">Actor</option>
+                        <option value="singer">Singer</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="name" class="block text-gray-300 text-sm font-bold mb-2">Name:</label>
+                    <input type="text" id="name" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="e.g., Jane Doe" required>
+                </div>
+                <div>
+                    <label for="bio" class="block text-gray-300 text-sm font-bold mb-2">Short Bio (Optional):</label>
+                    <textarea id="bio" rows="3" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="e.g., Award-winning actress, Pop sensation from Mumbai."></textarea>
+                </div>
+                <div>
+                    <label for="link" class="block text-gray-300 text-sm font-bold mb-2">External Link (Optional, e.g., IMDb, Spotify):</label>
+                    <input type="url" id="link" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="https://example.com/profile">
+                </div>
+                <!-- Removed Hometown field -->
+                <div class="mb-6">
+                    <label for="image-url" class="block text-gray-300 text-sm font-bold mb-2">Profile Image URL (Optional):</label>
+                    <input type="url" id="image-url" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="https://example.com/your-image.jpg">
+                    <div class="mt-4">
+                        <img id="image-preview" src="#" alt="Image Preview" class="listing-image-preview hidden mx-auto">
+                    </div>
+                </div>
+                <button type="submit" id="submit-profile-btn" class="w-full bg-emerald-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-300">
+                    Submit Profile
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script type="module" src="./js/list-actor-singer.js"></script>
+    <script>
+        // JavaScript for mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu-dropdown');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

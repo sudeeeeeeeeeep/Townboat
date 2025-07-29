@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Business Details - TownBoat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        /* Add styles for the larger business image */
+        .large-business-image {
+            width: 100%; /* Full width of its container */
+            max-height: 300px; /* Max height to prevent it from being too tall */
+            object-fit: cover; /* Cover the area, cropping if necessary */
+            border-radius: 12px; /* Slightly more rounded corners */
+            margin-bottom: 1.5rem; /* Space below the image */
+        }
+        /* Hide scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        body {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .deal-card {
+            background-color: #ffffff; /* White background */
+            color: #000000; /* Black text */
+            border: 1px solid #e5e7eb; /* Light gray border */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+        .deal-card .text-gray-600 { /* For description/details */
+            color: #000000;
+        }
+        .deal-card .text-sm {
+            color: #4a5568;
+        }
+        .deal-card .text-emerald-600 {
+            color: #059669; /* Keep emerald for call to action */
+        }
+        .deal-card .text-red-500 {
+            color: #ef4444; /* Keep red for expiry */
+        }
+        .deal-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        /* Custom style for the business detail container background */
+        .business-detail-background {
+            background-image: url('detailss.jpeg'); /* Background image for the main section */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            overflow: hidden;
+            padding-bottom: 2rem; /* Add some padding at the bottom for content */
+        }
+
+        /* New container for business info with white background and black text */
+        .business-info-card {
+            background-color: #ffffff;
+            color: #000000; /* Default text color for this card */
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem; /* Tailwind p-6 */
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            margin-top: 1rem; /* Tailwind mt-4 */
+        }
+        /* Ensure specific Tailwind colors are applied within the info card */
+        .business-info-card .text-emerald-400 { color: #34d399 !important; }
+        .business-info-card .text-yellow-400 { color: #facc15 !important; }
+        .business-info-card .text-blue-400 { color: #60a5fa !important; }
+        .business-info-card strong { color: #000000; } /* Ensure strong tags are black */
+
+
+        /* Specific style for the Call Now button text */
+        .call-button-text-white {
+            color: #ffffff !important; /* Force white text for the call button */
+        }
+
+        /* Custom style for the business deals section background */
+        .business-deals-background {
+            background-color: #1a202c; /* Darker gray, similar to bg-gray-900 but can be changed */
+            background-image: url('fildeal.jpeg'); /* Setting the background image */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            overflow: hidden;
+        }
+        /* Ensure text is readable on the new deals background */
+        .business-deals-background h2,
+        .business-deals-background p {
+            color: #ffffff; /* Ensure text is white for readability */
+        }
+        .business-deals-background .deal-card {
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white for deal cards */
+            color: #000000; /* Black text for deal cards */
+        }
+        .business-deals-background .deal-card .text-gray-600 {
+            color: #374151; /* Darker gray for deal card descriptions */
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <header class="bg-black sticky top-0 border-b border-gray-700 z-50">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="home.html" class="text-white text-xl font-bold">TownBoat</a>
+            
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+
+            <div id="nav-links" class="hidden md:flex space-x-4 items-center">
+                <a href="home.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-home md:hidden"></i><span class="hidden md:inline">Feed</span>
+                </a>
+                <a href="discover.html" class="text-white font-semibold flex items-center space-x-1">
+                    <i class="fas fa-compass md:hidden"></i><span class="hidden md:inline">Discover</span>
+                </a>
+                <a href="leaderboard.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-trophy md:hidden"></i><span class="hidden md:inline">Leaderboard</span>
+                </a>
+                <!-- NEW: Deals link for desktop -->
+                <a href="deals.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-tags md:hidden"></i><span class="hidden md:inline">Deals</span>
+                </a>
+            </div>
+
+            <button id="logout-btn" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-600 transition duration-300">
+                <i class="fas fa-sign-out-alt md:hidden"></i><span class="hidden md:inline">Logout</span>
+            </button>
+        </nav>
+
+        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-800 border-t border-gray-700 py-2">
+            <a href="home.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-home"></i> <span>Feed</span>
+            </a>
+            <a href="discover.html" class="block px-4 py-2 text-white hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-compass"></i> <span>Discover</span>
+            </a>
+            <a href="leaderboard.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-trophy"></i> <span>Leaderboard</span>
+            </a>
+            <!-- NEW: Deals link for mobile dropdown -->
+            <a href="deals.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-tags"></i> <span>Deals</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-6">
+        <div id="business-detail-container" class="bg-gray-900 p-6 rounded-lg shadow-lg border border-gray-700 max-w-2xl mx-auto mb-8 business-detail-background">
+            <!-- Content will be dynamically loaded by JavaScript -->
+            <p class="text-gray-400 text-center py-8">Loading business details...</p>
+        </div>
+
+        <!-- Deals Section for this Business -->
+        <div id="business-deals-section" class="bg-gray-900 p-6 rounded-lg shadow-lg border border-gray-700 max-w-2xl mx-auto mt-8 business-deals-background">
+            <h2 class="text-2xl font-bold text-center mb-6">Active Deals</h2>
+            <div id="business-deals-list" class="space-y-4">
+                <p class="text-gray-400 text-center" id="no-business-deals-message">Loading deals for this business...</p>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="./js/business-detail.js"></script>
+    <script>
+        // JavaScript for mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu-dropdown');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - TownBoat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5); /* Emerald focus ring */
+        }
+        .business-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        @media (min-width: 768px) {
+            .business-item {
+                display: grid;
+                grid-template-columns: 2fr 1fr 1fr 1.5fr 1fr; /* Name, Category, Status, Submitted By, Actions */
+                align-items: center;
+            }
+            .business-item > div {
+                padding: 0.5rem 0;
+            }
+        }
+        .business-image-preview {
+            width: 100px; /* Smaller size for admin panel */
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border: 1px solid #4a4a4a;
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <header class="bg-black sticky top-0 border-b border-gray-700 z-50">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#" class="text-white text-xl font-bold">TownBoat Admin</a>
+            <button id="logout-btn" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-600 transition duration-300">Logout</button>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-8" id="admin-dashboard-content" class="hidden">
+        <h1 class="text-3xl font-bold mb-6 text-center">Admin Dashboard</h1>
+
+        <!-- Analytics Section -->
+        <section class="bg-gray-900 p-6 rounded-lg shadow-xl mb-8">
+            <h2 class="text-2xl font-bold mb-4">Platform Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">Total Business Owners Registered</p>
+                    <p id="user-count" class="text-3xl font-bold text-emerald-400 mt-2">0</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">Total Businesses Listed</p>
+                    <p id="total-businesses-count" class="text-3xl font-bold text-blue-400 mt-2">0</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">Approved Businesses</p>
+                    <p id="approved-businesses-count" class="text-3xl font-bold text-green-400 mt-2">0</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">Pending Approvals</p>
+                    <p id="pending-businesses-count" class="text-3xl font-bold text-yellow-400 mt-2">0</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-3">Top 5 Most Viewed Businesses</h3>
+                    <ul id="most-viewed-businesses-list" class="space-y-2 text-gray-300">
+                        <li class="text-gray-400">No data available.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-3">Businesses per Town (Top 5)</h3>
+                    <ul id="businesses-by-town-list" class="space-y-2 text-gray-300">
+                        <li class="text-gray-400">No data available.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Add Business Section -->
+        <section class="bg-gray-900 p-6 rounded-lg shadow-xl mb-8">
+            <h2 class="text-2xl font-bold mb-4">Add New Business (Admin Approved)</h2>
+            <form id="admin-add-business-form" class="space-y-4">
+                <div>
+                    <label for="admin-name" class="block text-gray-300 text-sm font-bold mb-2">Business Name:</label>
+                    <input type="text" id="admin-name" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="e.g., The Coffee Shop" required>
+                </div>
+                <div>
+                    <label for="admin-category" class="block text-gray-300 text-sm font-bold mb-2">Category:</label>
+                    <select id="admin-category" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+                        <option value="">Select a Category</option>
+                        <option value="Restaurants">Restaurants</option>
+                        <option value="Retail">Retail</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Automotive">Automotive</option>
+                        <option value="Education">Education</option>
+                        <option value="Home Services">Home Services</option>
+                        <option value="Beauty & Spa">Beauty & Spa</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Groceries">Groceries</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="admin-town" class="block text-gray-300 text-sm font-bold mb-2">Town:</label>
+                    <select id="admin-town" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+                        <option value="">Select a Town</option>
+                        <!-- Towns will be populated by JS -->
+                    </select>
+                </div>
+                <div>
+                    <label for="admin-description" class="block text-gray-300 text-sm font-bold mb-2">Description:</label>
+                    <textarea id="admin-description" rows="3" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="A brief description of the business." required></textarea>
+                </div>
+                <div>
+                    <label for="admin-address" class="block text-gray-300 text-sm font-bold mb-2">Full Address:</label>
+                    <input type="text" id="admin-address" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="e.g., Shop No. 5, Main Market, XYZ Road, City" required>
+                </div>
+                <div>
+                    <label for="admin-phone" class="block text-gray-300 text-sm font-bold mb-2">Contact Phone Number:</label>
+                    <input type="tel" id="admin-phone" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="e.g., 9876543210" maxlength="10" required>
+                </div>
+                <div class="mb-4">
+                    <label for="admin-image" class="block text-gray-300 text-sm font-bold mb-2">Business Image/Logo (Upload File):</label>
+                    <input type="file" id="admin-image" accept="image/*" class="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-500 file:text-white hover:file:bg-emerald-600">
+                </div>
+                <div class="mb-6">
+                    <label for="admin-image-url" class="block text-gray-300 text-sm font-bold mb-2">Or Image URL (Optional):</label>
+                    <input type="url" id="admin-image-url" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="https://example.com/your-image.jpg">
+                    <div class="mt-4" id="admin-image-preview-container">
+                        <img id="admin-image-preview" src="#" alt="Image Preview" class="hidden business-image-preview">
+                    </div>
+                </div>
+                 <div>
+                    <label for="admin-owner-email" class="block text-gray-300 text-sm font-bold mb-2">Owner Email (Optional, for dashboard access):</label>
+                    <input type="email" id="admin-owner-email" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="owner@example.com">
+                    <p class="text-xs text-gray-500 mt-1">If provided, the owner can sign up with this email to manage their business.</p>
+                </div>
+
+                <p id="admin-add-business-status" class="text-center text-sm mb-4"></p>
+                <button type="submit" id="admin-add-business-btn" class="w-full bg-emerald-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-300">
+                    Add Business (Approved)
+                </button>
+            </form>
+        </section>
+
+        <!-- Business Filters -->
+        <section class="bg-gray-900 p-6 rounded-lg shadow-xl mb-8">
+            <h2 class="text-2xl font-bold mb-4">Filter Businesses</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label for="filter-status" class="block text-gray-300 text-sm font-bold mb-2">Filter by Status:</label>
+                    <select id="filter-status" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+                 <div>
+                    <label for="filter-town" class="block text-gray-300 text-sm font-bold mb-2">Filter by Town:</label>
+                    <select id="filter-town" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="">Select a Town</option>
+                        <!-- Towns will be populated by JS -->
+                    </select>
+                </div>
+                <div>
+                    <label for="filter-search" class="block text-gray-300 text-sm font-bold mb-2">Search Business:</label>
+                    <input type="text" id="filter-search" placeholder="Name, description, address..." class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+            </div>
+        </section>
+
+        <!-- Pending Business Approvals Section -->
+        <section class="bg-gray-900 p-6 rounded-lg shadow-xl mb-8">
+            <h2 class="text-2xl font-bold mb-4">Pending Business Approvals</h2>
+            <div id="pending-businesses-list" class="space-y-4">
+                <p class="text-gray-400 text-center" id="no-pending-businesses">No pending businesses.</p>
+            </div>
+        </section>
+
+        <!-- Approved Businesses Section -->
+        <section class="bg-gray-900 p-6 rounded-lg shadow-xl mb-8">
+            <h2 class="text-2xl font-bold mb-4">Approved Businesses</h2>
+            <div id="approved-businesses-list" class="space-y-4">
+                <p class="text-gray-400 text-center" id="no-approved-businesses">No approved businesses.</p>
+            </div>
+        </section>
+
+        <!-- Rejected Businesses Section (Optional, could be combined with Approved) -->
+        <section class="bg-gray-900 p-6 rounded-lg shadow-xl mb-8">
+            <h2 class="text-2xl font-bold mb-4">Rejected Businesses</h2>
+            <div id="rejected-businesses-list" class="space-y-4">
+                <p class="text-gray-400 text-center" id="no-rejected-businesses">No rejected businesses.</p>
+            </div>
+        </section>
+
+        <!-- Edit Business Modal -->
+        <div id="edit-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden p-4 z-50">
+            <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-lg border border-gray-700 max-h-[90vh] overflow-y-auto">
+                <h3 class="text-2xl font-bold text-white mb-6">Edit Business Details</h3>
+                <p id="edit-status-message" class="text-center text-sm mb-4"></p>
+                <form id="edit-business-form" class="space-y-4">
+                    <input type="hidden" id="edit-business-id">
+                    <div>
+                        <label for="edit-name" class="block text-gray-300 text-sm font-bold mb-2">Business Name:</label>
+                        <input type="text" id="edit-name" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
+                    </div>
+                    <div>
+                        <label for="edit-category" class="block text-gray-300 text-sm font-bold mb-2">Category:</label>
+                        <select id="edit-category" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+                             <option value="">Select a Category</option>
+                            <option value="Restaurants">Restaurants</option>
+                            <option value="Retail">Retail</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Automotive">Automotive</option>
+                            <option value="Education">Education</option>
+                            <option value="Home Services">Home Services</option>
+                            <option value="Beauty & Spa">Beauty & Spa</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Groceries">Groceries</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                     <div>
+                        <label for="edit-town" class="block text-gray-300 text-sm font-bold mb-2">Town:</label>
+                        <select id="edit-town" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
+                            <option value="">Select a Town</option>
+                            <!-- Towns will be populated by JS -->
+                        </select>
+                    </div>
+                    <div>
+                        <label for="edit-description" class="block text-gray-300 text-sm font-bold mb-2">Description:</label>
+                        <textarea id="edit-description" rows="3" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required></textarea>
+                    </div>
+                    <div>
+                        <label for="edit-address" class="block text-gray-300 text-sm font-bold mb-2">Full Address:</label>
+                        <input type="text" id="edit-address" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
+                    </div>
+                    <div>
+                        <label for="edit-phone" class="block text-gray-300 text-sm font-bold mb-2">Contact Phone Number:</label>
+                        <input type="tel" id="edit-phone" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" maxlength="10" required>
+                    </div>
+                    <div>
+                        <label for="edit-status" class="block text-gray-300 text-sm font-bold mb-2">Status:</label>
+                        <select id="edit-status" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-image" class="block text-gray-300 text-sm font-bold mb-2">Business Image/Logo (Upload File):</label>
+                        <input type="file" id="edit-image" accept="image/*" class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-500 file:text-white hover:file:bg-emerald-600">
+                    </div>
+                    <div class="mb-6">
+                        <label for="edit-image-url" class="block text-gray-300 text-sm font-bold mb-2">Or Image URL (Optional):</label>
+                        <input type="url" id="edit-image-url" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="https://example.com/your-image.jpg">
+                        <div class="mt-4">
+                            <img id="edit-image-preview" src="#" alt="Current Image" class="business-image-preview hidden">
+                            <p class="text-gray-500 text-sm mt-1" id="current-image-name"></p>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="edit-owner-email" class="block text-gray-300 text-sm font-bold mb-2">Owner Email (Optional):</label>
+                        <input type="email" id="edit-owner-email" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="owner@example.com">
+                    </div>
+
+                    <div class="flex justify-end space-x-4 mt-6">
+                        <button type="button" id="cancel-edit-btn" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition duration-300">Cancel</button>
+                        <button type="submit" class="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition duration-300">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="delete-confirm-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden p-4 z-50">
+            <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-sm border border-gray-700">
+                <h3 class="text-xl font-bold text-white mb-4">Confirm Deletion</h3>
+                <p class="text-gray-300 mb-6">Are you sure you want to delete this business? This action cannot be undone.</p>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" id="cancel-delete-btn" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition duration-300">Cancel</button>
+                    <button type="button" id="confirm-delete-btn" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition duration-300">Delete</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JS Modules -->
+    <script type="module" src="./js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title id="page-title">Businesses - TownBoat</title>
+
+  <!-- Fonts and Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom Styles -->
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+
+    .business-card {
+      background-color: #ffffff;
+      color: #000000;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .business-card .text-xl,
+    .business-card .text-gray-400,
+    .business-card .text-gray-300,
+    .business-card .text-gray-500 {
+      color: #000000;
+    }
+
+    .business-card .upvote-btn {
+      color: #000000;
+    }
+
+    .business-card .upvote-btn.text-red-500 {
+      color: #ef4444;
+    }
+
+    .business-card .upvote-btn:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .view-details-btn {
+      background-color: #000000;
+      color: #ffffff;
+    }
+
+    .view-details-btn:hover {
+      background-color: #1a1a1a;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5);
+    }
+
+    .business-image {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-right: 1rem;
+    }
+
+    /* Hide scrollbars */
+    ::-webkit-scrollbar { display: none; }
+    body {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+
+<body class="bg-black text-white">
+
+  <!-- Responsive Navbar -->
+  <header class="bg-black sticky top-0 border-b border-gray-700 z-50">
+    <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="home.html" class="text-white text-xl font-bold">TownBoat</a>
+
+      <div class="md:hidden flex items-center">
+        <button id="mobile-menu-button" class="text-white focus:outline-none">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16m-7 6h7"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div id="nav-links" class="hidden md:flex space-x-4 items-center">
+        <a href="home.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+          <i class="fas fa-home md:hidden"></i><span class="hidden md:inline">Feed</span>
+        </a>
+        <a href="discover.html" class="text-white font-semibold flex items-center space-x-1">
+          <i class="fas fa-compass md:hidden"></i><span class="hidden md:inline">Discover</span>
+        </a>
+        <a href="leaderboard.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+          <i class="fas fa-trophy md:hidden"></i><span class="hidden md:inline">Leaderboard</span>
+        </a>
+      </div>
+
+      <button id="logout-btn" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-600 transition duration-300">
+        <i class="fas fa-sign-out-alt md:hidden"></i><span class="hidden md:inline">Logout</span>
+      </button>
+    </nav>
+
+    <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-800 border-t border-gray-700 py-2">
+      <a href="home.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+        <i class="fas fa-home"></i> <span>Feed</span>
+      </a>
+      <a href="discover.html" class="block px-4 py-2 text-white hover:bg-gray-700 flex items-center space-x-2">
+        <i class="fas fa-compass"></i> <span>Discover</span>
+      </a>
+      <a href="leaderboard.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+        <i class="fas fa-trophy"></i> <span>Leaderboard</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <main class="container mx-auto px-4 py-8">
+    <h1 id="category-heading" class="text-3xl font-bold mb-6 text-center">Loading Businesses...</h1>
+
+    <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label for="town-filter" class="block text-gray-400 text-sm font-bold mb-2">Filter by Town:</label>
+        <select id="town-filter" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          <option value="">All Towns</option>
+        </select>
+      </div>
+      <div>
+        <label for="business-search" class="block text-gray-400 text-sm font-bold mb-2">Search Business:</label>
+        <input
+          type="text"
+          id="business-search"
+          placeholder="Search by name or description..."
+          class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        />
+      </div>
+    </div>
+
+    <!-- The no-businesses-message is now outside the business-list-container -->
+    <p id="no-businesses-message" class="text-gray-500 text-center py-8" style="display: none;">
+      No businesses found in this category yet. Be the first to list one!
+    </p>
+
+    <div id="business-list-container">
+      <!-- Business cards will be rendered here by business-list.js -->
+    </div>
+  </main>
+
+  <!-- JS Modules -->
+  <script type="module" src="./js/business-list.js"></script>
+
+  <!-- Mobile Menu Toggle Script -->
+  <script>
+    document.getElementById('mobile-menu-button').addEventListener('click', function () {
+      const mobileMenu = document.getElementById('mobile-menu-dropdown');
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
+</body>
+</html>

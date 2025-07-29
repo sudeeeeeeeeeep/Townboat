@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Dashboard - TownBoat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons (for hamburger menu) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        textarea { resize: vertical; }
+        .business-image-preview {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #4a4a4a; /* Darker border for preview */
+        }
+        .deal-image-preview {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #4a4a4a; /* Darker border for preview */
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <header class="bg-black sticky top-0 border-b border-gray-700 z-50">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="home.html" class="text-white text-xl font-bold">TownBoat</a>
+            
+            <!-- Mobile Menu Button (Hamburger) -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+
+            <!-- Navigation Links (Hidden on small screens, visible on md and up) -->
+            <div id="nav-links" class="hidden md:flex space-x-4 items-center">
+                <a href="home.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-home md:hidden"></i><span class="hidden md:inline">Feed</span>
+                </a>
+                <a href="discover.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-compass md:hidden"></i><span class="hidden md:inline">Discover</span>
+                </a>
+                <a href="leaderboard.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-trophy md:hidden"></i><span class="hidden md:inline">Leaderboard</span>
+                </a>
+                <a href="deals.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                    <i class="fas fa-tags md:hidden"></i><span class="hidden md:inline">Deals</span>
+                </a>
+            </div>
+
+            <!-- Logout Button (Always visible) -->
+            <button id="logout-btn" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-600 transition duration-300">
+                <i class="fas fa-sign-out-alt md:hidden"></i><span class="hidden md:inline">Logout</span>
+            </button>
+        </nav>
+
+        <!-- Mobile Menu Dropdown (Hidden by default) -->
+        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-800 border-t border-gray-700 py-2">
+            <a href="home.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-home"></i> <span>Feed</span>
+            </a>
+            <a href="discover.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-compass"></i> <span>Discover</span>
+            </a>
+            <a href="leaderboard.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-trophy"></i> <span>Leaderboard</span>
+            </a>
+            <a href="deals.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+                <i class="fas fa-tags"></i> <span>Deals</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-6 text-center">Business Dashboard</h1>
+
+        <!-- Business Login Form -->
+        <div id="business-login-form" class="bg-gray-900 p-8 rounded-lg shadow-xl max-w-sm mx-auto hidden">
+            <h2 class="text-2xl font-bold text-center mb-6">Business Login</h2>
+            <p id="login-error-message" class="text-red-500 text-center text-sm mb-4"></p>
+            <form>
+                <div class="mb-4">
+                    <label for="business-login-email" class="block text-gray-300 text-sm font-bold mb-2">Email:</label>
+                    <input type="email" id="business-login-email" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="your@business.com" required>
+                </div>
+                <div class="mb-6">
+                    <label for="business-login-password" class="block text-gray-300 text-sm font-bold mb-2">Password:</label>
+                    <input type="password" id="business-login-password" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="********" required>
+                </div>
+                <button type="submit" id="business-login-btn" class="w-full bg-emerald-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-300">
+                    Business Login
+                </button>
+            </form>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div id="dashboard-content" class="hidden">
+            <!-- List Your Business Form (shown if no business is linked) -->
+            <div id="list-business-section" class="bg-gray-900 p-6 rounded-lg shadow-lg max-w-2xl mx-auto mb-8 hidden">
+                <h2 class="text-2xl font-bold text-center mb-6">List Your Business</h2>
+                <p class="text-gray-300 mb-6 text-center">Fill out the form below to get your business listed on TownBoat.</p>
+                <p id="list-business-status-message" class="text-center text-sm mb-4"></p>
+
+                <form id="list-business-form" class="space-y-4">
+                    <div>
+                        <label for="list-business-name" class="block text-gray-300 text-sm font-bold mb-2">Business Name:</label>
+                        <input type="text" id="list-business-name" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="e.g., My Awesome Cafe" required>
+                    </div>
+                    <div>
+                        <label for="list-business-category" class="block text-gray-300 text-sm font-bold mb-2">Category:</label>
+                        <select id="list-business-category" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
+                            <option value="">Select a Category</option>
+                            <!-- Categories will be populated by JS -->
+                        </select>
+                    </div>
+                    <div>
+                        <label for="list-business-town" class="block text-gray-300 text-sm font-bold mb-2">Town:</label>
+                        <select id="list-business-town" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
+                            <option value="">Select a Town</option>
+                            <!-- Towns will be populated by JS -->
+                        </select>
+                    </div>
+                    <div>
+                        <label for="list-business-description" class="block text-gray-300 text-sm font-bold mb-2">Description:</label>
+                        <textarea id="list-business-description" rows="4" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="Describe your business, its services, and what makes it unique." required></textarea>
+                    </div>
+                    <div>
+                        <label for="list-business-address" class="block text-gray-300 text-sm font-bold mb-2">Full Address:</label>
+                        <input type="text" id="list-business-address" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="e.g., Shop No. 5, Main Market, XYZ Road, City" required>
+                    </div>
+                    <div>
+                        <label for="list-business-phone" class="block text-gray-300 text-sm font-bold mb-2">Contact Phone Number:</label>
+                        <input type="tel" id="list-business-phone" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" maxlength="10" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="list-business-image" class="block text-gray-300 text-sm font-bold mb-2">Business Image/Logo (Optional)</label>
+                        <input type="file" id="list-business-image" accept="image/*" class="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-500 file:text-white hover:file:bg-emerald-600">
+                        <div class="mt-4">
+                            <img id="list-image-preview" src="#" alt="Image Preview" class="business-image-preview hidden">
+                        </div>
+                    </div>
+                    <button type="submit" id="submit-new-business-btn" class="w-full bg-emerald-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-300">
+                        Submit Business for Approval
+                    </button>
+                </form>
+            </div>
+
+            <!-- Business Details Display (shown if business is linked) -->
+            <div id="business-details-display" class="bg-gray-900 p-6 rounded-lg shadow-lg max-w-2xl mx-auto mb-8 hidden">
+                <h2 class="text-2xl font-bold text-center mb-6">Your Business Listing</h2>
+                
+                <div class="mb-4 text-center">
+                    <img id="current-business-image" src="#" alt="Business Image" class="business-image-preview mx-auto hidden">
+                </div>
+
+                <div id="business-detail-container" class="space-y-2 text-gray-300 mb-6">
+                    <!-- Business details will be loaded here by JS -->
+                    <p class="text-gray-400 text-center">Loading your business details...</p>
+                </div>
+
+                <button id="show-edit-form-btn" class="w-full bg-emerald-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-emerald-700 transition duration-300 hidden">
+                    Edit Business Details
+                </button>
+
+                <form id="edit-business-form" class="mt-8 p-6 bg-gray-800 rounded-lg shadow-inner hidden">
+                    <h3 class="text-xl font-bold mb-4 text-center">Edit Your Business Information</h3>
+                    <p id="edit-status-message" class="text-center text-sm mb-4"></p>
+
+                    <div class="mb-4">
+                        <label for="edit-business-name" class="block text-gray-300 text-sm font-bold mb-2">Business Name:</label>
+                        <input type="text" id="edit-business-name" name="edit-business-name" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-900 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="edit-business-category" class="block text-gray-300 text-sm font-bold mb-2">Category:</label>
+                        <select id="edit-business-category" name="edit-business-category" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-900 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
+                            <option value="">Select a Category</option>
+                            <!-- Categories will be populated by JS -->
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="edit-business-town" class="block text-gray-300 text-sm font-bold mb-2">Town/Area:</label>
+                        <select id="edit-business-town" name="edit-business-town" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-900 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
+                            <option value="">Select a Town</option>
+                            <!-- Towns will be populated by JS -->
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="edit-business-description" class="block text-gray-300 text-sm font-bold mb-2">Description:</label>
+                        <textarea id="edit-business-description" name="edit-business-description" rows="4" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-900 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="Tell us about your business, its services, and what makes it unique." required></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="edit-business-address" class="block text-gray-300 text-sm font-bold mb-2">Full Address:</label>
+                        <input type="text" id="edit-business-address" name="edit-business-address" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-900 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="e.g., Shop No. 5, Main Market, XYZ Road, City" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="edit-business-phone" class="block text-gray-300 text-sm font-bold mb-2">Contact Phone Number:</label>
+                        <input type="tel" id="edit-business-phone" name="edit-business-phone" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-900 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" maxlength="10" required>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="edit-business-image" class="block text-gray-300 text-sm font-bold mb-2">Business Image/Logo:</label>
+                        <input type="file" id="edit-business-image" name="edit-business-image" accept="image/*" class="w-full text-white text-sm">
+                        <img id="edit-image-preview" src="#" alt="Image Preview" class="business-image-preview mt-3 hidden">
+                        <p class="text-gray-400 text-xs mt-2">Upload a new image to replace the existing one.</p>
+                    </div>
+
+                    <button type="submit" id="update-business-btn" class="bg-white text-black font-bold py-3 px-6 rounded-lg w-full hover:bg-gray-200 transition duration-300">
+                        Update Business Details
+                    </button>
+                </form>
+            </div>
+
+            <!-- Create New Deal Section -->
+            <div id="create-deal-section" class="bg-gray-900 p-6 rounded-lg shadow-lg max-w-2xl mx-auto mb-8 hidden">
+                <h2 class="text-2xl font-bold text-center mb-6">Create a New Deal</h2>
+                <p id="create-deal-status-message" class="text-center text-sm mb-4"></p>
+                <form id="create-deal-form" class="space-y-4">
+                    <input type="hidden" id="deal-business-id">
+                    <input type="hidden" id="deal-business-town">
+                    <input type="hidden" id="deal-business-category">
+
+                    <div>
+                        <label for="deal-title" class="block text-gray-300 text-sm font-bold mb-2">Deal Title:</label>
+                        <input type="text" id="deal-title" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="e.g., 20% Off All Pizzas" required>
+                    </div>
+                    <div>
+                        <label for="deal-description" class="block text-gray-300 text-sm font-bold mb-2">Deal Description:</label>
+                        <textarea id="deal-description" rows="3" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="Full details of the deal, terms & conditions." required></textarea>
+                    </div>
+                    <div>
+                        <label for="deal-expiry-date" class="block text-gray-300 text-sm font-bold mb-2">Expiry Date:</label>
+                        <input type="datetime-local" id="deal-expiry-date" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="deal-image" class="block text-gray-300 text-sm font-bold mb-2">Deal Image (Optional):</label>
+                        <input type="file" id="deal-image" accept="image/*" class="w-full text-white text-sm">
+                        <img id="deal-image-preview" src="#" alt="Deal Image Preview" class="deal-image-preview mt-3 hidden">
+                        <p class="text-gray-400 text-xs mt-2">Upload an image for your deal.</p>
+                    </div>
+
+                    <button type="submit" id="create-deal-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300">
+                        Publish Deal
+                    </button>
+                </form>
+            </div>
+
+            <!-- My Active Deals Section -->
+            <div id="my-deals-section" class="bg-gray-900 p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold text-center mb-6">My Active Deals</h2>
+                <div id="my-deals-list" class="space-y-4">
+                    <p class="text-gray-400 text-center" id="no-active-deals-message">No active deals published yet.</p>
+                </div>
+            </div>
+
+            <!-- Edit Deal Modal (NEW) -->
+            <div id="edit-deal-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden p-4 z-50">
+                <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-lg border border-gray-700 max-h-[90vh] overflow-y-auto">
+                    <h3 class="text-2xl font-bold text-white mb-6">Edit Deal Details</h3>
+                    <p id="edit-deal-status-message" class="text-center text-sm mb-4"></p>
+                    <form id="edit-deal-form" class="space-y-4">
+                        <input type="hidden" id="edit-deal-id">
+                        <div>
+                            <label for="edit-deal-title" class="block text-gray-300 text-sm font-bold mb-2">Deal Title:</label>
+                            <input type="text" id="edit-deal-title" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
+                        </div>
+                        <div>
+                            <label for="edit-deal-description" class="block text-gray-300 text-sm font-bold mb-2">Deal Description:</label>
+                            <textarea id="edit-deal-description" rows="3" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required></textarea>
+                        </div>
+                        <div>
+                            <label for="edit-deal-expiry-date" class="block text-gray-300 text-sm font-bold mb-2">Expiry Date:</label>
+                            <input type="datetime-local" id="edit-deal-expiry-date" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
+                        </div>
+                        <div class="mb-6">
+                            <label for="edit-deal-image" class="block text-gray-300 text-sm font-bold mb-2">Deal Image (Leave blank to keep current):</label>
+                            <input type="file" id="edit-deal-image" accept="image/*" class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-500 file:text-white hover:file:bg-emerald-600">
+                            <div class="mt-4">
+                                <img id="edit-deal-image-preview" src="#" alt="Deal Image Preview" class="deal-image-preview hidden">
+                                <p class="text-gray-500 text-sm mt-1" id="current-deal-image-name"></p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-4 mt-6">
+                            <button type="button" id="cancel-edit-deal-btn" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition duration-300">Cancel</button>
+                            <button type="submit" id="update-deal-btn" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script type="module" src="js/business-dashboard.js"></script>
+    <script>
+        // JavaScript for mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu-dropdown');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>
+
+
