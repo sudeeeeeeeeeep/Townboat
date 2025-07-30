@@ -330,6 +330,10 @@
                 <a href="polls.html" class="text-gray-600 hover:text-gray-900 flex items-center space-x-1">
                     <i class="fas fa-poll md:hidden"></i><span class="hidden md:inline">Polls</span>
                 </a>
+                <!-- NEW: Clubs link for desktop -->
+                <a href="club.html" class="text-gray-600 hover:text-gray-900 flex items-center space-x-1">
+                    <i class="fas fa-users md:hidden"></i><span class="hidden md:inline">Clubs</span>
+                </a>
             </div>
 
             <button id="logout-btn" class="bg-gray-200 text-gray-900 px-4 py-2 rounded-lg text-sm hover:bg-gray-300 transition duration-300">
@@ -353,6 +357,10 @@
             </a>
             <a href="polls.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-poll"></i> <span>Polls</span>
+            </a>
+            <!-- NEW: Clubs link for mobile dropdown -->
+            <a href="club.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-200 flex items-center space-x-2">
+                <i class="fas fa-users"></i> <span>Clubs</span>
             </a>
         </div>
     </header>
@@ -467,7 +475,7 @@
         </div>
     </div>
 
-    <script type="module" src="home.js"></script>
+    <script type="module" src="/home.js"></script>
     <script>
         // JavaScript for mobile menu toggle
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
