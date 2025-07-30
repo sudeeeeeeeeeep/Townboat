@@ -700,7 +700,7 @@ function createEntityCard(entity, entityId, rank, collectionName) {
             <div class="flex-grow min-w-0">
                 <p class="item-name font-semibold text-white">${entity.name}</p>
                 <p class="item-details text-gray-300">
-                    ${entity.bio || 'No bio'} 
+                   
                     ${entity.hometown ? ` • ${entity.hometown}` : ''}
                     ${extraInfoHtml}
                 </p>
