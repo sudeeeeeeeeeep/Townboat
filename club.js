@@ -236,7 +236,8 @@ function fetchAndDisplayClubs() {
                             `<button class="join-btn btn-primary ${isFull ? 'opacity-50 cursor-not-allowed' : ''}" data-club-id="${clubId}" ${isFull ? 'disabled' : ''}>Join Club</button>`
                         ) 
                         : 
-                        `<button class="join-btn btn-primary opacity-50 cursor-not-allowed" disabled>Login to Join</button>`
+                        // MODIFIED: Removed 'disabled' attribute to make the button clickable when logged out
+                        `<button class="join-btn btn-primary">Login to Join</button>` 
                     }
                 </div>
             `;
@@ -262,12 +263,11 @@ function fetchAndDisplayClubs() {
                     }
                 }
             } else {
-                // For non-logged-in users, clicking any interactive button will show signup modal
-                clubCard.querySelectorAll('.club-actions button').forEach(button => {
-                    if (!button.disabled) { // Only attach if not already disabled by isFull
-                        button.addEventListener('click', showSignupModal);
-                    }
-                });
+                // For non-logged-in users, attach a click listener to the "Login to Join" button
+                const loginToJoinBtn = clubCard.querySelector('.join-btn');
+                if (loginToJoinBtn) {
+                    loginToJoinBtn.addEventListener('click', showSignupModal);
+                }
             }
         });
     }, (error) => {
