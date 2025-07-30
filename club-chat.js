@@ -33,21 +33,31 @@ let unsubscribeMembers = null; // To unsubscribe from members listener
 const CLUB_MEMBER_LIMIT = 500; // Define the member limit
 
 // --- DOM Elements ---
-const logoutButton = document.getElementById('logout-btn');
-const chatPageTitle = document.getElementById('chat-page-title');
-const chatClubName = document.getElementById('chat-club-name');
-const chatMessagesContainer = document.getElementById('chat-messages');
-const chatMessageInput = document.getElementById('chat-message-input');
-const sendChatMessageBtn = document.getElementById('send-chat-message-btn');
-const memberListElement = document.getElementById('member-list');
-const currentMemberCountHeader = document.getElementById('current-member-count-header');
-const leaveClubChatBtn = document.getElementById('leave-club-chat-btn');
+// Helper function to safely get elements and log if not found
+const getElementByIdOrLog = (id) => {
+    const element = document.getElementById(id);
+    if (!element) {
+        console.error(`Error: DOM element with ID '${id}' not found. Please ensure your HTML is correct.`);
+    }
+    return element;
+};
+
+const logoutButton = getElementByIdOrLog('logout-btn');
+const chatPageTitle = getElementByIdOrLog('chat-page-title');
+const chatClubName = getElementByIdOrLog('chat-club-name');
+const chatMessagesContainer = getElementByIdOrLog('chat-messages');
+const chatMessageInput = getElementByIdOrLog('chat-message-input');
+const sendChatMessageBtn = getElementByIdOrLog('send-chat-message-btn');
+const memberListElement = getElementByIdOrLog('member-list');
+const currentMemberCountHeader = getElementByIdOrLog('current-member-count-header');
+const leaveClubChatBtn = getElementByIdOrLog('leave-club-chat-btn');
 
 // Signup/Login Modal Elements (reused from other pages)
-const signupModal = document.getElementById('signup-modal');
-const modalSignupBtn = document.getElementById('modal-signup-btn');
-const modalLoginBtn = document.getElementById('modal-login-btn');
-const modalCancelBtn = document.getElementById('modal-cancel-btn');
+const signupModal = getElementByIdOrLog('signup-modal');
+const modalSignupBtn = getElementByIdOrLog('modal-signup-btn');
+const modalLoginBtn = getElementByIdOrLog('modal-login-btn');
+const modalCancelBtn = getElementByIdOrLog('modal-cancel-btn');
+const messageBox = getElementByIdOrLog('message-box'); // Get the message box element
 
 // --- Helper Functions ---
 
@@ -92,12 +102,15 @@ function getInitials(name) {
 
 // --- CUSTOM MESSAGE BOX (instead of alert) ---
 function displayMessage(message, type = "info") {
-    const messageBox = document.getElementById('message-box');
-    messageBox.textContent = message;
-    messageBox.className = `message-box show ${type}`; // Add type class for styling
-    setTimeout(() => {
-        messageBox.classList.remove('show');
-    }, 3000); // Hide after 3 seconds
+    if (messageBox) {
+        messageBox.textContent = message;
+        messageBox.className = `message-box show ${type}`; // Add type class for styling
+        setTimeout(() => {
+            messageBox.classList.remove('show');
+        }, 3000); // Hide after 3 seconds
+    } else {
+        console.warn(`Message Box element not found. Message: ${message}`);
+    }
 }
 
 // --- MODAL FUNCTIONS (reused from other pages) ---
@@ -142,12 +155,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    if (currentClubName) {
-        chatPageTitle.textContent = `${decodeURIComponent(currentClubName)} Chat - TownBoat`;
-        chatClubName.textContent = decodeURIComponent(currentClubName);
-    } else {
-        chatPageTitle.textContent = `Club Chat - TownBoat`;
-        chatClubName.textContent = `Club Chat`;
+    if (chatPageTitle) {
+        chatPageTitle.textContent = currentClubName ? `${decodeURIComponent(currentClubName)} Chat - TownBoat` : `Club Chat - TownBoat`;
+    }
+    if (chatClubName) {
+        chatClubName.textContent = currentClubName ? decodeURIComponent(currentClubName) : `Club Chat`;
     }
 
     // --- AUTHENTICATION CHECK ---
@@ -159,12 +171,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const clubRef = doc(db, "clubs", currentClubId);
             try {
                 const clubDoc = await getDoc(clubRef);
-                if (clubDoc.exists() && clubDoc.data().members.includes(user.uid)) {
-                    // User is a member, proceed with chat
-                    fetchAndDisplayChatMessages(currentClubId);
-                    fetchClubMembers(currentClubId);
+                if (clubDoc.exists()) {
+                    const clubData = clubDoc.data();
+                    // Ensure clubData.members is an array before using .includes()
+                    const membersArray = Array.isArray(clubData.members) ? clubData.members : [];
+
+                    if (membersArray.includes(user.uid)) {
+                        // User is a member, proceed with chat
+                        fetchAndDisplayChatMessages(currentClubId);
+                        fetchClubMembers(currentClubId);
+                    } else {
+                        displayMessage("You are not a member of this club. Redirecting.", "error");
+                        setTimeout(() => { window.location.href = 'club.html'; }, 2000);
+                    }
                 } else {
-                    displayMessage("You are not a member of this club. Redirecting.", "error");
+                    displayMessage("Club not found. Redirecting.", "error");
                     setTimeout(() => { window.location.href = 'club.html'; }, 2000);
                 }
             } catch (error) {
@@ -236,6 +257,11 @@ async function sendChatMessage() {
 }
 
 function fetchAndDisplayChatMessages(clubId) {
+    if (!chatMessagesContainer) {
+        console.error("Chat messages container not found.");
+        return;
+    }
+
     const chatQuery = query(collection(db, `clubs/${clubId}/chats`), orderBy("timestamp", "asc")); // Order by asc for chat flow
 
     // Unsubscribe from previous listener if any
@@ -275,11 +301,18 @@ function fetchAndDisplayChatMessages(clubId) {
         chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
     }, (error) => {
         console.error("Error fetching chat messages:", error);
-        chatMessagesContainer.innerHTML = '<p class="text-red-500 text-center">Failed to load messages.</p>';
+        if (chatMessagesContainer) {
+            chatMessagesContainer.innerHTML = '<p class="text-red-500 text-center">Failed to load messages.</p>';
+        }
     });
 }
 
 async function fetchClubMembers(clubId) {
+    if (!memberListElement || !currentMemberCountHeader) {
+        console.error("Member list or member count header element not found.");
+        return;
+    }
+
     memberListElement.innerHTML = ''; // Clear existing members
     currentMemberCountHeader.textContent = `0/${CLUB_MEMBER_LIMIT} Members`;
 
@@ -296,7 +329,7 @@ async function fetchClubMembers(clubId) {
             return;
         }
         const clubData = clubDoc.data();
-        const members = clubData.members || [];
+        const members = Array.isArray(clubData.members) ? clubData.members : []; // Ensure it's an array
         currentMemberCountHeader.textContent = `${members.length}/${CLUB_MEMBER_LIMIT} Members`;
         memberListElement.innerHTML = ''; // Clear for fresh render
 
@@ -331,8 +364,12 @@ async function fetchClubMembers(clubId) {
         });
     }, (error) => {
         console.error("Error fetching club members:", error);
-        memberListElement.innerHTML = '<p class="text-red-500 text-sm">Failed to load members.</p>';
-        currentMemberCountHeader.textContent = `Error loading members`;
+        if (memberListElement) {
+            memberListElement.innerHTML = '<p class="text-red-500 text-sm">Failed to load members.</p>';
+        }
+        if (currentMemberCountHeader) {
+            currentMemberCountHeader.textContent = `Error loading members`;
+        }
     });
 }
 
@@ -351,7 +388,9 @@ async function leaveClub(clubId) {
             return;
         }
         const clubData = clubDoc.data();
-        if (!clubData.members.includes(currentLoggedInUser.uid)) {
+        // Ensure club.members is an array before using .includes()
+        const membersArray = Array.isArray(clubData.members) ? clubData.members : [];
+        if (!membersArray.includes(currentLoggedInUser.uid)) {
             displayMessage("You are not a member of this club.", "info");
             return;
         }
