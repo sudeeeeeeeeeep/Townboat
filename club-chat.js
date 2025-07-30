@@ -15,7 +15,9 @@ import {
     arrayUnion,
     arrayRemove,
     getDoc,
-    where
+    where,
+    deleteDoc,
+    getDocs // Added for deleting multiple messages
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig } from './firebase-config.js';
 
@@ -42,7 +44,7 @@ const getElementByIdOrLog = (id) => {
     return element;
 };
 
-const logoutButton = getElementByIdOrLog('logout-btn');
+// Get all necessary DOM elements
 const chatPageTitle = getElementByIdOrLog('chat-page-title');
 const chatClubName = getElementByIdOrLog('chat-club-name');
 const chatMessagesContainer = getElementByIdOrLog('chat-messages');
@@ -51,13 +53,11 @@ const sendChatMessageBtn = getElementByIdOrLog('send-chat-message-btn');
 const memberListElement = getElementByIdOrLog('member-list');
 const currentMemberCountHeader = getElementByIdOrLog('current-member-count-header');
 const leaveClubChatBtn = getElementByIdOrLog('leave-club-chat-btn');
-
-// Signup/Login Modal Elements (reused from other pages)
 const signupModal = getElementByIdOrLog('signup-modal');
 const modalSignupBtn = getElementByIdOrLog('modal-signup-btn');
 const modalLoginBtn = getElementByIdOrLog('modal-login-btn');
 const modalCancelBtn = getElementByIdOrLog('modal-cancel-btn');
-const messageBox = getElementByIdOrLog('message-box'); // Get the message box element
+const messageBox = getElementByIdOrLog('message-box');
 
 // --- Helper Functions ---
 
@@ -109,7 +109,7 @@ function displayMessage(message, type = "info") {
             messageBox.classList.remove('show');
         }, 3000); // Hide after 3 seconds
     } else {
-        console.warn(`Message Box element not found. Message: ${message}`);
+        console.warn(`Message Box element with ID 'message-box' not found. Message: ${message}`);
     }
 }
 
@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (chatPageTitle) {
-        chatPageTitle.textContent = currentClubName ? `${decodeURIComponent(currentClubName)} Chat - TownBoat` : `Club Chat - TownBoat`;
+        chatPageTitle.textContent = currentClubName ? `${decodeURIComponent(currentClubName)}` : `Club Chat`;
     }
     if (chatClubName) {
         chatClubName.textContent = currentClubName ? decodeURIComponent(currentClubName) : `Club Chat`;
@@ -216,18 +216,41 @@ document.addEventListener('DOMContentLoaded', () => {
         leaveClubChatBtn.addEventListener('click', () => leaveClub(currentClubId));
     }
 
-    // --- LOGOUT BUTTON ---
-    if (logoutButton) {
-        logoutButton.addEventListener('click', () => {
-            signOut(auth).then(() => {
-                console.log("User signed out.");
-                window.location.href = 'index.html'; // Redirect to the main login page
-            }).catch((error) => {
-                console.error("Error signing out:", error);
-                displayMessage("Failed to log out. Please try again.", "error");
-            });
-        });
-    }
+    // --- ATTEMPT TO DELETE USER'S MESSAGES ON PAGE UNLOAD ---
+    // WARNING: This is highly unreliable for guaranteed deletion due to browser behavior
+    // and asynchronous Firestore operations. The browser might terminate the page
+    // before the delete operations complete, especially on mobile devices or fast navigation.
+    // For robust message deletion, a backend solution (e.g., a Cloud Function triggered
+    // when a user leaves a club, or a scheduled cleanup task) is strongly recommended.
+    window.addEventListener('beforeunload', async (event) => {
+        if (currentLoggedInUser && currentClubId) {
+            console.log("Attempting to delete user's messages on page unload...");
+            try {
+                const userMessagesQuery = query(
+                    collection(db, `clubs/${currentClubId}/chats`),
+                    where("senderId", "==", currentLoggedInUser.uid)
+                );
+                const querySnapshot = await getDocs(userMessagesQuery);
+                
+                if (!querySnapshot.empty) {
+                    const deletePromises = [];
+                    querySnapshot.forEach((messageDoc) => {
+                        // Add each delete operation to an array of promises
+                        deletePromises.push(deleteDoc(doc(db, `clubs/${currentClubId}/chats`, messageDoc.id)));
+                    });
+                    // Wait for all delete operations to complete.
+                    // Note: This 'await' might not fully resolve before the page unloads.
+                    await Promise.all(deletePromises);
+                    console.log(`Deleted ${deletePromises.length} messages by user ${currentLoggedInUser.uid} from club ${currentClubId}.`);
+                } else {
+                    console.log("No messages found to delete for this user in this club.");
+                }
+            } catch (error) {
+                console.error("Failed to delete user's messages on unload:", error);
+                // Cannot display message to user as page is unloading
+            }
+        }
+    });
 });
 
 async function sendChatMessage() {
@@ -249,7 +272,7 @@ async function sendChatMessage() {
             timestamp: serverTimestamp(),
         });
         chatMessageInput.value = ''; // Clear input
-        // Messages will be displayed via onSnapshot
+        // Messages will be displayed via onSnapshot, which will handle scrolling
     } catch (error) {
         console.error("Error sending message:", error);
         displayMessage("Failed to send message. Please try again.", "error");
@@ -262,9 +285,10 @@ function fetchAndDisplayChatMessages(clubId) {
         return;
     }
 
-    const chatQuery = query(collection(db, `clubs/${clubId}/chats`), orderBy("timestamp", "asc")); // Order by asc for chat flow
+    // Order by timestamp ascending for correct display (oldest at top, newest at bottom)
+    const chatQuery = query(collection(db, `clubs/${clubId}/chats`), orderBy("timestamp", "asc")); 
 
-    // Unsubscribe from previous listener if any
+    // Unsubscribe from previous listener if any to prevent multiple listeners
     if (unsubscribeChat) {
         unsubscribeChat();
     }
@@ -279,26 +303,54 @@ function fetchAndDisplayChatMessages(clubId) {
         snapshot.forEach((messageDoc) => {
             const message = messageDoc.data();
             const messageElement = document.createElement('div');
-            const isSelf = message.senderId === currentLoggedInUser.uid;
+            // Check if currentLoggedInUser is not null before accessing its properties
+            const isSelf = currentLoggedInUser && message.senderId === currentLoggedInUser.uid; 
             messageElement.classList.add('chat-message-item', isSelf ? 'self' : 'other');
 
             const senderName = message.senderName || 'Anonymous User';
             const timeAgo = message.timestamp ? formatTimeAgo(message.timestamp) : 'Just now';
 
-            messageElement.innerHTML = `
-                <div class="chat-message-bubble ${isSelf ? 'self' : 'other'}">
-                    ${message.content}
-                </div>
-                <div class="chat-message-info ${isSelf ? 'self' : 'other'}">
-                    ${isSelf ? '' : `<span>${senderName}</span> - `}
-                    <span>${timeAgo}</span>
-                </div>
-            `;
+            // Create avatar element (only for 'other' messages)
+            if (!isSelf) {
+                const avatarElement = document.createElement('div');
+                avatarElement.classList.add('message-avatar');
+                avatarElement.textContent = getInitials(senderName);
+                messageElement.appendChild(avatarElement);
+            }
+
+            // Create content wrapper for message and info (name, bubble, time)
+            const contentWrapper = document.createElement('div');
+            contentWrapper.classList.add('message-content-wrapper');
+
+            // Add sender name for 'other' messages (above the bubble)
+            if (!isSelf) {
+                const senderNameElement = document.createElement('div');
+                senderNameElement.classList.add('message-sender-name');
+                senderNameElement.textContent = senderName;
+                contentWrapper.appendChild(senderNameElement);
+            }
+
+            // Add message bubble
+            const messageBubble = document.createElement('div');
+            messageBubble.classList.add('chat-message-bubble', isSelf ? 'self' : 'other');
+            messageBubble.textContent = message.content;
+            contentWrapper.appendChild(messageBubble);
+
+            // Add timestamp
+            const timeElement = document.createElement('div');
+            timeElement.classList.add('chat-message-time', isSelf ? 'self' : 'other');
+            timeElement.textContent = timeAgo;
+            contentWrapper.appendChild(timeElement);
+            
+            messageElement.appendChild(contentWrapper);
             chatMessagesContainer.appendChild(messageElement);
         });
 
-        // Scroll to the bottom of the chat
-        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+        // Scroll to the bottom of the chat to show recent messages
+        // Use a slight delay to ensure DOM has rendered
+        setTimeout(() => {
+            chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+        }, 100);
     }, (error) => {
         console.error("Error fetching chat messages:", error);
         if (chatMessagesContainer) {
@@ -338,27 +390,42 @@ async function fetchClubMembers(clubId) {
             return;
         }
 
-        // Fetch user display names for members
         members.forEach(memberId => {
             const memberItem = document.createElement('li');
             memberItem.classList.add('member-item');
             
-            let memberName = memberId; // Default to UID
+            let memberDisplayName = 'Anonymous User'; // Default display name
+            let isAdmin = false;
+
             if (currentLoggedInUser && currentLoggedInUser.uid === memberId) {
-                memberName = currentLoggedInUser.displayName || 'You';
+                memberDisplayName = currentLoggedInUser.displayName || 'You';
+            } else if (memberId === clubData.createdBy) { // Check if this member is the creator
+                memberDisplayName = clubData.createdByName || 'Admin'; // Use creator's name if available
+                isAdmin = true;
             } else {
-                // In a real app, you'd fetch this from a 'users' collection:
-                // For now, we'll just display the UID or a placeholder.
-                // If you have a 'users' collection with displayName, you'd do an async fetch here
-                // and then update the specific memberItem once the name is resolved.
+                // For other members, fetch their display name from the 'users' collection
+                // This is an asynchronous operation, so we'll update the list item once data is fetched.
+                // For simplicity, initially display "Loading..." or a generic name.
+                // A more robust solution would involve a map of UIDs to display names.
+                const userDocRef = doc(db, "users", memberId);
+                getDoc(userDocRef).then(userDocSnap => {
+                    if (userDocSnap.exists()) {
+                        memberDisplayName = userDocSnap.data().name || 'Anonymous User';
+                    }
+                    // Update the innerHTML after fetching the name
+                    memberItem.querySelector('.member-name').textContent = memberDisplayName;
+                    memberItem.querySelector('.member-avatar-small').textContent = getInitials(memberDisplayName);
+                }).catch(error => {
+                    console.error("Error fetching member display name:", error);
+                });
             }
 
-            const memberInitials = getInitials(memberName);
+            const memberInitials = getInitials(memberDisplayName);
 
             memberItem.innerHTML = `
-                <div class="member-avatar">${memberInitials}</div>
-                <span class="member-name">${memberName}</span>
-                ${memberId === clubData.createdBy ? '<span class="member-role">(Admin)</span>' : ''}
+                <div class="member-avatar-small">${memberInitials}</div>
+                <span class="member-name">${memberDisplayName}</span>
+                ${isAdmin ? '<span class="member-role">(Admin)</span>' : ''}
             `;
             memberListElement.appendChild(memberItem);
         });
