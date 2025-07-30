@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="chat-page-title">Club Chat - TownBoat</title>
+    <title>TownBoat Clubs - Create & Join Local Communities</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
@@ -11,14 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background-color: #F0F2F5; 
-            color: #1A1A1A; 
-            min-height: 100vh; /* Ensure body takes full viewport height */
-            display: flex;
-            flex-direction: column;
-        }
+        body { font-family: 'Poppins', sans-serif; background-color: #F0F2F5; color: #1A1A1A; }
         /* Header styles matching existing app aesthetic */
         header {
             background-color: #FFFFFF; /* White header */
@@ -59,205 +52,106 @@
             color: #1DA1F2 !important; /* Highlight active link with Twitter blue */
         }
 
-        /* Main content area */
-        main {
-            flex-grow: 1; /* Allow main content to take remaining space */
-            display: flex;
-            flex-direction: column;
-            padding: 0; /* Remove padding from main, container will handle it */
-        }
-        @media (min-width: 768px) {
-            main {
-                padding: 1.5rem; /* Larger padding for desktop */
-            }
-        }
-
-        /* Chat Room Specific Styles */
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%; /* Take full height of main */
-            width: 100%; /* Full width on mobile */
-            max-width: 900px; /* Max width on desktop */
-            margin: 0 auto;
-            background-color: #FFFFFF;
-            border-radius: 0; /* No border-radius on mobile for full screen effect */
-            box-shadow: none; /* No shadow on mobile */
-            overflow: hidden;
-            border: none; /* No border on mobile */
-        }
-        @media (min-width: 768px) {
-            .chat-container {
-                border-radius: 12px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-                border: 1px solid #E0E0E0;
-            }
-        }
-
-        .chat-header-main {
-            background-color: #1DA1F2; /* Blue header */
-            color: white;
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1.25rem; /* text-xl */
-            font-weight: 600;
-            flex-shrink: 0; /* Prevent header from shrinking */
-            position: sticky; /* Keep header on top */
-            top: 0;
-            z-index: 10;
-        }
-        .chat-header-main a {
-            color: white;
-            text-decoration: none;
-            margin-right: 0.5rem;
-        }
-        .chat-header-main a:hover {
-            text-decoration: underline;
-        }
-        .chat-messages {
-            flex-grow: 1;
-            padding: 1rem;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column-reverse; /* To make new messages appear at the bottom */
-            background-color: #F8F8F8; /* Light background for chat area */
-        }
-        .chat-message-item {
-            margin-bottom: 0.75rem;
-            display: flex;
-            flex-direction: column;
-        }
-        .chat-message-item.self {
-            align-items: flex-end;
-            margin-left: auto; /* Push to right */
-        }
-        .chat-message-item.other {
-            align-items: flex-start;
-            margin-right: auto; /* Push to left */
-        }
-        .chat-message-bubble {
-            max-width: 80%; /* Max width for bubbles */
-            padding: 0.75rem 1rem;
-            line-height: 1.4;
-            word-wrap: break-word; /* Ensure long words break */
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1); /* Subtle shadow for bubbles */
-        }
-        .chat-message-bubble.other {
-            background-color: #E0E0E0; /* Light gray for others */
-            color: #1A1A1A;
-            border-radius: 1.25rem 1.25rem 1.25rem 0.25rem; /* Top-left, Top-right, Bottom-right, Bottom-left */
-        }
-        .chat-message-bubble.self {
-            background-color: #1DA1F2; /* Blue for self */
-            color: white;
-            border-radius: 1.25rem 1.25rem 0.25rem 1.25rem; /* Top-left, Top-right, Bottom-right, Bottom-left */
-        }
-        .chat-message-info {
-            font-size: 0.75rem; /* text-xs */
-            color: #888888;
-            margin-top: 0.25rem;
-        }
-        .chat-message-info.self {
-            text-align: right;
-        }
-        .chat-input-area {
-            display: flex;
-            padding: 1rem;
-            border-top: 1px solid #E0E0E0;
+        /* General form styling */
+        input[type="text"],
+        input[type="url"],
+        textarea,
+        select {
             background-color: #F8F8F8;
-            flex-shrink: 0; /* Prevent input area from shrinking */
-            position: sticky; /* Keep input area at bottom */
-            bottom: 0;
-            z-index: 10;
-        }
-        .chat-input-area input {
-            flex-grow: 1;
-            margin-bottom: 0;
-            margin-right: 0.75rem;
-            background-color: #FFFFFF;
             border: 1px solid #E0E0E0;
-            border-radius: 2rem; /* More rounded for chat input */
+            border-radius: 8px;
             padding: 0.75rem 1rem;
             color: #1A1A1A;
+            width: 100%;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            box-sizing: border-box;
         }
-        .chat-input-area input:focus {
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        textarea:focus,
+        select:focus {
             outline: none;
             border-color: #1DA1F2;
             box-shadow: 0 0 0 2px rgba(29, 161, 242, 0.2);
         }
-        .chat-input-area button {
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            background-color: #1DA1F2;
+        button[type="submit"],
+        .btn-primary {
+            background-color: #1DA1F2; /* Twitter blue */
             color: white;
-            border-radius: 2rem; /* More rounded for send button */
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
             font-weight: 600;
             transition: background-color 0.2s ease-in-out;
             cursor: pointer;
         }
-        .chat-input-area button:hover {
-            background-color: #1A91DA;
+        button[type="submit"]:hover,
+        .btn-primary:hover {
+            background-color: #1A91DA; /* Darker blue on hover */
+        }
+        .btn-secondary {
+            background-color: #E0E0E0;
+            color: #1A1A1A;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .btn-secondary:hover {
+            background-color: #D0D0D0;
         }
 
-        /* Club Members Section (for chat page) */
-        .club-members-section {
-            padding: 1rem;
-            background-color: #F8F8F8;
-            border-top: 1px solid #E0E0E0;
-            flex-shrink: 0; /* Prevent members section from shrinking */
-            position: sticky; /* Keep members section on top of input */
-            top: 64px; /* Below the header */
-            z-index: 9;
-        }
-        .club-members-section h4 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
+        /* Club Card Styling */
+        .club-card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #E0E0E0;
             color: #1A1A1A;
         }
-        .member-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            max-height: 80px; /* Reduced height for mobile optimization */
-            overflow-y: auto;
+        .club-card h3 {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 700; /* font-bold */
+            margin-bottom: 0.5rem;
         }
-        .member-item {
-            display: flex;
-            align-items: center;
+        .club-card p {
+            font-size: 0.875rem; /* text-sm */
+            color: #555555;
+            margin-bottom: 0.75rem;
+        }
+        .club-card .member-count {
             font-size: 0.875rem;
-            color: #333333;
-            background-color: #E0E0E0;
+            color: #777777;
+            margin-top: 0.5rem;
+        }
+        .club-card .club-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .club-card .join-btn, .club-card .view-chat-btn, .club-card .leave-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            border-radius: 6px;
+        }
+        .club-card .join-btn { background-color: #22C55E; color: white; } /* Emerald green */
+        .club-card .join-btn:hover { background-color: #16A34A; }
+        .club-card .view-chat-btn { background-color: #1DA1F2; color: white; } /* Twitter blue */
+        .club-card .view-chat-btn:hover { background-color: #1A91DA; }
+        .club-card .leave-btn { background-color: #EF4444; color: white; } /* Red */
+        .club-card .leave-btn:hover { background-color: #DC2626; }
+        .club-card .full-badge {
+            background-color: #FBBF24; /* Amber */
+            color: #885D00;
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
-            white-space: nowrap; /* Prevent names from wrapping */
-        }
-        .member-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 9999px;
-            background-color: #1DA1F2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 500;
-            font-size: 0.7rem;
-            margin-right: 0.4rem;
-            flex-shrink: 0;
-        }
-        .member-name {
-            font-weight: 500;
-        }
-        .member-role {
-            font-size: 0.65rem;
-            color: #777777;
-            margin-left: 0.4rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
         }
 
         /* Message Box (reused from other pages) */
@@ -353,38 +247,59 @@
         </div>
     </header>
 
-    <main class="container mx-auto flex-grow">
-        <div class="chat-container h-full">
-            <div class="chat-header-main">
-                <a href="club.html" class="text-white text-lg hover:underline"><i class="fas fa-arrow-left mr-2"></i></a>
-                <span id="chat-club-name">Club Chat</span>
-                <div class="flex items-center">
-                    <span id="current-member-count-header" class="text-sm mr-2">0/500 Members</span>
-                    <button id="leave-club-chat-btn" class="bg-red-500 text-white px-3 py-1 rounded-md text-sm hover:bg-red-600 transition duration-300">Leave</button>
+    <main class="container mx-auto p-4 py-8 max-w-4xl">
+        <h1 class="text-3xl font-bold text-center mb-8">TownBoat Clubs</h1>
+
+        <!-- Create New Club Section (Visible only to logged-in users) -->
+        <section id="create-club-section" class="bg-white p-6 rounded-lg shadow-lg border border-gray-200 mb-8 hidden">
+            <h2 class="text-2xl font-bold mb-4">Create Your Own Club</h2>
+            <p id="create-club-status-message" class="text-center text-sm mb-4"></p>
+            <form id="create-club-form" class="space-y-4">
+                <div>
+                    <label for="club-name" class="block text-sm font-bold mb-2">Club Name:</label>
+                    <input type="text" id="club-name" placeholder="e.g., Movie Buffs, Local Musicians" required>
                 </div>
+                <div>
+                    <label for="club-description" class="block text-sm font-bold mb-2">Description:</label>
+                    <textarea id="club-description" rows="3" placeholder="Tell us what your club is about..." required></textarea>
+                </div>
+                <div>
+                    <label for="club-category" class="block text-sm font-bold mb-2">Category:</label>
+                    <select id="club-category" required>
+                        <option value="">Select a Category</option>
+                        <option value="Movies">Movies</option>
+                        <option value="Music">Music</option>
+                        <option value="Books">Books</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Gaming">Gaming</option>
+                        <option value="Arts & Crafts">Arts & Crafts</option>
+                        <option value="Cooking">Cooking</option>
+                        <option value="Photography">Photography</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Travel">Travel</option>
+                        <option value="Fitness">Fitness</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full btn-primary">Create Club</button>
+            </form>
+        </section>
+
+        <!-- Browse Clubs Section -->
+        <section>
+            <h2 class="text-2xl font-bold text-center mb-6">Browse & Join Clubs</h2>
+            <div id="clubs-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <p class="text-gray-500 text-center col-span-full">Loading clubs...</p>
+                <!-- Clubs will be dynamically loaded here -->
             </div>
-            <div class="club-members-section">
-                <h4>Members:</h4>
-                <ul id="member-list" class="member-list">
-                    <!-- Members will be listed here -->
-                </ul>
-            </div>
-            <div class="chat-messages" id="chat-messages">
-                <!-- Chat messages will be loaded here -->
-                <p class="text-gray-500 text-center">Loading messages...</p>
-            </div>
-            <div class="chat-input-area">
-                <input type="text" id="chat-message-input" placeholder="Type your message...">
-                <button id="send-chat-message-btn">Send</button>
-            </div>
-        </div>
+        </section>
     </main>
 
     <!-- Signup/Login Modal (reused from home.html/polls.html) -->
     <div id="signup-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden p-4 z-[1000]">
         <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-sm text-center">
-            <h3 class="text-2xl font-bold text-gray-900 mb-4">Join TownBoat to Chat!</h3>
-            <p class="text-gray-700 mb-6">You need to be logged in to participate in club chats.</p>
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">Join TownBoat to Interact!</h3>
+            <p class="text-gray-700 mb-6">You need to be logged in to create or join clubs, and chat.</p>
             <div class="flex flex-col space-y-4">
                 <button id="modal-signup-btn" class="bg-blue-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-600 transition duration-300">
                     Sign Up
@@ -401,7 +316,7 @@
 
     <div id="message-box" class="message-box hidden"></div>
 
-    <script type="module" src="./js/club-chat.js"></script>
+    <script type="module" src="club.js"></script>
     <script>
         // JavaScript for mobile menu toggle
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
