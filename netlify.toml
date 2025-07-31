@@ -1,0 +1,4 @@
+    [[redirects]]
+      from = "/"
+      to = "/discover.html"
+      status = 200
