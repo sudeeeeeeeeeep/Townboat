@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About TownBoat - Your Local Community Hub</title>
+    <meta name="description" content="Discover everything about TownBoat: a real-time social platform for local communities to connect, share posts, find deals, participate in polls, and more.">
+    <meta name="keywords" content="TownBoat, local community, social network, local deals, community polls, business directory, local events, social feed">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #F0F2F5; color: #1A1A1A; }
+        .nav-link.active { font-weight: 700; color: #1a1a1a; }
+        ::-webkit-scrollbar { display: none; }
+        body { -ms-overflow-style: none; scrollbar-width: none; }
+        .feature-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .feature-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); }
+        .hero-section {
+            background-image: url(https://www.mgsarchitecture.in/images/Projects/2333-Plaza-Crop-IMKAN.jpg);
+            background-size: cover;
+            background-position: center;
+            color: #1A1A1A;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Navigation Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="home.html" class="text-2xl font-bold text-gray-900">TownBoat</a>
+            <div class="hidden md:flex space-x-6 items-center">
+                <a href="home.html" class="text-gray-600 hover:text-gray-900 nav-link">Home</a>
+                <a href="discover.html" class="text-gray-600 hover:text-gray-900 nav-link">Discover</a>
+                <a href="deals.html" class="text-gray-600 hover:text-gray-900 nav-link">Deals</a>
+                <a href="polls.html" class="text-gray-600 hover:text-gray-900 nav-link">Polls</a>
+                <a href="leaderboard.html" class="text-gray-600 hover:text-gray-900 nav-link">Leaderboard</a>
+                <a href="about.html" class="text-gray-900 font-semibold nav-link active">About</a>
+                <div id="auth-buttons-desktop">
+                    <!-- Auth buttons will be rendered here by JS -->
+                </div>
+                <button id="logout-btn-desktop" class="bg-red-500 text-white px-4 py-2 rounded-full font-bold hidden hover:bg-red-600 transition">Log Out</button>
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-900 focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </nav>
+        <!-- Mobile Dropdown Menu -->
+        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-white shadow-lg py-2">
+            <a href="home.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-100 nav-link">Home</a>
+            <a href="discover.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-100 nav-link">Discover</a>
+            <a href="deals.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-100 nav-link">Deals</a>
+            <a href="polls.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-100 nav-link">Polls</a>
+            <a href="leaderboard.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-100 nav-link">Leaderboard</a>
+            <a href="about.html" class="block px-4 py-2 text-gray-900 font-semibold bg-gray-100 nav-link active">About</a>
+            <div id="auth-buttons-mobile" class="px-4 py-2 flex flex-col space-y-2">
+                <!-- Auth buttons will be rendered here by JS -->
+            </div>
+            <button id="logout-btn-mobile" class="w-full text-left px-4 py-2 text-red-500 hover:bg-red-100 hidden">Log Out</button>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-6">
+
+        <!-- Hero Section -->
+        <section class="hero-section text-center p-12 md:p-24 rounded-lg shadow-lg mb-12">
+            <h1 class="text-4xl md:text-6xl font-bold text-white leading-tight mb-4">Connecting Communities, One Town at a Time.</h1>
+            <p class="text-lg md:text-xl text-white font-medium mb-8 max-w-2xl mx-auto">
+                TownBoat is the ultimate local hub, designed to bring neighbors, businesses, and communities closer together.
+            </p>
+        </section>
+        
+        <!-- Mission Statement Section -->
+        <section class="mb-12 text-center max-w-3xl mx-auto">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Our Mission</h2>
+            <p class="text-lg text-gray-600">
+                Our mission is to empower local communities by providing a platform where residents can easily share information, support local businesses, and have a voice in their town's future. We believe that a strong community starts with strong connections.
+            </p>
+        </section>
+
+        <!-- Features Section -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">What TownBoat Offers</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Feature 1: Community Feed -->
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">
+                    <i class="fas fa-comments text-5xl text-blue-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Real-time Community Feed</h3>
+                    <p class="text-gray-600">
+                        Share what's happening in your neighborhood, ask for recommendations, or post updates. Connect with your neighbors and stay in the loop.
+                    </p>
+                </div>
+
+                <!-- Feature 2: Local Deals -->
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">
+                    <i class="fas fa-tags text-5xl text-emerald-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Exclusive Local Deals</h3>
+                    <p class="text-gray-600">
+                        Discover and share amazing deals and discounts from local businesses. Save money while supporting your town's economy.
+                    </p>
+                </div>
+
+                <!-- Feature 3: Community Polls -->
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">
+                    <i class="fas fa-chart-bar text-5xl text-indigo-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Interactive Polls</h3>
+                    <p class="text-gray-600">
+                        Vote on important local issues, share your opinion on community events, or settle a friendly debate with your neighbors.
+                    </p>
+                </div>
+
+                <!-- Feature 4: Business Discovery -->
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">
+                    <i class="fas fa-store text-5xl text-orange-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Business Directory</h3>
+                    <p class="text-gray-600">
+                        Find and review local shops, restaurants, and services. A curated directory to help you find what you need, right in your town.
+                    </p>
+                </div>
+                
+                <!-- Feature 5: Leaderboards -->
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">
+                    <i class="fas fa-trophy text-5xl text-yellow-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Town Leaderboards</h3>
+                    <p class="text-gray-600">
+                        Recognize and celebrate the most active and helpful community members, businesses, and singers through our unique leaderboards.
+                    </p>
+                </div>
+
+                <!-- Feature 6: Local Clubs -->
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">
+                    <i class="fas fa-users text-5xl text-red-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Connect in Clubs</h3>
+                    <p class="text-gray-600">
+                        Join or create clubs based on your interests. From book clubs to hiking groups, find your people and share your passions.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action Section -->
+        <section class="bg-blue-500 text-white text-center p-12 rounded-lg shadow-md">
+            <h2 class="text-3xl font-bold mb-4">Ready to Join the Conversation?</h2>
+            <p class="text-lg mb-6">
+                Connect with your neighbors and make your community stronger today.
+            </p>
+            <a href="index.html" class="bg-white text-blue-500 px-8 py-3 rounded-full font-bold hover:bg-gray-200 transition duration-300 shadow-md">
+                Get Started Now!
+            </a>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex flex-col md:flex-row justify-center items-center mb-4">
+                <a href="about.html" class="text-gray-400 hover:text-white px-3">About Us</a>
+                <span class="text-gray-500 hidden md:inline-block">|</span>
+                <a href="#" class="text-gray-400 hover:text-white px-3">Contact</a>
+                <span class="text-gray-500 hidden md:inline-block">|</span>
+                <a href="#" class="text-gray-400 hover:text-white px-3">Privacy Policy</a>
+            </div>
+            <p class="text-gray-500 text-sm">&copy; 2024 TownBoat. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Signup/Login Modal -->
+    <div id="signup-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden p-4 z-[1000]">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-sm text-center">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">Join TownBoat Today!</h3>
+            <p class="text-gray-700 mb-6">You need to be logged in to interact with the community.</p>
+            <div class="flex flex-col space-y-4">
+                <button id="modal-signup-btn" class="bg-blue-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-600 transition duration-300">
+                    Sign Up
+                </button>
+                <button id="modal-login-btn" class="bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg hover:bg-gray-300 transition duration-300">
+                    Log In
+                </button>
+                <button id="modal-cancel-btn" class="text-gray-600 hover:text-gray-900 mt-2">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="./js/about.js"></script>
+</body>
+</html>
