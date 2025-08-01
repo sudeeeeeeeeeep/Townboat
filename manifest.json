@@ -1,0 +1,21 @@
+{
+    "name": "TownBoat - Your Local Community Hub",
+    "short_name": "TownBoat",
+    "description": "The ultimate local community hub to connect, share, discover deals, and participate in polls.",
+    "start_url": "/home.html",
+    "display": "standalone",
+    "background_color": "#F0F2F5",
+    "theme_color": "#4299e1",
+    "icons": [
+        {
+            "src": "https://placehold.co/192x192/4299e1/ffffff?text=TB",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "https://placehold.co/512x512/4299e1/ffffff?text=TB",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
