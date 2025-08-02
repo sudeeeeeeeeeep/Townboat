@@ -209,6 +209,10 @@
                 <a href="leaderboard.html" class="text-black font-semibold flex items-center space-x-1">
                     <i class="fas fa-trophy md:hidden"></i><span class="hidden md:inline">Leaderboard</span>
                 </a>
+                <!-- NEW: Clubs link for desktop -->
+                <a href="clubs.html" class="text-black hover:text-gray-800 flex items-center space-x-1">
+                    <i class="fas fa-handshake md:hidden"></i><span class="hidden md:inline">Clubs</span>
+                </a>
                 <!-- NEW: Deals link for desktop -->
                 <a href="deals.html" class="text-black hover:text-gray-800 flex items-center space-x-1">
                     <i class="fas fa-tags md:hidden"></i><span class="hidden md:inline">Deals</span>
@@ -235,6 +239,10 @@
             </a>
             <a href="leaderboard.html" class="block px-4 py-2 text-black hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-trophy"></i> <span>Leaderboard</span>
+            </a>
+            <!-- NEW: Clubs link for mobile dropdown -->
+            <a href="clubs.html" class="block px-4 py-2 text-black hover:bg-gray-200 flex items-center space-x-2">
+                <i class="fas fa-handshake"></i> <span>Clubs</span>
             </a>
             <!-- NEW: Deals link for mobile dropdown -->
             <a href="deals.html" class="block px-4 py-2 text-black hover:bg-gray-200 flex items-center space-x-2">
@@ -421,7 +429,7 @@
         </section>
     </main>
 
-    <script type="module" src="./js/leaderboard.js"></script>
+    <script type="module" src="leaderboard.js"></script>
     <script>
         // JavaScript for mobile menu toggle
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
@@ -431,8 +439,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
