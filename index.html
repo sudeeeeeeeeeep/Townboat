@@ -10,30 +10,116 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="manifest" href="/manifest.json">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap');
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7f9fc; /* Light, clean background */
+            color: #333;
         }
-        .card-hover:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+        /* Wavy pink background for the hero section */
+        .hero-wave {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23FCEFF9' fill-opacity='1' d='M0,192L60,197.3C120,203,240,213,360,208C480,203,600,181,720,186.7C840,192,960,224,1080,224C1200,224,1320,192,1380,176L1440,160L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
         }
-        .card-hover {
+        
+        .hero-button-gradient {
+            background-image: linear-gradient(to right, #ff7e5f, #feb47b);
             transition: all 0.3s ease-in-out;
+        }
+
+        .hero-button-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(254, 180, 123, 0.4);
+        }
+
+        /* Primary CTA Button */
+        .primary-cta-button {
+            background-image: linear-gradient(to right, #ff69b4, #8a2be2);
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+            transition: all 0.3s ease-in-out;
+        }
+        .primary-cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.6);
+        }
+
+        /* Card styles with a soft shadow and rounded corners */
+        .smooth-card {
+            background-color: #fff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease-in-out;
+        }
+        .smooth-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Icon background gradient */
+        .icon-bg {
+            background-image: linear-gradient(135deg, #a8c0ff, #ff7e5f);
+        }
+
+        /* Keyframes for the SVG animation */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* New subtle floating animation for header and login card */
+        @keyframes subtle-float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .animated-svg-group {
+            animation: float 5s ease-in-out infinite;
+        }
+
+        .animated-svg-circle-1 {
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .animated-svg-circle-2 {
+            animation: pulse 4s ease-in-out infinite 0.5s;
+        }
+
+        .animated-svg-circle-3 {
+            animation: pulse 3.5s ease-in-out infinite 0.2s;
+        }
+        
+        .animated-card {
+            animation: subtle-float 4s ease-in-out infinite;
+        }
+
+        .header-animated {
+            animation: subtle-float 5s ease-in-out infinite;
         }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
-    <!-- Header Section -->
-    <header class="bg-white shadow-lg sticky top-0 z-50">
+    <!-- Header Section - Clean & Simple -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 header-animated">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center">
-                <h1 class="text-3xl font-extrabold text-blue-700">TownBoat</h1>
-                <p class="text-base text-gray-500 ml-3 hidden sm:block">Your Hyperlocal Hub</p>
+                <h1 class="text-3xl font-black text-gray-800 mr-2 transform hover:scale-110 transition duration-300">
+                    TownBoat
+                </h1>
+                <p class="text-md text-gray-500 font-semibold hidden sm:block">Your Hyperlocal Hub</p>
             </div>
-            <a href="#login-form" class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-md">
-                Login
+            <a href="#login-form" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105">
+                Join Now
             </a>
         </div>
     </header>
@@ -41,20 +127,40 @@
     <!-- Main Content Section -->
     <main class="container mx-auto p-4 md:p-8 lg:p-12">
 
-        <!-- Hero Section -->
-        <section class="text-center py-16 md:py-24 bg-gradient-to-br from-blue-50 to-white rounded-3xl shadow-xl mb-12">
-            <h2 class="text-4xl md:text-6xl font-black text-gray-900 mb-4 tracking-tight">TownBoat: The Local Superapp</h2>
-            <p class="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto px-4 leading-relaxed">
-                TownBoat is a hyperlocal platform designed to connect residents and businesses within a community. It's evolving into a one-stop destination for local interaction and services, empowering communities and supporting the local economy.
-            </p>
-            <!-- Call to action buttons -->
-            <div class="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
-                <a href="#login-form" class="w-full sm:w-auto bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-lg">
-                    Sign Up to Continue
-                </a>
-                <a href="discover.html" class="w-full sm:w-auto bg-white text-blue-600 font-bold py-3 px-8 rounded-full text-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105 shadow-lg">
-                    Browse as Guest
-                </a>
+        <!-- Hero Section - Smooth & Modern -->
+        <section class="relative rounded-3xl overflow-hidden mb-12 py-16 md:py-24 lg:py-32 hero-wave">
+            <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="text-left z-10">
+                    <h2 class="text-4xl md:text-6xl font-black text-gray-900 mb-4 tracking-tight">
+                        Connect with your town, find local deals, and more.
+                    </h2>
+                    <p class="text-lg md:text-xl text-gray-600 max-w-xl mb-8 leading-relaxed">
+                        TownBoat is your hyperlocal hub for community news, local deals, and connecting with neighbors. Share your experiences and discover everything your town has to offer.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#login-form" class="w-full sm:w-auto text-white text-center font-bold py-3 px-8 rounded-full text-lg shadow-lg hero-button-gradient">
+                            Get Started
+                        </a>
+                    </div>
+                </div>
+                <!-- Animated SVG Object -->
+                <div class="md:block hidden z-10 p-8">
+                    <svg class="w-full max-w-md mx-auto animated-svg-group" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ff69b4;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#8a2be2;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ff7e5f;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#feb47b;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <circle class="animated-svg-circle-1" cx="50" cy="100" r="30" fill="url(#gradient1)" opacity="0.8" />
+                        <circle class="animated-svg-circle-2" cx="150" cy="100" r="35" fill="url(#gradient2)" opacity="0.8" />
+                        <path d="M 50 100 Q 100 120, 150 100" stroke="url(#gradient1)" stroke-width="3" fill="none" opacity="0.6"/>
+                    </svg>
+                </div>
             </div>
         </section>
 
@@ -63,101 +169,103 @@
             <h3 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">Key Features and Functions</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Real-time Community Feed -->
-                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover">
-                    <div class="text-blue-500 text-5xl mb-4 text-center"><i class="fas fa-comment-alt"></i></div>
-                    <h4 class="text-2xl font-semibold mb-2 text-center">Real-time Community Feed</h4>
-                    <p class="text-gray-600 text-center">Engage with your neighbors by sharing updates, asking for recommendations, and participating in lively local discussions. Never miss out on what's happening in your town.</p>
+                <div class="p-8 rounded-2xl smooth-card">
+                    <div class="text-white text-5xl mb-4 text-center rounded-2xl w-16 h-16 flex items-center justify-center mx-auto icon-bg">
+                        <i class="fas fa-comment-alt"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-2 text-center text-gray-900">Real-time Community Feed</h4>
+                    <p class="text-gray-600 text-center text-sm">Engage with your neighbors by sharing updates, asking for recommendations, and participating in local discussions.</p>
                 </div>
                 <!-- Exclusive Local Deals -->
-                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover">
-                    <div class="text-green-500 text-5xl mb-4 text-center"><i class="fas fa-tags"></i></div>
-                    <h4 class="text-2xl font-semibold mb-2 text-center">Exclusive Local Deals</h4>
-                    <p class="text-gray-600 text-center">Discover and share exclusive discounts and promotions from your favorite local businesses. It's a win-win: save money while supporting your local economy.</p>
+                <div class="p-8 rounded-2xl smooth-card">
+                    <div class="text-white text-5xl mb-4 text-center rounded-2xl w-16 h-16 flex items-center justify-center mx-auto icon-bg">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-2 text-center text-gray-900">Exclusive Local Deals</h4>
+                    <p class="text-gray-600 text-center text-sm">Discover and share exclusive discounts and promotions from your favorite local businesses.</p>
                 </div>
                 <!-- Interactive Polls -->
-                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover">
-                    <div class="text-purple-500 text-5xl mb-4 text-center"><i class="fas fa-poll"></i></div>
-                    <h4 class="text-2xl font-semibold mb-2 text-center">Interactive Polls</h4>
-                    <p class="text-gray-600 text-center">Create and participate in polls on local issues, upcoming community events, or friendly debates. Your opinion helps shape the conversation in your town.</p>
+                <div class="p-8 rounded-2xl smooth-card">
+                    <div class="text-white text-5xl mb-4 text-center rounded-2xl w-16 h-16 flex items-center justify-center mx-auto icon-bg">
+                        <i class="fas fa-poll"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-2 text-center text-gray-900">Interactive Polls</h4>
+                    <p class="text-gray-600 text-center text-sm">Create and participate in polls on local issues and upcoming community events.</p>
                 </div>
                 <!-- Business Directory -->
-                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover">
-                    <div class="text-yellow-500 text-5xl mb-4 text-center"><i class="fas fa-store-alt"></i></div>
-                    <h4 class="text-2xl font-semibold mb-2 text-center">Business Directory</h4>
-                    <p class="text-gray-600 text-center">A curated list of local shops, restaurants, and services. Find what you need, read trusted reviews from neighbors, and support local entrepreneurs.</p>
+                <div class="p-8 rounded-2xl smooth-card">
+                    <div class="text-white text-5xl mb-4 text-center rounded-2xl w-16 h-16 flex items-center justify-center mx-auto icon-bg">
+                        <i class="fas fa-store-alt"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-2 text-center text-gray-900">Business Directory</h4>
+                    <p class="text-gray-600 text-center text-sm">A curated list of local shops, restaurants, and services. Find what you need and support local entrepreneurs.</p>
                 </div>
                 <!-- Town Leaderboards -->
-                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover">
-                    <div class="text-red-500 text-5xl mb-4 text-center"><i class="fas fa-trophy"></i></div>
-                    <h4 class="text-2xl font-semibold mb-2 text-center">Town Leaderboards</h4>
-                    <p class="text-gray-600 text-center">Get recognized for your contributions! Our leaderboard celebrates the most active and helpful community members and businesses, fostering a friendly spirit of engagement.</p>
+                <div class="p-8 rounded-2xl smooth-card">
+                    <div class="text-white text-5xl mb-4 text-center rounded-2xl w-16 h-16 flex items-center justify-center mx-auto icon-bg">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-2 text-center text-gray-900">Town Leaderboards</h4>
+                    <p class="text-gray-600 text-center text-sm">Get recognized for your contributions! Our leaderboard celebrates the most active and helpful community members.</p>
                 </div>
                 <!-- Local Clubs -->
-                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover">
-                    <div class="text-indigo-500 text-5xl mb-4 text-center"><i class="fas fa-users"></i></div>
-                    <h4 class="text-2xl font-semibold mb-2 text-center">Local Clubs</h4>
-                    <p class="text-gray-600 text-center">Join or create interest-based groups to connect with like-minded people. From hiking clubs to book clubs, find your tribe right in your neighborhood.</p>
+                <div class="p-8 rounded-2xl smooth-card">
+                    <div class="text-white text-5xl mb-4 text-center rounded-2xl w-16 h-16 flex items-center justify-center mx-auto icon-bg">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-2 text-center text-gray-900">Local Clubs</h4>
+                    <p class="text-gray-600 text-center text-sm">Join or create interest-based groups to connect with like-minded people.</p>
                 </div>
-                <!-- Free Auto and Taxi Services -->
-                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover">
-                    <div class="text-cyan-500 text-5xl mb-4 text-center"><i class="fas fa-taxi"></i></div>
-                    <h4 class="text-2xl font-semibold mb-2 text-center">Free Auto and Taxi Services</h4>
-                    <p class="text-gray-600 text-center">Simplify your local travel with our new function that allows you to directly call local auto drivers and taxis at no cost, right from the app.</p>
+            </div>
+        </section>
+        
+        <!-- Sign-up/Login Section -->
+        <section id="login-form" class="flex flex-col justify-center items-center py-12 md:py-24">
+            <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm border-2 border-gray-100 animated-card">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800">Join TownBoat</h2>
+                    <p class="text-gray-500">Sign in to start connecting with your town.</p>
                 </div>
+
+                <button 
+                    id="google-sign-in-btn" 
+                    class="w-full flex items-center justify-center primary-cta-button text-white font-semibold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300"
+                >
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google icon" class="w-5 h-5 mr-2">
+                    Sign in with Google
+                </button>
+
+                <div class="flex items-center my-6">
+                    <div class="flex-grow border-t border-gray-300"></div>
+                    <span class="flex-shrink mx-4 text-gray-500">or</span>
+                    <div class="flex-grow border-t border-gray-300"></div>
+                </div>
+
+                <p class="text-center text-gray-500 text-sm">
+                    If you have a business account, please <a href="business-login.html" class="text-blue-600 hover:underline font-semibold">login here</a>.
+                </p>
             </div>
         </section>
 
         <!-- Social Affiliate Program Section -->
-        <section class="bg-blue-600 text-white rounded-3xl p-8 lg:p-16 my-12 text-center shadow-xl">
+        <section class="bg-white text-gray-800 rounded-3xl p-8 lg:p-16 my-12 text-center shadow-xl">
             <h3 class="text-3xl md:text-4xl font-bold mb-4">Earn With Us: The Social Affiliate Program</h3>
             <p class="text-lg md:text-xl mb-6 max-w-2xl mx-auto">
                 To further engage the community, TownBoat is launching an affiliate program designed for influential social media users.
             </p>
             <div class="flex flex-col md:flex-row justify-center items-stretch gap-6 mb-8">
-                <div class="p-6 bg-white text-blue-600 rounded-2xl shadow-lg flex-1 md:max-w-xs">
+                <div class="p-6 bg-gray-100 rounded-2xl shadow-lg flex-1 md:max-w-xs">
                     <h4 class="text-xl font-semibold mb-2">Eligibility</h4>
-                    <p class="text-gray-700">Must have at least 1,000 followers on Instagram or Facebook.</p>
+                    <p class="text-gray-600">Must have at least 1,000 followers on Instagram or Facebook.</p>
                 </div>
-                <div class="p-6 bg-white text-blue-600 rounded-2xl shadow-lg flex-1 md:max-w-xs">
+                <div class="p-6 bg-gray-100 rounded-2xl shadow-lg flex-1 md:max-w-xs">
                     <h4 class="text-xl font-semibold mb-2">Affiliate Benefits</h4>
-                    <p class="text-gray-700">Promote TownBoat and local businesses to earn rewards for your contributions.</p>
+                    <p class="text-gray-600">Promote TownBoat and local businesses to earn rewards for your contributions.</p>
                 </div>
             </div>
-            <a href="#" class="bg-white text-blue-600 font-bold py-4 px-12 rounded-full text-lg hover:bg-gray-100 transition duration-300 inline-block shadow-lg transform hover:scale-105">
+            <a href="#" class="primary-cta-button text-white font-bold py-4 px-12 rounded-full text-lg inline-block shadow-lg transform hover:scale-105">
                 Join Now
             </a>
-        </section>
-
-        <!-- Sign-up/Login Section -->
-        <section id="login-form" class="py-12 md:py-24">
-            <div class="min-h-screen flex flex-col justify-center items-center">
-                <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm">
-
-                    <div class="text-center mb-8">
-                        <h2 class="text-3xl font-bold text-gray-800">Join TownBoat</h2>
-                        <p class="text-gray-500">Sign in to start connecting with your town.</p>
-                    </div>
-
-                    <button 
-                        id="google-sign-in-btn" 
-                        class="w-full flex items-center justify-center bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300"
-                    >
-                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google icon" class="w-5 h-5 mr-2">
-                        Sign in with Google
-                    </button>
-
-                    <div class="flex items-center my-6">
-                        <div class="flex-grow border-t border-gray-300"></div>
-                        <span class="flex-shrink mx-4 text-gray-500">or</span>
-                        <div class="flex-grow border-t border-gray-300"></div>
-                    </div>
-
-                    <p class="text-center text-gray-500 text-sm">
-                        If you have a business account, please <a href="business-login.html" class="text-indigo-600 hover:underline font-semibold">login here</a>.
-                    </p>
-
-                </div>
-            </div>
         </section>
     </main>
 
@@ -179,3 +287,4 @@
     <script type="module" src="auth.js"></script>
 </body>
 </html>
+
