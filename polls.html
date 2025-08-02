@@ -3,16 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TownBoat: Participate in Local Community Polls | Have Your Say</title>
-    <meta name="description" content="Vote on trending local topics and engage in real-time community polls on TownBoat. See what your neighbors think and help shape your town's conversation." />
-    <meta name="keywords" content="townboat, local polls, community polls, town opinion, vote on local issues, neighborhood polls, local social network, community voice, India polls" />
+    <!-- Updated Title for SEO -->
+    <title>Kerala Polls, Public Polls & Local Surveys | TownBoat</title>
+    
+    <!-- New Meta Tags for SEO -->
+    <meta name="description" content="Participate in and create public polls and local surveys on TownBoat. Vote on community issues, events, and opinions in Kerala and your local town. Join the conversation today!" />
+    <meta name="keywords" content="kerala polls, public polls, local polls, community polls, online polls, surveys Kerala, TownBoat polls, hyperlocal polls, vote online, community opinion, local surveys" />
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Open Graph (OG) tags for social media sharing -->
+    <meta property="og:title" content="TownBoat: Local & Public Polls" />
+    <meta property="og:description" content="Vote on public polls and local surveys happening in your community and across Kerala. Join the conversation!" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://townboat.in/polls.html" />
+    <meta property="og:image" content="https://placehold.co/1200x630/000000/FFFFFF?text=TownBoat+Polls" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Schema.org Structured Data for Rich Snippets -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "TownBoat Community Polls",
+      "url": "https://townboat.in/polls.html",
+      "description": "A platform for creating and participating in public and local polls in Kerala and other regions.",
+      "mainEntity": {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What kind of polls can I find on TownBoat?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "TownBoat features a variety of community polls, public polls, and local surveys on topics relevant to your town and the state of Kerala."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How can I participate in a poll?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "You can participate in any active poll by selecting one of the options. You must be a logged-in user to vote."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I create my own poll?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, logged-in users with administrative privileges can create new polls for the community to vote on."
+            }
+          }
+        ]
+      }
+    }
+    </script>
 
     <style>
         body {
@@ -309,12 +359,12 @@
                 <a href="deals.html" class="text-gray-600 hover:text-gray-900 flex items-center space-x-1">
                     <i class="fas fa-tags md:hidden"></i><span class="hidden md:inline">Deals</span>
                 </a>
+                <!-- New 'Clubs' link -->
+                <a href="clubs.html" class="text-gray-600 hover:text-gray-900 flex items-center space-x-1">
+                    <i class="fas fa-users md:hidden"></i><span class="hidden md:inline">Clubs</span>
+                </a>
                 <a href="polls.html" class="text-gray-900 font-semibold flex items-center space-x-1">
                     <i class="fas fa-poll md:hidden"></i><span class="hidden md:inline">Polls</span>
-                </a>
-                <!-- NEW: Clubs link for desktop -->
-                <a href="club.html" class="text-gray-600 hover:text-gray-900 flex items-center space-x-1">
-                    <i class="fas fa-users md:hidden"></i><span class="hidden md:inline">Clubs</span>
                 </a>
             </div>
 
@@ -336,18 +386,19 @@
             <a href="deals.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-tags"></i> <span>Deals</span>
             </a>
-            <a href="polls.html" class="block px-4 py-2 text-gray-900 hover:bg-gray-200 flex items-center space-x-2">
-                <i class="fas fa-poll"></i> <span>Polls</span>
-            </a>
-            <!-- NEW: Clubs link for mobile dropdown -->
-            <a href="club.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-200 flex items-center space-x-2">
+            <!-- New 'Clubs' link -->
+            <a href="clubs.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-users"></i> <span>Clubs</span>
+            </a>
+            <a href="polls.html" class="block px-4 py-2 text-gray-900 font-semibold hover:bg-gray-200 flex items-center space-x-2">
+                <i class="fas fa-poll"></i> <span>Polls</span>
             </a>
         </div>
     </header>
 
     <main class="container mx-auto max-w-2xl py-8">
-        <h1 class="text-3xl font-bold text-center mb-8">Community Polls</h1>
+        <!-- Updated H1 for SEO -->
+        <h1 class="text-3xl font-bold text-center mb-8">Participate in Public & Local Polls</h1>
 
         <!-- Admin Poll Creation Section -->
         <section id="admin-poll-creation" class="hidden mb-8">
