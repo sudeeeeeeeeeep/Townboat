@@ -13,197 +13,205 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Poppins', sans-serif; }
+        body { 
+            font-family: 'Poppins', sans-serif;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
         /* Hide scrollbar for webkit browsers */
         ::-webkit-scrollbar {
             display: none;
         }
-        /* Hide scrollbar for IE, Edge and Firefox */
-        body {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+        /* Header styles */
+        header {
+            background-color: #FFFFFF; /* White header */
+            border-bottom: 1px solid #E0E0E0; /* Light gray border */
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
+        header a, header button {
+            color: #1A1A1A; /* Dark text for header links/buttons */
+        }
+        header .text-white {
+            color: #1A1A1A !important; /* Ensure brand name is dark */
+        }
+        header .text-gray-300:hover {
+            color: #000000 !important; /* Black on hover */
+        }
+        header .bg-gray-700 {
+            background-color: #E0E0E0; /* Light gray for logout button */
+            color: #1A1A1A; /* Dark text for logout button */
+        }
+        header .hover\:bg-gray-600:hover {
+            background-color: #D0D0D0; /* Even lighter on hover */
+        }
+        
+        /* Mobile menu dropdown */
+        #mobile-menu-dropdown {
+            background-color: #FFFFFF; /* White background */
+            border-top: 1px solid #E0E0E0; /* Light gray border */
+        }
+        #mobile-menu-dropdown a {
+            color: #1A1A1A; /* Dark text */
+        }
+        #mobile-menu-dropdown a:hover {
+            background-color: #F0F0F0; /* Lighter hover state */
+        }
+        #mobile-menu-dropdown .text-white {
+            color: #1DA1F2 !important; /* Highlight active link with Twitter blue */
+        }
+
+        /* Deal card styling */
         .deal-card {
-            background-color: #ffffff; /* White background */
-            color: #000000; /* Black text */
-            border: 1px solid #e5e7eb; /* Light gray border */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-            position: relative; /* Needed for overlay */
-            overflow: hidden; /* Ensure background doesn't spill */
+            background-color: #FFFFFF;
+            color: #1A1A1A;
+            border: 1px solid #E0E0E0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            cursor: pointer;
         }
-        .deal-card .text-gray-600 { /* For description/details */
-            color: #4a5568;
-        }
-        .deal-card .text-sm {
-            color: #4a5568;
-        }
-        .deal-card .text-emerald-600 {
-            color: #059669; /* Keep emerald for call to action */
-        }
-        .deal-card .text-red-500 {
-            color: #ef4444; /* Keep red for expiry */
+        .deal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
         .deal-image {
             width: 100%;
             height: 200px;
             object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 1rem;
         }
-
-        /* Custom style for the filter deals background */
-        .filter-deals-background {
-            background-image: url('fildeal.jpeg'); /* Updated to the new attached image */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            position: relative;
-            overflow: hidden;
-        }
-        /* Ensure text and inputs are readable on the new background */
-        .filter-deals-background h2,
-        .filter-deals-background label {
-            color: #000000 !important; /* Make text black */
-        }
-        .filter-deals-background select,
-        .filter-deals-background input {
-            background-color: rgba(255, 255, 255, 0.8) !important; /* Semi-transparent white background for inputs */
-            color: #000000 !important; /* Black text for inputs */
-            border-color: #cbd5e0 !important; /* Lighter border for inputs */
-        }
-        .filter-deals-background select option {
-             background-color: #ffffff; /* White background for dropdown options */
-             color: #000000; /* Black text for dropdown options */
-        }
-
-        /* New style for individual deal card background */
-        .deal-card-background {
-            background-image: url('detailss.jpeg'); /* The attached image */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-        /* Overlay for readability on deal cards */
-        .deal-card-overlay {
+        .deal-badge {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white overlay */
-            z-index: 1; /* Place above background image but below content */
-            border-radius: 0.5rem; /* Match card border-radius */
+            top: 1rem;
+            left: 1rem;
+            background-color: #EF4444; /* Red color for a vibrant deal look */
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
-        /* Ensure content is above the overlay */
-        .deal-card-content {
-            position: relative;
-            z-index: 2;
-            display: flex; /* Use flex to maintain column layout */
-            flex-direction: column;
-            height: 100%; /* Take full height of the card */
+        .deal-content {
+            padding: 1.5rem;
         }
-        /* Adjust text colors within the deal card content for readability */
-        .deal-card-content h3,
-        .deal-card-content p,
-        .deal-card-content strong {
-            color: #000000; /* Force black text */
+        .business-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 9999px;
+            object-fit: cover;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: absolute;
+            top: 175px;
+            left: 1.5rem;
+            background-color: #FFFFFF;
         }
-        .deal-card-content .text-red-500 {
-            color: #ef4444 !important; /* Keep red for expiry */
+        .deal-title {
+            margin-top: 1.5rem;
         }
-        .deal-card-content .bg-emerald-600 {
-            background-color: #059669 !important; /* Keep emerald for button */
+        .deal-expiry {
+            font-weight: 500;
+        }
+        .deal-button {
+            transition: transform 0.2s ease-in-out;
+        }
+        .deal-button:hover {
+            transform: scale(1.05);
         }
     </style>
 </head>
-<body class="bg-black text-white">
+<body class="bg-gray-100 text-gray-900">
 
-    <header class="bg-black sticky top-0 border-b border-gray-700 z-50">
+    <header class="bg-white sticky top-0 border-b border-gray-200 z-50">
         <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="home.html" class="text-white text-xl font-bold">TownBoat</a>
+            <a href="home.html" class="text-gray-900 text-xl font-bold">TownBoat</a>
             
             <!-- Mobile Menu Button (Hamburger) -->
             <div class="md:hidden flex items-center">
-                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                <button id="mobile-menu-button" class="text-gray-900 focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
             </div>
 
             <!-- Navigation Links (Hidden on small screens, visible on md and up) -->
             <div id="nav-links" class="hidden md:flex space-x-4 items-center">
-                <a href="home.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                <a href="home.html" class="text-gray-600 hover:text-gray-900 flex items-center space-x-1">
                     <i class="fas fa-home md:hidden"></i><span class="hidden md:inline">Feed</span>
                 </a>
-                <a href="discover.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                <a href="discover.html" class="text-gray-600 hover:text-gray-900 flex items-center space-x-1">
                     <i class="fas fa-compass md:hidden"></i><span class="hidden md:inline">Discover</span>
                 </a>
-                <a href="leaderboard.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                <a href="leaderboard.html" class="text-gray-600 hover:text-gray-900 flex items-center space-x-1">
                     <i class="fas fa-trophy md:hidden"></i><span class="hidden md:inline">Leaderboard</span>
                 </a>
-                <a href="deals.html" class="text-white font-semibold flex items-center space-x-1">
+                <a href="deals.html" class="text-gray-900 font-semibold flex items-center space-x-1">
                     <i class="fas fa-tags md:hidden"></i><span class="hidden md:inline">Deals</span>
                 </a>
-                <!-- NEW: Polls link for desktop -->
-                <a href="polls.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
-                    <i class="fas fa-poll md:hidden"></i><span class="hidden md:inline">Polls</span>
-                </a>
-                <!-- NEW: Clubs link for desktop -->
-                <a href="club.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                <a href="clubs.html" class="text-gray-600 hover:text-gray-900 flex items-center space-x-1">
                     <i class="fas fa-users md:hidden"></i><span class="hidden md:inline">Clubs</span>
+                </a>
+                <a href="polls.html" class="text-gray-600 hover:text-gray-900 flex items-center space-x-1">
+                    <i class="fas fa-poll md:hidden"></i><span class="hidden md:inline">Polls</span>
                 </a>
             </div>
 
-            <!-- Logout Button (Always visible) -->
-            <button id="logout-btn" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-600 transition duration-300">
+            <!-- Logout Button -->
+            <button id="logout-btn" class="bg-gray-200 text-gray-900 px-4 py-2 rounded-lg text-sm hover:bg-gray-300 transition duration-300">
                 <i class="fas fa-sign-out-alt md:hidden"></i><span class="hidden md:inline">Logout</span>
             </button>
         </nav>
 
-        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-800 border-t border-gray-700 py-2">
-            <a href="home.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-100 border-t border-gray-200 py-2">
+            <a href="home.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-home"></i> <span>Feed</span>
             </a>
-            <a href="discover.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+            <a href="discover.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-compass"></i> <span>Discover</span>
             </a>
-            <a href="leaderboard.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+            <a href="leaderboard.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-trophy"></i> <span>Leaderboard</span>
             </a>
-            <a href="deals.html" class="block px-4 py-2 text-white hover:bg-gray-700 flex items-center space-x-2">
+            <a href="deals.html" class="block px-4 py-2 text-gray-900 font-semibold hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-tags"></i> <span>Deals</span>
             </a>
-            <!-- NEW: Polls link for mobile dropdown -->
-            <a href="polls.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
-                <i class="fas fa-poll"></i> <span>Polls</span>
-            </a>
-            <!-- NEW: Clubs link for mobile dropdown -->
-            <a href="club.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+            <a href="clubs.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-users"></i> <span>Clubs</span>
+            </a>
+            <a href="polls.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-200 flex items-center space-x-2">
+                <i class="fas fa-poll"></i> <span>Polls</span>
             </a>
         </div>
     </header>
 
-    <main class="container mx-auto p-4 py-8 max-w-4xl">
-        <h1 class="text-3xl font-bold mb-8 text-center">Real-time Deals</h1>
-
-        <!-- Filter Section for Deals -->
-        <section class="bg-gray-900 p-6 rounded-lg shadow-xl border border-gray-700 mb-8 filter-deals-background">
-            <h2 class="text-2xl font-bold mb-4 text-center">Filter Deals</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <main class="container mx-auto p-4 md:p-6 lg:p-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900">Exclusive Local Deals</h1>
+        
+        <!-- Filter and Sort Section -->
+        <section class="bg-white p-6 rounded-xl shadow-lg mb-8 border border-gray-200">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 flex items-center justify-center text-gray-900">
+                <i class="fas fa-filter text-blue-600 mr-3"></i> Find Your Deal
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Location Filter -->
                 <div>
-                    <label for="deal-town-filter" class="block text-gray-300 text-sm font-bold mb-2">Filter by Town:</label>
-                    <select id="deal-town-filter" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        <option value="">All Towns</option>
-                        <!-- Town options will be loaded here by JavaScript -->
+                    <label for="deal-location" class="block text-sm font-semibold text-gray-700 mb-2">Location:</label>
+                    <select id="deal-location" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
+                        <option value="all">All Locations</option>
+                        <!-- Options will be dynamically loaded by JS -->
                     </select>
                 </div>
+                <!-- Category Filter -->
                 <div>
-                    <label for="deal-category-filter" class="block text-gray-300 text-sm font-bold mb-2">Filter by Category:</label>
-                    <select id="deal-category-filter" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        <option value="">All Categories</option>
+                    <label for="deal-category" class="block text-sm font-semibold text-gray-700 mb-2">Category:</label>
+                    <select id="deal-category" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
+                        <option value="all">All Categories</option>
                         <option value="Restaurants">Restaurants</option>
                         <option value="Retail">Retail</option>
-                        <option value="Healthcare">Healthcare</option>
+                        <option value="Services">Services</option>
                         <option value="Education">Education</option>
                         <option value="Home Services">Home Services</option>
                         <option value="Beauty & Spa">Beauty & Spa</option>
@@ -221,11 +229,59 @@
 
         <!-- Deals List Container -->
         <div id="deals-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <p class="text-gray-400 text-center col-span-full" id="no-deals-message">Loading deals...</p>
+            <!-- Sample Highly Designed Deal Card -->
+            <div class="deal-card bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
+                <div class="relative">
+                    <img src="https://placehold.co/600x400/9e5631/ffffff?text=Delicious+Burger" alt="Deal Image" class="w-full h-48 object-cover">
+                    <span class="deal-badge bg-red-600 text-white text-sm font-bold px-3 py-1 rounded-full shadow-md">20% OFF</span>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Burger Bliss Combo</h3>
+                    <p class="text-gray-600 text-sm mb-4">Get a juicy burger, fries, and a drink at a special discount. Perfect for a quick lunch!</p>
+                    <div class="flex items-center mb-4">
+                        <img src="https://placehold.co/50x50/1e40af/ffffff?text=BB" alt="Business Logo" class="w-10 h-10 rounded-full border-2 border-blue-600 shadow-md">
+                        <div class="ml-3">
+                            <p class="font-semibold text-gray-800">Burger Barn</p>
+                            <p class="text-xs text-gray-500">Expires: 31st Oct, 2025</p>
+                        </div>
+                    </div>
+                    <button class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center">
+                        <i class="fas fa-ticket-alt mr-2"></i>
+                        Claim Deal
+                    </button>
+                </div>
+            </div>
+
+            <!-- Another Sample Card -->
+            <div class="deal-card bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
+                <div class="relative">
+                    <img src="https://placehold.co/600x400/3e7215/ffffff?text=Spa+Relaxation" alt="Deal Image" class="w-full h-48 object-cover">
+                    <span class="deal-badge bg-green-600 text-white text-sm font-bold px-3 py-1 rounded-full shadow-md">30% OFF</span>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Relaxation Massage</h3>
+                    <p class="text-gray-600 text-sm mb-4">Enjoy a full body massage to unwind and de-stress. Book your session today!</p>
+                    <div class="flex items-center mb-4">
+                        <img src="https://placehold.co/50x50/333/ffffff?text=SS" alt="Business Logo" class="w-10 h-10 rounded-full border-2 border-green-600 shadow-md">
+                        <div class="ml-3">
+                            <p class="font-semibold text-gray-800">Serenity Spa</p>
+                            <p class="text-xs text-gray-500">Expires: 15th Nov, 2025</p>
+                        </div>
+                    </div>
+                    <button class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center">
+                        <i class="fas fa-ticket-alt mr-2"></i>
+                        Claim Deal
+                    </button>
+                </div>
+            </div>
+
+            <!-- Placeholder for loading or no deals message -->
+            <p class="text-gray-500 text-center col-span-full hidden" id="no-deals-message">No deals found for your filters.</p>
+            <p class="text-gray-500 text-center col-span-full" id="loading-deals-message">Loading deals...</p>
         </div>
     </main>
 
-    <script type="module" src="deals.js"></script>
+    <script type="module" src="./js/deals.js"></script>
     <script>
         // JavaScript for mobile menu toggle
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
