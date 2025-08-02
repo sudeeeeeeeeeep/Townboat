@@ -212,7 +212,7 @@ function fetchBusinessDeals(businessId) {
                     <h3 class="text-xl font-bold mb-2">${deal.title}</h3>
                     <p class="text-gray-600 mb-2">${deal.description}</p>
                     <p class="text-sm font-semibold text-red-500 mt-auto">${expiryText}</p>
-                    <button class="mt-4 bg-emerald-600 text-white text-center py-2 px-4 rounded-lg hover:bg-emerald-700 transition duration-300">View Deal</button>
+                    <button class="mt-4 bg-blue-600 text-white text-center py-2 px-4 rounded-lg hover:bg-emerald-700 transition duration-300">View Deal</button>
                 `;
                 businessDealsList.appendChild(dealCard);
             });
