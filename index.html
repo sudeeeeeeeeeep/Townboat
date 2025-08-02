@@ -3,51 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TownBoat - Login</title>
+    <title>TownBoat - The Local Superapp</title>
+    <meta name="description" content="Join TownBoat, your hyperlocal hub for community news, local deals, and connecting with neighbors. Sign in to discover your town's social network.">
+    <meta name="keywords" content="local community, social network, local deals, community polls, local events, town, hyperlocal, auto drivers, taxis, affiliate program, earn money">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="manifest" href="/manifest.json">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .card-hover {
+            transition: all 0.3s ease-in-out;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 text-gray-800">
 
-    <div class="min-h-screen flex flex-col justify-center items-center">
-        
-        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm">
-
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-800">TownBoat</h1>
-                <p class="text-gray-500">Your Hyperlocal Hub</p>
+    <!-- Header Section -->
+    <header class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <h1 class="text-3xl font-extrabold text-blue-700">TownBoat</h1>
+                <p class="text-base text-gray-500 ml-3 hidden sm:block">Your Hyperlocal Hub</p>
             </div>
-
-            <button 
-                id="google-sign-in-btn" 
-                class="w-full flex items-center justify-center bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300"
-            >
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google icon" class="w-5 h-5 mr-2">
-                Sign in with Google
-            </button>
-
-            <div class="flex items-center my-6">
-                <div class="flex-grow border-t border-gray-300"></div>
-                <span class="flex-shrink mx-4 text-gray-500">or</span>
-                <div class="flex-grow border-t border-gray-300"></div>
-            </div>
-
-            <p class="text-center text-gray-500 text-sm">
-                If you have a business account, please <a href="business-login.html" class="text-indigo-600 hover:underline font-semibold">login here</a>.
-            </p>
-
+            <a href="#login-form" class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-md">
+                Login
+            </a>
         </div>
-    </div>
+    </header>
+
+    <!-- Main Content Section -->
+    <main class="container mx-auto p-4 md:p-8 lg:p-12">
+
+        <!-- Hero Section -->
+        <section class="text-center py-16 md:py-24 bg-gradient-to-br from-blue-50 to-white rounded-3xl shadow-xl mb-12">
+            <h2 class="text-4xl md:text-6xl font-black text-gray-900 mb-4 tracking-tight">TownBoat: The Local Superapp</h2>
+            <p class="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto px-4 leading-relaxed">
+                TownBoat is a hyperlocal platform designed to connect residents and businesses within a community. It's evolving into a one-stop destination for local interaction and services, empowering communities and supporting the local economy.
+            </p>
+            <!-- Call to action buttons -->
+            <div class="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
+                <a href="#login-form" class="w-full sm:w-auto bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-lg">
+                    Sign Up to Continue
+                </a>
+                <a href="discover.html" class="w-full sm:w-auto bg-white text-blue-600 font-bold py-3 px-8 rounded-full text-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105 shadow-lg">
+                    Browse as Guest
+                </a>
+            </div>
+        </section>
+
+        <!-- Key Features Section -->
+        <section class="py-12">
+            <h3 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">Key Features and Functions</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Real-time Community Feed -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover">
+                    <div class="text-blue-500 text-5xl mb-4 text-center"><i class="fas fa-comment-alt"></i></div>
+                    <h4 class="text-2xl font-semibold mb-2 text-center">Real-time Community Feed</h4>
+                    <p class="text-gray-600 text-center">Engage with your neighbors by sharing updates, asking for recommendations, and participating in lively local discussions. Never miss out on what's happening in your town.</p>
+                </div>
+                <!-- Exclusive Local Deals -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover">
+                    <div class="text-green-500 text-5xl mb-4 text-center"><i class="fas fa-tags"></i></div>
+                    <h4 class="text-2xl font-semibold mb-2 text-center">Exclusive Local Deals</h4>
+                    <p class="text-gray-600 text-center">Discover and share exclusive discounts and promotions from your favorite local businesses. It's a win-win: save money while supporting your local economy.</p>
+                </div>
+                <!-- Interactive Polls -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover">
+                    <div class="text-purple-500 text-5xl mb-4 text-center"><i class="fas fa-poll"></i></div>
+                    <h4 class="text-2xl font-semibold mb-2 text-center">Interactive Polls</h4>
+                    <p class="text-gray-600 text-center">Create and participate in polls on local issues, upcoming community events, or friendly debates. Your opinion helps shape the conversation in your town.</p>
+                </div>
+                <!-- Business Directory -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover">
+                    <div class="text-yellow-500 text-5xl mb-4 text-center"><i class="fas fa-store-alt"></i></div>
+                    <h4 class="text-2xl font-semibold mb-2 text-center">Business Directory</h4>
+                    <p class="text-gray-600 text-center">A curated list of local shops, restaurants, and services. Find what you need, read trusted reviews from neighbors, and support local entrepreneurs.</p>
+                </div>
+                <!-- Town Leaderboards -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover">
+                    <div class="text-red-500 text-5xl mb-4 text-center"><i class="fas fa-trophy"></i></div>
+                    <h4 class="text-2xl font-semibold mb-2 text-center">Town Leaderboards</h4>
+                    <p class="text-gray-600 text-center">Get recognized for your contributions! Our leaderboard celebrates the most active and helpful community members and businesses, fostering a friendly spirit of engagement.</p>
+                </div>
+                <!-- Local Clubs -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover">
+                    <div class="text-indigo-500 text-5xl mb-4 text-center"><i class="fas fa-users"></i></div>
+                    <h4 class="text-2xl font-semibold mb-2 text-center">Local Clubs</h4>
+                    <p class="text-gray-600 text-center">Join or create interest-based groups to connect with like-minded people. From hiking clubs to book clubs, find your tribe right in your neighborhood.</p>
+                </div>
+                <!-- Free Auto and Taxi Services -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover">
+                    <div class="text-cyan-500 text-5xl mb-4 text-center"><i class="fas fa-taxi"></i></div>
+                    <h4 class="text-2xl font-semibold mb-2 text-center">Free Auto and Taxi Services</h4>
+                    <p class="text-gray-600 text-center">Simplify your local travel with our new function that allows you to directly call local auto drivers and taxis at no cost, right from the app.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Social Affiliate Program Section -->
+        <section class="bg-blue-600 text-white rounded-3xl p-8 lg:p-16 my-12 text-center shadow-xl">
+            <h3 class="text-3xl md:text-4xl font-bold mb-4">Earn With Us: The Social Affiliate Program</h3>
+            <p class="text-lg md:text-xl mb-6 max-w-2xl mx-auto">
+                To further engage the community, TownBoat is launching an affiliate program designed for influential social media users.
+            </p>
+            <div class="flex flex-col md:flex-row justify-center items-stretch gap-6 mb-8">
+                <div class="p-6 bg-white text-blue-600 rounded-2xl shadow-lg flex-1 md:max-w-xs">
+                    <h4 class="text-xl font-semibold mb-2">Eligibility</h4>
+                    <p class="text-gray-700">Must have at least 1,000 followers on Instagram or Facebook.</p>
+                </div>
+                <div class="p-6 bg-white text-blue-600 rounded-2xl shadow-lg flex-1 md:max-w-xs">
+                    <h4 class="text-xl font-semibold mb-2">Affiliate Benefits</h4>
+                    <p class="text-gray-700">Promote TownBoat and local businesses to earn rewards for your contributions.</p>
+                </div>
+            </div>
+            <a href="#" class="bg-white text-blue-600 font-bold py-4 px-12 rounded-full text-lg hover:bg-gray-100 transition duration-300 inline-block shadow-lg transform hover:scale-105">
+                Join Now
+            </a>
+        </section>
+
+        <!-- Sign-up/Login Section -->
+        <section id="login-form" class="py-12 md:py-24">
+            <div class="min-h-screen flex flex-col justify-center items-center">
+                <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm">
+
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-800">Join TownBoat</h2>
+                        <p class="text-gray-500">Sign in to start connecting with your town.</p>
+                    </div>
+
+                    <button 
+                        id="google-sign-in-btn" 
+                        class="w-full flex items-center justify-center bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300"
+                    >
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google icon" class="w-5 h-5 mr-2">
+                        Sign in with Google
+                    </button>
+
+                    <div class="flex items-center my-6">
+                        <div class="flex-grow border-t border-gray-300"></div>
+                        <span class="flex-shrink mx-4 text-gray-500">or</span>
+                        <div class="flex-grow border-t border-gray-300"></div>
+                    </div>
+
+                    <p class="text-center text-gray-500 text-sm">
+                        If you have a business account, please <a href="business-login.html" class="text-indigo-600 hover:underline font-semibold">login here</a>.
+                    </p>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-white text-center py-6 text-gray-500 border-t border-gray-200">
+        <p>&copy; 2024 TownBoat. All rights reserved.</p>
+    </footer>
+    
+    <!-- Service worker registration for PWA functionality -->
     <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(reg => console.log('SW registered'))
-      .catch(err => console.error('SW failed', err));
-  }
-</script>
-
-
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(reg => console.log('Service Worker registered.'))
+            .catch(err => console.log('Service Worker registration failed: ', err));
+        });
+      }
+    </script>
     <script type="module" src="auth.js"></script>
 </body>
 </html>
-
