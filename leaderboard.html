@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TownBoat: Community Leaderboard | Top Businesses & Members</title>
-    <meta name="description" content="Find the top-rated businesses, most active members, and community leaders on TownBoat's dynamic leaderboard. Upvote your favorites and see who's making an impact in your town." />
-    <meta name="keywords" content="townboat, community leaderboard, local rankings, top businesses in my town, community leaders, top members, local awards, townboat community" />
+    <title>Leaderboard - TownBoat</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
@@ -13,85 +11,86 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Poppins', sans-serif; }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
         /* Hide scrollbar for webkit browsers */
         ::-webkit-scrollbar {
             display: none;
         }
-        /* Hide scrollbar for IE, Edge and Firefox */
-        body {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+
+        /* Custom animation for icons */
+        .icon-pulse:hover {
+            animation: pulse 1s infinite;
         }
-        /* Ensure text within the white section is black */
-        .white-section-text-black h2,
-        .white-section-text-black li {
-            color: #000000; /* Force black text */
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
         }
-        .white-section-text-black .text-gray-400 {
-            color: #4a5568 !important; /* Darker gray for subtle text */
+        
+        /* Custom animation for list item hover */
+        .leaderboard-item-animated {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
-        .white-section-text-black .text-gray-300 {
-            color: #4a5568 !important; /* Darker gray for subtle text */
+        .leaderboard-item-animated:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
         /* Custom style for the filter background */
         .filter-background {
-            background-image: url('leader.jpeg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            position: relative; /* Needed for z-index if overlay is added later */
-            overflow: hidden; /* Ensures image doesn't spill out */
-        }
-        /* Style for text within the filter background to ensure readability */
-        .filter-background .text-white,
-        .filter-background .text-gray-300,
-        .filter-background .text-gray-800 {
-            color: #000000 !important; /* Make text black */
-        }
-        .filter-background select,
-        .filter-background input {
-            background-color: rgba(255, 255, 255, 0.8) !important; /* Semi-transparent white background for inputs */
-            color: #000000 !important; /* Black text for inputs */
-            border-color: #cbd5e0 !important; /* Lighter border for inputs */
-        }
-        .filter-background select option {
-             background-color: #ffffff; /* White background for dropdown options */
-             color: #000000; /* Black text for dropdown options */
-        }
-
-        /* Custom style for the top upvoted sections background */
-        .top-upvoted-background {
-            background-image: url('topleader.jpeg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            background-color: #f3f4f6; /* A light gray background */
             position: relative;
             overflow: hidden;
-            color: #000000; /* Default text to black for this section */
+            border: 1px solid #e2e8f0; /* Light border */
         }
-        .top-upvoted-background h2,
-        .top-upvoted-background li {
-            color: #ffffff; /* Ensure headings and list items are black */
+
+        /* Custom style for the top upvoted sections background with gradients */
+        .top-upvoted-section-businesses {
+            background-image: linear-gradient(to bottom right, #fef2f2, #fff); /* Soft red to white gradient */
         }
-        .top-upvoted-background .text-gray-500 {
-            color: #4a5568 !important; /* Darker grey for subtle text */
+        .top-upvoted-section-people {
+            background-image: linear-gradient(to bottom right, #e0f2fe, #fff); /* Soft blue to white gradient */
         }
-        .top-upvoted-background .text-gray-600 {
-            color: #4a5568 !important; /* Darker grey for subtle text */
+        .top-upvoted-section-actors {
+            background-image: linear-gradient(to bottom right, #f0fdf4, #fff); /* Soft green to white gradient */
         }
-        /* Adjust specific colors that should remain vibrant */
-        .top-upvoted-background .text-red-500 {
-            color: #ef4444 !important; /* Keep heart icon red */
+        .top-upvoted-section-singers {
+            background-image: linear-gradient(to bottom right, #fefce8, #fff); /* Soft yellow to white gradient */
         }
-        .top-upvoted-background .text-yellow-400 {
+        .top-upvoted-section {
+            position: relative;
+            overflow: hidden;
+            color: #000000; /* Default text to dark for this section */
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Ensure all text and icons are black inside these sections, overriding any other color classes */
+        .top-upvoted-section h2,
+        .top-upvoted-section li,
+        .top-upvoted-section .fas,
+        .upvote-btn .fas,
+        .upvote-count {
+            color: #000000 !important;
+        }
+        
+        /* Adjust specific colors that should remain vibrant for ranking */
+        .top-upvoted-section .text-yellow-400 {
             color: #fbbf24 !important; /* Keep gold for rank 1 */
         }
-        .top-upvoted-background .text-yellow-600 {
+        .top-upvoted-section .text-yellow-600 {
             color: #d97706 !important; /* Keep darker gold for rank 2 */
         }
-        .top-upvoted-background .text-yellow-700 {
+        .top-upvoted-section .text-yellow-700 {
             color: #b45309 !important; /* Keep even darker gold for rank 3 */
         }
 
@@ -100,7 +99,7 @@
             padding: 0.75rem; /* Reduced padding */
             width: 100%; /* Ensure it takes full width */
             box-sizing: border-box; /* Include padding in width */
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Small line divider */
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Small line divider */
             margin-bottom: 0; /* Remove space between items */
             border-radius: 0; /* Remove rounded corners for individual items */
             background-color: transparent; /* Remove individual item background */
@@ -118,6 +117,7 @@
         }
         .leaderboard-item .item-name {
             font-size: 1rem; /* text-base */
+            color: #000000; /* Ensure name is black */
         }
         .leaderboard-item .item-details {
             font-size: 0.75rem; /* text-xs */
@@ -129,7 +129,7 @@
             padding: 0.25rem 0.5rem; /* px-2 py-1 */
             font-size: 0.75rem; /* text-xs */
         }
-
+        
         /* Adjust for medium screens and up */
         @media (min-width: 768px) {
             .leaderboard-item {
@@ -168,120 +168,102 @@
 
         /* Reward Banner Specific Styles */
         .reward-banner {
-            background-image: url('reward.jpeg'); /* Your reward banner image */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            color: white;
-            padding: 2rem 1rem; /* Smaller padding than main banner */
+            background-image: linear-gradient(to right, #fde68a, #fca5a5); /* A warm, fun gradient from yellow to red */
+            padding: 2rem 1rem;
             text-align: center;
             position: relative;
             overflow: hidden;
-            border-radius: 0.5rem; /* rounded-lg */
-            margin-bottom: 2rem; /* mb-8 */
-        }
-        .reward-banner-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.4); /* Slightly less opaque overlay */
-            z-index: 1;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #fcd34d;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
         .reward-banner-content {
             position: relative;
             z-index: 2;
         }
+
     </style>
 </head>
-<body class="bg-black text-white">
+<body class="bg-gray-100 text-black">
 
-    <header class="bg-black sticky top-0 border-b border-gray-700 z-50">
-        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="home.html" class="text-white text-xl font-bold">TownBoat</a>
+    <header class="bg-white sticky top-0 border-b border-gray-200 z-50">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center text-black">
+            <a href="home.html" class="text-xl font-bold">TownBoat</a>
             
             <!-- Mobile Menu Button (Hamburger) -->
             <div class="md:hidden flex items-center">
-                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                <button id="mobile-menu-button" class="text-black focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
             </div>
 
             <!-- Navigation Links (Hidden on small screens, visible on md and up) -->
             <div id="nav-links" class="hidden md:flex space-x-4 items-center">
-                <a href="home.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                <a href="home.html" class="text-black hover:text-gray-800 flex items-center space-x-1">
                     <i class="fas fa-home md:hidden"></i><span class="hidden md:inline">Feed</span>
                 </a>
-                <a href="discover.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                <a href="discover.html" class="text-black hover:text-gray-800 flex items-center space-x-1">
                     <i class="fas fa-compass md:hidden"></i><span class="hidden md:inline">Discover</span>
                 </a>
-                <a href="leaderboard.html" class="text-white font-semibold flex items-center space-x-1">
+                <a href="leaderboard.html" class="text-black font-semibold flex items-center space-x-1">
                     <i class="fas fa-trophy md:hidden"></i><span class="hidden md:inline">Leaderboard</span>
                 </a>
                 <!-- NEW: Deals link for desktop -->
-                <a href="deals.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                <a href="deals.html" class="text-black hover:text-gray-800 flex items-center space-x-1">
                     <i class="fas fa-tags md:hidden"></i><span class="hidden md:inline">Deals</span>
                 </a>
                 <!-- NEW: Polls link for desktop -->
-                <a href="polls.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                <a href="polls.html" class="text-black hover:text-gray-800 flex items-center space-x-1">
                     <i class="fas fa-poll md:hidden"></i><span class="hidden md:inline">Polls</span>
-                </a>
-                <!-- NEW: Clubs link for desktop -->
-                <a href="club.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
-                    <i class="fas fa-users md:hidden"></i><span class="hidden md:inline">Clubs</span>
                 </a>
             </div>
 
             <!-- Logout Button (Always visible) -->
-            <button id="logout-btn" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-600 transition duration-300">
+            <button id="logout-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition duration-300">
                 <i class="fas fa-sign-out-alt md:hidden"></i><span class="hidden md:inline">Logout</span>
             </button>
         </nav>
 
         <!-- Mobile Menu Dropdown (Hidden by default) -->
-        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-800 border-t border-gray-700 py-2">
-            <a href="home.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-100 border-t border-gray-200 py-2">
+            <a href="home.html" class="block px-4 py-2 text-black hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-home"></i> <span>Feed</span>
             </a>
-            <a href="discover.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+            <a href="discover.html" class="block px-4 py-2 text-black hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-compass"></i> <span>Discover</span>
             </a>
-            <a href="leaderboard.html" class="block px-4 py-2 text-white hover:bg-gray-700 flex items-center space-x-2">
+            <a href="leaderboard.html" class="block px-4 py-2 text-black hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-trophy"></i> <span>Leaderboard</span>
             </a>
             <!-- NEW: Deals link for mobile dropdown -->
-            <a href="deals.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+            <a href="deals.html" class="block px-4 py-2 text-black hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-tags"></i> <span>Deals</span>
             </a>
             <!-- NEW: Polls link for mobile dropdown -->
-            <a href="polls.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+            <a href="polls.html" class="block px-4 py-2 text-black hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-poll"></i> <span>Polls</span>
-            </a>
-            <!-- NEW: Clubs link for mobile dropdown -->
-            <a href="club.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
-                <i class="fas fa-users"></i> <span>Clubs</span>
             </a>
         </div>
     </header>
 
     <main class="container mx-auto p-4 py-8 max-w-4xl">
-        <h1 class="text-3xl font-bold mb-8 text-center">TownBoat Leaderboard</h1>
+        <h1 class="text-3xl font-bold mb-8 text-center text-black">TownBoat Leaderboard</h1>
 
         <!-- Filter Section -->
-        <section class="bg-gray-900 p-6 rounded-lg shadow-xl border border-gray-700 mb-8 filter-background">
+        <section class="bg-white p-6 rounded-lg shadow-xl border border-gray-200 mb-8 filter-background">
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label for="town-filter" class="block  text-sm font-bold mb-2">Filter by Town:</label>
-                    <select id="town-filter" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <label for="town-filter" class="block text-black text-sm font-bold mb-2">Filter by Town:</label>
+                    <select id="town-filter" class="w-full p-3 rounded-lg bg-gray-100 text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="">All Towns</option>
                         <!-- Town options will be loaded here by JavaScript -->
                     </select>
                 </div>
                 <div>
-                    <label for="category-filter" class="block text-sm font-bold mb-2">Filter by Category:</label>
-                    <select id="category-filter" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <label for="category-filter" class="block text-black text-sm font-bold mb-2">Filter by Category:</label>
+                    <select id="category-filter" class="w-full p-3 rounded-lg bg-gray-100 text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="">All Categories</option>
                         <option value="Restaurants">Restaurants</option>
                         <option value="Retail">Retail</option>
@@ -303,52 +285,52 @@
         </section>
 
         <!-- Top Upvoted Businesses Section -->
-        <section class="bg-white white-section-text-black top-upvoted-background mb-8">
-            <h2 class="text-2xl font-bold p-6 mb-4 flex items-center justify-center">
-                <i class="fas fa-arrow-up text-gray-500 mr-3"></i> Top Upvoted Businesses
+        <section class="top-upvoted-section top-upvoted-section-businesses">
+            <h2 class="text-2xl font-bold p-6 mb-4 flex items-center justify-center text-black">
+                <i class="fas fa-arrow-up text-black mr-3 icon-pulse"></i> Top Upvoted Businesses
             </h2>
             <ul id="top-upvoted-list" class="leaderboard-list-container">
-                <li class="text-gray-400 text-center py-4">Loading top upvoted businesses...</li>
+                <li class="text-black text-center py-4">Loading top upvoted businesses...</li>
             </ul>
             <div id="view-all-businesses-container" class="text-center mt-4 hidden">
-                <button class="view-all-btn bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition duration-300 flex items-center mx-auto" data-section="businesses">
-                    <i class="fas fa-chevron-down mr-2"></i> View All
+                <button class="view-all-btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center mx-auto" data-section="businesses">
+                    <i class="fas fa-chevron-down text-black mr-2"></i> View All
                 </button>
             </div>
         </section>
 
         <!-- List Yourself Section (for People Ranking) -->
-        <section id="list-person-section" class="bg-gray-900 p-6 rounded-lg shadow-lg max-w-2xl mx-auto mb-8 hidden">
-            <h2 class="text-2xl font-bold text-center mb-6" id="person-section-title">List Yourself on the People Leaderboard</h2>
-            <p id="person-listing-status-message" class="text-center text-sm mb-4"></p>
+        <section id="list-person-section" class="bg-white p-6 rounded-lg shadow-lg max-w-2xl mx-auto mb-8 hidden">
+            <h2 class="text-2xl font-bold text-center mb-6 text-black" id="person-section-title">List Yourself on the People Leaderboard</h2>
+            <p id="person-listing-status-message" class="text-center text-sm mb-4 text-black"></p>
             
             <!-- Form for New Listing -->
             <form id="person-listing-form" class="space-y-4">
                 <div>
-                    <label for="person-name" class="block text-gray-300 text-sm font-bold mb-2">Your Name:</label>
-                    <input type="text" id="person-name" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="e.g., John Doe" required>
+                    <label for="person-name" class="block text-black text-sm font-bold mb-2">Your Name:</label>
+                    <input type="text" id="person-name" class="shadow appearance-none border border-gray-300 rounded w-full py-3 px-4 bg-gray-100 text-black leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-blue-500" placeholder="e.g., John Doe" required>
                 </div>
                 <div>
-                    <label for="person-bio" class="block text-gray-300 text-sm font-bold mb-2">Short Bio (Optional):</label>
-                    <textarea id="person-bio" rows="2" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="e.g., Local community organizer, Tech enthusiast"></textarea>
+                    <label for="person-bio" class="block text-black text-sm font-bold mb-2">Short Bio (Optional):</label>
+                    <textarea id="person-bio" rows="2" class="shadow appearance-none border border-gray-300 rounded w-full py-3 px-4 bg-gray-100 text-black leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-blue-500" placeholder="e.g., Local community organizer, Tech enthusiast"></textarea>
                 </div>
                 <div>
-                    <label for="person-instagram" class="block text-gray-300 text-sm font-bold mb-2">Instagram ID (Optional):</label>
-                    <input type="text" id="person-instagram" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" placeholder="e.g., your_instagram_handle">
+                    <label for="person-instagram" class="block text-black text-sm font-bold mb-2">Instagram ID (Optional):</label>
+                    <input type="text" id="person-instagram" class="shadow appearance-none border border-gray-300 rounded w-full py-3 px-4 bg-gray-100 text-black leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-blue-500" placeholder="e.g., your_instagram_handle">
                 </div>
                 <div class="mb-6 text-center">
-                    <label class="block text-gray-300 text-sm font-bold mb-2">Your Profile Image:</label>
+                    <label class="block text-black text-sm font-bold mb-2">Your Profile Image:</label>
                     <img id="person-image-preview" src="#" alt="Profile Image Preview" class="business-image-preview mx-auto hidden">
-                    <p id="person-image-source-note" class="text-gray-500 text-xs mt-1">Image from your Google account.</p>
+                    <p id="person-image-source-note" class="text-black text-xs mt-1">Image from your Google account.</p>
                 </div>
-                <button type="submit" id="submit-person-listing-btn" class="w-full bg-emerald-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-300">
+                <button type="submit" id="submit-person-listing-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300">
                     Add Me to Leaderboard
                 </button>
             </form>
 
             <!-- Message when already listed -->
             <div id="person-already-listed-info" class="text-center p-6 hidden">
-                <p class="text-gray-400 mt-4">
+                <p class="text-black mt-4">
                     You are already listed on the People Leaderboard!
                 </p>
                 <button id="edit-person-profile-btn" class="mt-4 bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">
@@ -357,90 +339,89 @@
             </div>
 
             <!-- Form for Editing Existing Listing (Initially Hidden) -->
-            <form id="edit-person-form" class="space-y-4 mt-8 p-6 bg-gray-800 rounded-lg shadow-inner hidden">
-                <h3 class="text-xl font-bold mb-4 text-center">Edit Your Profile</h3>
-                <p id="edit-person-status-message" class="text-center text-sm mb-4"></p>
+            <form id="edit-person-form" class="space-y-4 mt-8 p-6 bg-gray-100 rounded-lg shadow-inner hidden">
+                <h3 class="text-xl font-bold mb-4 text-center text-black">Edit Your Profile</h3>
+                <p id="edit-person-status-message" class="text-center text-sm mb-4 text-black"></p>
                 <input type="hidden" id="edit-person-id">
                 <div>
-                    <label for="edit-person-name" class="block text-gray-300 text-sm font-bold mb-2">Your Name:</label>
-                    <input type="text" id="edit-person-name" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-900 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
+                    <label for="edit-person-name" class="block text-black text-sm font-bold mb-2">Your Name:</label>
+                    <input type="text" id="edit-person-name" class="shadow appearance-none border border-gray-300 rounded w-full py-3 px-4 bg-white text-black leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div>
-                    <label for="edit-person-bio" class="block text-gray-300 text-sm font-bold mb-2">Short Bio (Optional):</label>
-                    <textarea id="edit-person-bio" rows="2" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-900 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500"></textarea>
+                    <label for="edit-person-bio" class="block text-black text-sm font-bold mb-2">Short Bio (Optional):</label>
+                    <textarea id="edit-person-bio" rows="2" class="shadow appearance-none border border-gray-300 rounded w-full py-3 px-4 bg-white text-black leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-blue-500"></textarea>
                 </div>
                 <div>
-                    <label for="edit-person-instagram" class="block text-gray-300 text-sm font-bold mb-2">Instagram ID (Optional):</label>
-                    <input type="text" id="edit-person-instagram" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-900 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500">
+                    <label for="edit-person-instagram" class="block text-black text-sm font-bold mb-2">Instagram ID (Optional):</label>
+                    <input type="text" id="edit-person-instagram" class="shadow appearance-none border border-gray-300 rounded w-full py-3 px-4 bg-white text-black leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div class="mb-6 text-center">
-                    <label class="block text-gray-300 text-sm font-bold mb-2">Your Profile Image:</label>
+                    <label class="block text-black text-sm font-bold mb-2">Your Profile Image:</label>
                     <img id="edit-person-image-preview" src="#" alt="Profile Image Preview" class="business-image-preview mx-auto hidden">
-                    <p class="text-gray-500 text-xs mt-1">Image from your Google account.</p>
+                    <p class="text-black text-xs mt-1">Image from your Google account.</p>
                 </div>
                 <div class="flex justify-end space-x-4 mt-6">
-                    <button type="button" id="cancel-edit-person-btn" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition duration-300">Cancel</button>
-                    <button type="submit" id="update-person-profile-btn" class="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition duration-300">Save Changes</button>
+                    <button type="button" id="cancel-edit-person-btn" class="bg-gray-300 text-black px-6 py-2 rounded-lg hover:bg-gray-400 transition duration-300">Cancel</button>
+                    <button type="submit" id="update-person-profile-btn" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Save Changes</button>
                 </div>
             </form>
         </section>
 
         <!-- Reward Banner Section -->
         <section class="reward-banner">
-            <div class="reward-banner-overlay"></div>
-            <div class="reward-banner-content">
+            <div class="reward-banner-content text-black">
                 <h2 class="text-2xl md:text-3xl font-bold mb-2">Top voted people in every town wins 500 Rupees weekly!</h2>
-                <p class="text-sm md:text-base text-gray-200">(if the list has at least 100 people)</p>
+                <p class="text-sm md:text-base">(if the list has at least 100 people)</p>
             </div>
         </section>
 
         <!-- Top Upvoted People Section -->
-        <section class="bg-white white-section-text-black top-upvoted-background mb-8">
-            <h2 class="text-2xl font-bold p-6 mb-4 flex items-center justify-center">
-                <i class="fas fa-users text-gray-500 mr-3"></i> Top Upvoted People
+        <section class="top-upvoted-section top-upvoted-section-people">
+            <h2 class="text-2xl font-bold p-6 mb-4 flex items-center justify-center text-black">
+                <i class="fas fa-users text-black mr-3 icon-pulse"></i> Top Upvoted People
             </h2>
             <ul id="top-upvoted-people-list" class="leaderboard-list-container">
-                <li class="text-gray-400 text-center py-4">Loading top upvoted people...</li>
+                <li class="text-black text-center py-4">Loading top upvoted people...</li>
             </ul>
             <div id="view-all-people-container" class="text-center mt-4 hidden">
-                <button class="view-all-btn bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition duration-300 flex items-center mx-auto" data-section="people">
-                    <i class="fas fa-chevron-down mr-2"></i> View All
+                <button class="view-all-btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center mx-auto" data-section="people">
+                    <i class="fas fa-chevron-down text-black mr-2"></i> View All
                 </button>
             </div>
         </section>
 
         <!-- Top Upvoted Actors Section (NEW) -->
-        <section class="bg-white white-section-text-black top-upvoted-background mb-8">
-            <h2 class="text-2xl font-bold p-6 mb-4 flex items-center justify-center">
-                <i class="fas fa-mask text-gray-500 mr-3"></i> Top Upvoted Actors
+        <section class="top-upvoted-section top-upvoted-section-actors">
+            <h2 class="text-2xl font-bold p-6 mb-4 flex items-center justify-center text-black">
+                <i class="fas fa-mask text-black mr-3 icon-pulse"></i> Top Upvoted Actors
             </h2>
             <ul id="top-upvoted-actors-list" class="leaderboard-list-container">
-                <li class="text-gray-400 text-center py-4">Loading top upvoted actors...</li>
+                <li class="text-black text-center py-4">Loading top upvoted actors...</li>
             </ul>
             <div id="view-all-actors-container" class="text-center mt-4 hidden">
-                <button class="view-all-btn bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition duration-300 flex items-center mx-auto" data-section="actors">
-                    <i class="fas fa-chevron-down mr-2"></i> View All
+                <button class="view-all-btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center mx-auto" data-section="actors">
+                    <i class="fas fa-chevron-down text-black mr-2"></i> View All
                 </button>
             </div>
         </section>
 
         <!-- Top Upvoted Singers Section (NEW) -->
-        <section class="bg-white white-section-text-black top-upvoted-background">
-            <h2 class="text-2xl font-bold p-6 mb-4 flex items-center justify-center">
-                <i class="fas fa-microphone-alt text-gray-500 mr-3"></i> Top Upvoted Singers
+        <section class="top-upvoted-section top-upvoted-section-singers">
+            <h2 class="text-2xl font-bold p-6 mb-4 flex items-center justify-center text-black">
+                <i class="fas fa-microphone-alt text-black mr-3 icon-pulse"></i> Top Upvoted Singers
             </h2>
             <ul id="top-upvoted-singers-list" class="leaderboard-list-container">
-                <li class="text-gray-400 text-center py-4">Loading top upvoted singers...</li>
+                <li class="text-black text-center py-4">Loading top upvoted singers...</li>
             </ul>
             <div id="view-all-singers-container" class="text-center mt-4 hidden">
-                <button class="view-all-btn bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition duration-300 flex items-center mx-auto" data-section="singers">
-                    <i class="fas fa-chevron-down mr-2"></i> View All
+                <button class="view-all-btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center mx-auto" data-section="singers">
+                    <i class="fas fa-chevron-down text-black mr-2"></i> View All
                 </button>
             </div>
         </section>
     </main>
 
-    <script type="module" src="leaderboard.js"></script>
+    <script type="module" src="./js/leaderboard.js"></script>
     <script>
         // JavaScript for mobile menu toggle
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
@@ -450,6 +431,7 @@
     </script>
 </body>
 </html>
+
 
 
 
