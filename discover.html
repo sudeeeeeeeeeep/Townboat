@@ -3,14 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TownBoat: Find Local Businesses & Services Near Me in India</title>
-    <meta name="description" content="Discover the best local businesses, services, and community events near you in India. TownBoat is your hyper-local guide to shops, restaurants, and more. Find what's happening in your town now!" />
-    <meta name="keywords" content="townboat, businesses near me, local businesses India, find services near me, local directory, community events, nearby shops, discover local, townboat app, local services" />
+    <title>TownBoat: Discover the Best Local Businesses & Services in India</title>
+    <meta name="description" content="Explore a comprehensive directory of local businesses, services, and community events on TownBoat. Find the best restaurants, shops, and more near you with our hyper-local hub." />
+    <meta name="keywords" content="townboat, local businesses, services near me, businesses India, local directory, community events, nearby shops, discover local, townboat app, local services, restaurants, fashion, retail, healthcare, home services" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Open Graph (OG) tags for social media sharing -->
+    <meta property="og:title" content="TownBoat: Discover Local Businesses & Services" />
+    <meta property="og:description" content="Find and connect with the best local businesses, services, and events in your town. TownBoat is your hyper-local community hub." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://townboat.in/discover.html" />
+    <meta property="og:image" content="https://placehold.co/1200x630/000000/FFFFFF?text=TownBoat+Discover" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Schema.org Structured Data for Rich Snippets -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "TownBoat Discover",
+      "url": "https://townboat.in/discover.html",
+      "description": "Discover a hyper-local directory of businesses and services in your town on the TownBoat platform.",
+      "mainEntity": {
+        "@type": "ItemList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Restaurants"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Fashion"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Retail"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Services"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 5,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Healthcare"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 6,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Education"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 7,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Home Services"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 8,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Beauty & Spa"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 9,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Finance"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 10,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Groceries"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 11,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Auto/Taxi"
+            }
+          }
+        ]
+      }
+    }
+    </script>
+    
     <style>
         body { font-family: 'Poppins', sans-serif; }
         /* Hide scrollbar for webkit browsers */
@@ -39,17 +152,17 @@
         }
 
         /* Specific background images for each category */
-        .category-restaurants { background-image: url('restaurants.jpeg'); } /* Placeholder if you have a restaurant image */
-        .category-fashion { background-image: url('fashion.jpeg'); }
-        .category-retail { background-image: url('retail.jpeg'); }
-        .category-services { background-image: url('services.jpeg'); }
-        .category-healthcare { background-image: url('healthcare.jpeg'); }
-        .category-education { background-image: url('education.jpeg'); }
-        .category-home-services { background-image: url('homeservices.jpeg'); }
-        .category-beauty-spa { background-image: url('beautyspa.jpeg'); }
-        .category-finance { background-image: url('finance.jpeg'); }
-        .category-groceries { background-image: url('grocery.jpeg'); }
-        .category-auto-taxi { background-image: url('autotaxi.png'); }
+        .category-restaurants { background-image: url('https://placehold.co/600x400/000000/FFFFFF?text=Restaurants'); }
+        .category-fashion { background-image: url('https://placehold.co/600x400/000000/FFFFFF?text=Fashion'); }
+        .category-retail { background-image: url('https://placehold.co/600x400/000000/FFFFFF?text=Retail'); }
+        .category-services { background-image: url('https://placehold.co/600x400/000000/FFFFFF?text=Services'); }
+        .category-healthcare { background-image: url('https://placehold.co/600x400/000000/FFFFFF?text=Healthcare'); }
+        .category-education { background-image: url('https://placehold.co/600x400/000000/FFFFFF?text=Education'); }
+        .category-home-services { background-image: url('https://placehold.co/600x400/000000/FFFFFF?text=Home+Services'); }
+        .category-beauty-spa { background-image: url('https://placehold.co/600x400/000000/FFFFFF?text=Beauty+%26+Spa'); }
+        .category-finance { background-image: url('https://placehold.co/600x400/000000/FFFFFF?text=Finance'); }
+        .category-groceries { background-image: url('https://placehold.co/600x400/000000/FFFFFF?text=Groceries'); }
+        .category-auto-taxi { background-image: url('https://placehold.co/600x400/000000/FFFFFF?text=Auto+%2F+Taxi'); }
         /* Add more category styles as needed for other images */
 
         .category-card:hover {
@@ -58,113 +171,107 @@
         }
     </style>
 </head>
-<body class="bg-black text-white">
+<body class="bg-gray-100 text-black">
 
-    <header class="bg-black sticky top-0 border-b border-gray-700 z-50">
-        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="home.html" class="text-white text-xl font-bold">TownBoat</a>
+    <header class="bg-white sticky top-0 border-b border-gray-200 z-50">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center text-black">
+            <a href="home.html" class="text-xl font-bold">TownBoat</a>
             
             <div class="md:hidden flex items-center">
-                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                <button id="mobile-menu-button" class="text-black focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
             </div>
 
             <div id="nav-links" class="hidden md:flex space-x-4 items-center">
-                <a href="home.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                <a href="home.html" class="text-black hover:text-gray-800 flex items-center space-x-1">
                     <i class="fas fa-home md:hidden"></i><span class="hidden md:inline">Feed</span>
                 </a>
-                <a href="discover.html" class="text-white font-semibold flex items-center space-x-1">
+                <a href="discover.html" class="text-black font-semibold flex items-center space-x-1">
                     <i class="fas fa-compass md:hidden"></i><span class="hidden md:inline">Discover</span>
                 </a>
-                <a href="leaderboard.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                <a href="leaderboard.html" class="text-black hover:text-gray-800 flex items-center space-x-1">
                     <i class="fas fa-trophy md:hidden"></i><span class="hidden md:inline">Leaderboard</span>
                 </a>
-                <!-- NEW: Deals link for desktop -->
-                <a href="deals.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                <a href="deals.html" class="text-black hover:text-gray-800 flex items-center space-x-1">
                     <i class="fas fa-tags md:hidden"></i><span class="hidden md:inline">Deals</span>
                 </a>
-                <!-- NEW: Polls link for desktop -->
-                <a href="polls.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                <a href="polls.html" class="text-black hover:text-gray-800 flex items-center space-x-1">
                     <i class="fas fa-poll md:hidden"></i><span class="hidden md:inline">Polls</span>
                 </a>
-                <!-- NEW: Clubs link for desktop -->
-                <a href="club.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
+                <a href="club.html" class="text-black hover:text-gray-800 flex items-center space-x-1">
                     <i class="fas fa-users md:hidden"></i><span class="hidden md:inline">Clubs</span>
                 </a>
             </div>
 
-            <button id="logout-btn" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-600 transition duration-300">
+            <button id="logout-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition duration-300">
                 <i class="fas fa-sign-out-alt md:hidden"></i><span class="hidden md:inline">Logout</span>
             </button>
         </nav>
 
-        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-800 border-t border-gray-700 py-2">
-            <a href="home.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-100 border-t border-gray-200 py-2">
+            <a href="home.html" class="block px-4 py-2 text-black hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-home"></i> <span>Feed</span>
             </a>
-            <a href="discover.html" class="block px-4 py-2 text-white hover:bg-gray-700 flex items-center space-x-2">
+            <a href="discover.html" class="block px-4 py-2 text-black hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-compass"></i> <span>Discover</span>
             </a>
-            <a href="leaderboard.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+            <a href="leaderboard.html" class="block px-4 py-2 text-black hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-trophy"></i> <span>Leaderboard</span>
             </a>
-            <!-- NEW: Deals link for mobile dropdown -->
-            <a href="deals.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+            <a href="deals.html" class="block px-4 py-2 text-black hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-tags"></i> <span>Deals</span>
             </a>
-            <!-- NEW: Polls link for mobile dropdown -->
-            <a href="polls.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+            <a href="polls.html" class="block px-4 py-2 text-black hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-poll"></i> <span>Polls</span>
             </a>
-            <!-- NEW: Clubs link for mobile dropdown -->
-            <a href="club.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
+            <a href="club.html" class="block px-4 py-2 text-black hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-users"></i> <span>Clubs</span>
             </a>
         </div>
     </header>
 
     <main class="container mx-auto p-4 py-8 max-w-4xl">
-        <h1 class="text-3xl font-bold text-center mb-8">Discover Businesses & Services</h1>
+        <h1 class="text-3xl font-bold text-center mb-4">Discover Local Businesses & Services</h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <a href="business-list.html?category=Restaurants" class="category-card category-restaurants block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+            <a href="business-list.html?category=Restaurants" class="category-card category-restaurants block p-6 rounded-lg text-center hover:bg-gray-200 transition duration-300">
                 <h3 class="font-semibold text-2xl">Restaurants</h3>
             </a>
-            <a href="business-list.html?category=Fashion" class="category-card category-fashion block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+            <a href="business-list.html?category=Fashion" class="category-card category-fashion block p-6 rounded-lg text-center hover:bg-gray-200 transition duration-300">
                 <h3 class="font-semibold text-2xl">Fashion</h3>
             </a>
-            <a href="business-list.html?category=Retail" class="category-card category-retail block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+            <a href="business-list.html?category=Retail" class="category-card category-retail block p-6 rounded-lg text-center hover:bg-gray-200 transition duration-300">
                 <h3 class="font-semibold text-2xl">Retail</h3>
             </a>
-            <a href="business-list.html?category=Services" class="category-card category-services block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+            <a href="business-list.html?category=Services" class="category-card category-services block p-6 rounded-lg text-center hover:bg-gray-200 transition duration-300">
                 <h3 class="font-semibold text-2xl">Services</h3>
             </a>
-            <a href="business-list.html?category=Healthcare" class="category-card category-healthcare block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+            <a href="business-list.html?category=Healthcare" class="category-card category-healthcare block p-6 rounded-lg text-center hover:bg-gray-200 transition duration-300">
                 <h3 class="font-semibold text-2xl">Healthcare</h3>
             </a>
-            <a href="business-list.html?category=Education" class="category-card category-education block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+            <a href="business-list.html?category=Education" class="category-card category-education block p-6 rounded-lg text-center hover:bg-gray-200 transition duration-300">
                 <h3 class="font-semibold text-2xl">Education</h3>
             </a>
-            <a href="business-list.html?category=Home Services" class="category-card category-home-services block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+            <a href="business-list.html?category=Home Services" class="category-card category-home-services block p-6 rounded-lg text-center hover:bg-gray-200 transition duration-300">
                 <h3 class="font-semibold text-2xl">Home Services</h3>
             </a>
-            <a href="business-list.html?category=Beauty & Spa" class="category-card category-beauty-spa block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+            <a href="business-list.html?category=Beauty & Spa" class="category-card category-beauty-spa block p-6 rounded-lg text-center hover:bg-gray-200 transition duration-300">
                 <h3 class="font-semibold text-2xl">Beauty & Spa</h3>
             </a>
-            <a href="business-list.html?category=Finance" class="category-card category-finance block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+            <a href="business-list.html?category=Finance" class="category-card category-finance block p-6 rounded-lg text-center hover:bg-gray-200 transition duration-300">
                 <h3 class="font-semibold text-2xl">Finance</h3>
             </a>
-            <a href="business-list.html?category=Groceries" class="category-card category-groceries block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+            <a href="business-list.html?category=Groceries" class="category-card category-groceries block p-6 rounded-lg text-center hover:bg-gray-200 transition duration-300">
                 <h3 class="font-semibold text-2xl">Groceries</h3>
             </a>
-            <a href="autotaxi.html" class="category-card category-auto-taxi block p-6 rounded-lg text-center hover:bg-gray-700 transition duration-300">
+            <a href="autotaxi.html" class="category-card category-auto-taxi block p-6 rounded-lg text-center hover:bg-gray-200 transition duration-300">
                 <h3 class="font-semibold text-2xl">Auto/Taxi</h3>
             </a>
-            </div>
+        </div>
 
         <p class="text-center text-gray-500 mt-8">
-            Want to list your business? <a href="business-login.html" class="text-emerald-400 hover:underline">Click here</a>.
+            Want to list your business? <a href="business-login.html" class="text-blue-600 hover:underline">Click here</a>.
         </p>
     </main>
 
