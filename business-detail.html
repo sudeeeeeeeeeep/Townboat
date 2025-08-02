@@ -4,179 +4,175 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="page-title">Business Details - TownBoat</title>
+    
+    <!-- Using Inter for a fresh, modern feel -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <style>
-        body { font-family: 'Poppins', sans-serif; }
-        /* Add styles for the larger business image */
-        .large-business-image {
-            width: 100%; /* Full width of its container */
-            max-height: 300px; /* Max height to prevent it from being too tall */
-            object-fit: cover; /* Cover the area, cropping if necessary */
-            border-radius: 12px; /* Slightly more rounded corners */
-            margin-bottom: 1.5rem; /* Space below the image */
-        }
-        /* Hide scrollbar for webkit browsers */
-        ::-webkit-scrollbar {
-            display: none;
-        }
-        /* Hide scrollbar for IE, Edge and Firefox */
-        body {
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #EFF6FF; /* A very light blue background */
+            color: #1a1a1a; /* Dark charcoal text for high contrast */
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
         }
-        .deal-card {
-            background-color: #ffffff; /* White background */
-            color: #000000; /* Black text */
-            border: 1px solid #e5e7eb; /* Light gray border */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        ::-webkit-scrollbar {
+            display: none;
         }
-        .deal-card .text-gray-600 { /* For description/details */
-            color: #000000;
+
+        /* Gen Z-inspired styles for a modern, playful feel */
+        .card {
+            background-color: #ffffff; /* Crisp white cards */
+            border: 1px solid #DBEAFE; /* Subtle light blue border */
+            border-radius: 1.5rem; /* Highly rounded corners */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04); /* More pronounced, soft shadow */
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
         }
-        .deal-card .text-sm {
-            color: #4a5568;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
         }
-        .deal-card .text-emerald-600 {
-            color: #059669; /* Keep emerald for call to action */
+        .btn-primary {
+            background-color: #1D4ED8; /* The requested dark blue */
+            color: #ffffff;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px; /* Pill-shaped buttons */
+            transition: all 0.3s ease-in-out;
         }
-        .deal-card .text-red-500 {
-            color: #ef4444; /* Keep red for expiry */
+        .btn-primary:hover {
+            background-color: #1E40AF; /* Slightly darker shade for hover */
+            transform: translateY(-2px);
         }
-        .deal-image {
+        .large-business-image {
             width: 100%;
-            height: 200px;
+            max-height: 350px;
             object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 1rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-
-        /* Custom style for the business detail container background */
-        .business-detail-background {
-            background-image: url('detailss.jpeg'); /* Background image for the main section */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+        .nav-link.active {
+            color: #1D4ED8; /* Active link color */
+            font-weight: 700;
             position: relative;
-            overflow: hidden;
-            padding-bottom: 2rem; /* Add some padding at the bottom for content */
         }
-
-        /* New container for business info with white background and black text */
-        .business-info-card {
-            background-color: #ffffff;
-            color: #000000; /* Default text color for this card */
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem; /* Tailwind p-6 */
-            border-radius: 0.5rem; /* Tailwind rounded-lg */
-            margin-top: 1rem; /* Tailwind mt-4 */
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 100%;
+            height: 3px;
+            background-color: #1D4ED8;
+            border-radius: 2px;
         }
-        /* Ensure specific Tailwind colors are applied within the info card */
-        .business-info-card .text-emerald-400 { color: #34d399 !important; }
-        .business-info-card .text-yellow-400 { color: #facc15 !important; }
-        .business-info-card .text-blue-400 { color: #60a5fa !important; }
-        .business-info-card strong { color: #000000; } /* Ensure strong tags are black */
-
-
-        /* Specific style for the Call Now button text */
-        .call-button-text-white {
-            color: #ffffff !important; /* Force white text for the call button */
+        .text-gradient {
+            background-image: linear-gradient(45deg, #1D4ED8, #3B82F6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-
-        /* Custom style for the business deals section background */
-        .business-deals-background {
-            background-color: #1a202c; /* Darker gray, similar to bg-gray-900 but can be changed */
-            background-image: url('fildeal.jpeg'); /* Setting the background image */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            position: relative;
-            overflow: hidden;
+        .animate-pulse-fast {
+            animation: pulse-fast 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
-        /* Ensure text is readable on the new deals background */
-        .business-deals-background h2,
-        .business-deals-background p {
-            color: #ffffff; /* Ensure text is white for readability */
+        @keyframes pulse-fast {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .5;
+            }
         }
-        .business-deals-background .deal-card {
-            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white for deal cards */
-            color: #000000; /* Black text for deal cards */
-        }
-        .business-deals-background .deal-card .text-gray-600 {
-            color: #374151; /* Darker gray for deal card descriptions */
+        .modern-deals-section {
+            background-color: #F8FAFC; /* A subtle off-white for contrast */
+            border: 1px solid #E2E8F0;
+            border-radius: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            transition: all 0.3s ease-in-out;
         }
     </style>
 </head>
-<body class="bg-black text-white">
+<body class="text-gray-900">
 
-    <header class="bg-black sticky top-0 border-b border-gray-700 z-50">
-        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="home.html" class="text-white text-xl font-bold">TownBoat</a>
-            
-            <div class="md:hidden flex items-center">
-                <button id="mobile-menu-button" class="text-white focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+    <!-- Header Section -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="index.html" class="text-3xl font-extrabold tracking-tight text-black">
+                TownBoat
+            </a>
+            <div class="flex items-center space-x-4">
+                <!-- Back Button for desktop -->
+                <a href="javascript:history.back()" class="hidden md:block text-gray-900 text-2xl hover:text-gray-600 transition duration-300 mr-4">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <!-- Mobile Menu Button (Hamburger) -->
+                <button id="mobile-menu-button" class="md:hidden text-gray-900 focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
                 </button>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="index.html" class="nav-link text-gray-600 hover:text-gray-900 transition duration-300">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                    <a href="discover.html" class="nav-link text-gray-900 font-semibold border-b-2 border-[#1D4ED8]">
+                        <i class="fas fa-compass mr-2"></i>Discover
+                    </a>
+                    <a href="polls.html" class="nav-link text-gray-600 hover:text-gray-900 transition duration-300">
+                        <i class="fas fa-poll mr-2"></i>Polls
+                    </a>
+                    <a href="deals.html" class="nav-link text-gray-600 hover:text-gray-900 transition duration-300">
+                        <i class="fas fa-tags mr-2"></i>Deals
+                    </a>
+                </div>
             </div>
-
-            <div id="nav-links" class="hidden md:flex space-x-4 items-center">
-                <a href="home.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
-                    <i class="fas fa-home md:hidden"></i><span class="hidden md:inline">Feed</span>
-                </a>
-                <a href="discover.html" class="text-white font-semibold flex items-center space-x-1">
-                    <i class="fas fa-compass md:hidden"></i><span class="hidden md:inline">Discover</span>
-                </a>
-                <a href="leaderboard.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
-                    <i class="fas fa-trophy md:hidden"></i><span class="hidden md:inline">Leaderboard</span>
-                </a>
-                <!-- NEW: Deals link for desktop -->
-                <a href="deals.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
-                    <i class="fas fa-tags md:hidden"></i><span class="hidden md:inline">Deals</span>
-                </a>
-            </div>
-
-            <button id="logout-btn" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-600 transition duration-300">
-                <i class="fas fa-sign-out-alt md:hidden"></i><span class="hidden md:inline">Logout</span>
-            </button>
         </nav>
-
-        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-800 border-t border-gray-700 py-2">
-            <a href="home.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
-                <i class="fas fa-home"></i> <span>Feed</span>
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-white p-4 shadow-lg">
+            <a href="index.html" class="block py-2 text-gray-600 hover:bg-gray-100 rounded-md px-3">
+                <i class="fas fa-home mr-2"></i>Home
             </a>
-            <a href="discover.html" class="block px-4 py-2 text-white hover:bg-gray-700 flex items-center space-x-2">
-                <i class="fas fa-compass"></i> <span>Discover</span>
+            <a href="discover.html" class="block py-2 text-gray-900 bg-gray-100 font-semibold rounded-md px-3">
+                <i class="fas fa-compass mr-2"></i>Discover
             </a>
-            <a href="leaderboard.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
-                <i class="fas fa-trophy"></i> <span>Leaderboard</span>
+            <a href="polls.html" class="block py-2 text-gray-600 hover:bg-gray-100 rounded-md px-3">
+                <i class="fas fa-poll mr-2"></i>Polls
             </a>
-            <!-- NEW: Deals link for mobile dropdown -->
-            <a href="deals.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
-                <i class="fas fa-tags"></i> <span>Deals</span>
+            <a href="deals.html" class="block py-2 text-gray-600 hover:bg-gray-100 rounded-md px-3">
+                <i class="fas fa-tags mr-2"></i>Deals
             </a>
+            <button id="mobile-logout-btn" class="w-full text-left py-2 px-3 mt-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition duration-300">
+                <i class="fas fa-sign-out-alt mr-2"></i>Log Out
+            </button>
         </div>
     </header>
 
     <main class="container mx-auto p-4 md:p-6">
-        <div id="business-detail-container" class="bg-gray-900 p-6 rounded-lg shadow-lg border border-gray-700 max-w-2xl mx-auto mb-8 business-detail-background">
+        <div id="business-detail-container" class="card p-6 max-w-3xl mx-auto mb-8">
             <!-- Content will be dynamically loaded by JavaScript -->
-            <p class="text-gray-400 text-center py-8">Loading business details...</p>
+            <p class="text-gray-500 text-center py-8">Loading business details...</p>
         </div>
 
         <!-- Deals Section for this Business -->
-        <div id="business-deals-section" class="bg-gray-900 p-6 rounded-lg shadow-lg border border-gray-700 max-w-2xl mx-auto mt-8 business-deals-background">
-            <h2 class="text-2xl font-bold text-center mb-6">Active Deals</h2>
+        <div id="business-deals-section" class="modern-deals-section p-6 max-w-3xl mx-auto mt-8">
+            <h2 class="text-3xl font-extrabold text-center mb-6 text-[#1D4ED8]">
+                <i class="fas fa-star animate-pulse-fast text-yellow-400 mr-2"></i> Active Deals <i class="fas fa-tags ml-2 text-emerald-500"></i>
+            </h2>
             <div id="business-deals-list" class="space-y-4">
-                <p class="text-gray-400 text-center" id="no-business-deals-message">Loading deals for this business...</p>
+                <p class="text-gray-500 text-center" id="no-business-deals-message">Loading deals for this business...</p>
             </div>
         </div>
     </main>
+    
+    <div id="message-box-container"></div>
 
-    <script type="module" src="business-detail.js"></script>
+    <script type="module" src="./js/business-detail.js"></script>
     <script>
         // JavaScript for mobile menu toggle
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
@@ -186,3 +182,7 @@
     </script>
 </body>
 </html>
+
+
+
+
