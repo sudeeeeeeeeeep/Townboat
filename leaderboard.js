@@ -2,22 +2,22 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { 
-    getFirestore, 
-    collection, 
-    query, 
-    orderBy, 
-    limit, 
+import {
+    getFirestore,
+    collection,
+    query,
+    orderBy,
+    limit,
     onSnapshot,
-    where, 
-    getDocs, 
-    doc, 
+    where,
+    getDocs,
+    doc,
     getDoc,
-    addDoc, 
-    updateDoc, 
-    arrayUnion, 
-    arrayRemove, 
-    serverTimestamp 
+    addDoc,
+    updateDoc,
+    arrayUnion,
+    arrayRemove,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 // Removed getStorage, ref, uploadBytes, getDownloadURL as personal images are now from Google
 import { firebaseConfig } from './firebase-config.js';
@@ -30,10 +30,10 @@ const db = getFirestore(app);
 
 // Declare DOM elements globally but initialize them inside DOMContentLoaded
 let logoutButton;
-let topUpvotedList; 
-let topUpvotedPeopleList; 
-let topUpvotedActorsList; 
-let topUpvotedSingersList; 
+let topUpvotedList;
+let topUpvotedPeopleList;
+let topUpvotedActorsList;
+let topUpvotedSingersList;
 let townFilter;
 let categoryFilter;
 
@@ -49,7 +49,7 @@ let personSectionTitle; // New: for dynamic title
 let personListingForm;
 let personNameInput;
 let personBioInput;
-let personInstagramInput; 
+let personInstagramInput;
 let personImagePreview;
 let submitPersonListingBtn;
 let personListingStatusMessage;
@@ -86,8 +86,8 @@ let currentFilters = {
     town: '',
     category: ''
 };
-let userHometown = ''; 
-let currentLoggedInUser = null; 
+let userHometown = '';
+let currentLoggedInUser = null;
 
 // Helper function to get element by ID and log an error if not found
 const getElementByIdOrLog = (id) => {
@@ -104,8 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
     logoutButton = getElementByIdOrLog('logout-btn');
     topUpvotedList = getElementByIdOrLog('top-upvoted-list');
     topUpvotedPeopleList = getElementByIdOrLog('top-upvoted-people-list');
-    topUpvotedActorsList = getElementByIdOrLog('top-upvoted-actors-list'); 
-    topUpvotedSingersList = getElementByIdOrLog('top-upvoted-singers-list'); 
+    topUpvotedActorsList = getElementByIdOrLog('top-upvoted-actors-list');
+    topUpvotedSingersList = getElementByIdOrLog('top-upvoted-singers-list');
     townFilter = getElementByIdOrLog('town-filter');
     categoryFilter = getElementByIdOrLog('category-filter');
 
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     personListingForm = getElementByIdOrLog('person-listing-form');
     personNameInput = getElementByIdOrLog('person-name');
     personBioInput = getElementByIdOrLog('person-bio');
-    personInstagramInput = getElementByIdOrLog('person-instagram'); 
+    personInstagramInput = getElementByIdOrLog('person-instagram');
     personImagePreview = getElementByIdOrLog('person-image-preview');
     submitPersonListingBtn = getElementByIdOrLog('submit-person-listing-btn');
     personListingStatusMessage = getElementByIdOrLog('person-listing-status-message');
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- AUTHENTICATION CHECK ---
-    onAuthStateChanged(auth, async (user) => { 
+    onAuthStateChanged(auth, async (user) => {
         currentLoggedInUser = user; // Set currentLoggedInUser regardless of login status
 
         if (user) {
@@ -155,19 +155,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     userHometown = userDocSnap.data().hometown;
                     console.log("User's hometown:", userHometown);
                     
-                    await populateTownFilter(); 
+                    await populateTownFilter();
                     if (townFilter && Array.from(townFilter.options).some(opt => opt.value === userHometown)) {
                         townFilter.value = userHometown;
-                        currentFilters.town = userHometown; 
+                        currentFilters.town = userHometown;
                     }
                 } else {
                     console.log("User has no hometown set. Redirecting to set-hometown page.");
-                    window.location.href = 'set-hometown.html'; 
-                    return; 
+                    window.location.href = 'set-hometown.html';
+                    return;
                 }
             } catch (error) {
                 console.error("Error fetching user hometown:", error);
-                await populateTownFilter(); 
+                await populateTownFilter();
             }
 
             // --- PROCEED WITH PAGE-SPECIFIC LOGIC ---
@@ -182,25 +182,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Always fetch leaderboard data, regardless of login status
-        fetchLeaderboardData(); 
-        fetchPeopleRankingData(); 
-        fetchActorsRankingData(); 
-        fetchSingersRankingData(); 
+        fetchLeaderboardData();
+        fetchPeopleRankingData();
+        fetchActorsRankingData();
+        fetchSingersRankingData();
     });
 
     // --- EVENT LISTENERS FOR FILTERS ---
-    if (townFilter) { 
+    if (townFilter) {
         townFilter.addEventListener('change', (e) => {
             currentFilters.town = e.target.value;
-            fetchLeaderboardData(); 
-            fetchPeopleRankingData(); 
+            fetchLeaderboardData();
+            fetchPeopleRankingData();
         });
     }
 
-    if (categoryFilter) { 
+    if (categoryFilter) {
         categoryFilter.addEventListener('change', (e) => {
             currentFilters.category = e.target.value;
-            fetchLeaderboardData(); 
+            fetchLeaderboardData();
         });
     }
 
@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderListings(topUpvotedList, allBusinessesData, showAllBusinessesFlag, createBusinessCard, 'businesses');
             } else if (section === 'people') {
                 showAllPeopleFlag = !showAllPeopleFlag;
-                renderListings(topUpvotedPeopleList, allPeopleData, showAllPeopleFlag, createEntityCard, 'peopleRankings'); 
+                renderListings(topUpvotedPeopleList, allPeopleData, showAllPeopleFlag, createEntityCard, 'peopleRankings');
             } else if (section === 'actors') {
                 showAllActorsFlag = !showAllActorsFlag;
                 renderListings(topUpvotedActorsList, allActorsData, showAllActorsFlag, createEntityCard, 'actors');
@@ -226,11 +226,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- LOGOUT BUTTON ---
-    if (logoutButton) { 
+    if (logoutButton) {
         logoutButton.addEventListener('click', () => {
             signOut(auth).then(() => {
                 console.log("User signed out.");
-                window.location.href = 'index.html'; 
+                window.location.href = 'index.html';
             }).catch((error) => {
                 console.error("Error signing out:", error);
                 displayMessage("Failed to log out. Please try again.", "error"); // Use custom message box
@@ -254,9 +254,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const name = personNameInput.value.trim();
             const bio = personBioInput.value.trim();
-            const instagramId = personInstagramInput.value.trim(); 
+            const instagramId = personInstagramInput.value.trim();
             const userId = currentLoggedInUser.uid;
-            const hometown = userHometown; 
+            const hometown = userHometown;
 
             if (!name) {
                 personListingStatusMessage.textContent = "Please enter your name.";
@@ -267,18 +267,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Always use the Google profile image for the person listing
-            const imageUrl = currentLoggedInUser.photoURL || 'https://placehold.co/50x50/E5E7EB/000000?text=User'; 
-            
+            const imageUrl = currentLoggedInUser.photoURL || 'https://placehold.co/50x50/E5E7EB/000000?text=User';
+
             try {
                 const docRef = await addDoc(collection(db, "peopleRankings"), {
                     userId: userId,
                     name: name,
                     bio: bio,
-                    instagramId: instagramId, 
+                    instagramId: instagramId,
                     hometown: hometown,
                     imageUrl: imageUrl, // Use Google profile image
                     upvoteCount: 0,
-                    upvotedBy: [], 
+                    upvotedBy: [],
                     createdAt: serverTimestamp()
                 });
                 console.log("Person listing added with ID:", docRef.id);
@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 personListingStatusMessage.classList.remove('text-red-500');
                 personListingStatusMessage.classList.add('text-emerald-400');
                 personListingForm.reset();
-                currentPersonListingId = docRef.id; 
+                currentPersonListingId = docRef.id;
                 checkAndDisplayPersonListingForm(); // Re-check to hide form and show message
             } catch (error) {
                 console.error("Error adding person listing:", error);
@@ -402,12 +402,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- POPULATE TOWN FILTER ---
 async function populateTownFilter() {
-    if (townFilter) { 
+    if (townFilter) {
         townFilter.innerHTML = '<option value="">All Towns</option>';
 
         try {
             const townsCollectionRef = collection(db, "towns");
-            const q = query(townsCollectionRef, orderBy("name")); 
+            const q = query(townsCollectionRef, orderBy("name"));
             const querySnapshot = await getDocs(q);
 
             if (querySnapshot.empty) {
@@ -421,7 +421,7 @@ async function populateTownFilter() {
                 querySnapshot.forEach((doc) => {
                     const townData = doc.data();
                     const option = document.createElement('option');
-                    option.value = townData.name; 
+                    option.value = townData.name;
                     option.textContent = townData.name;
                     townFilter.appendChild(option);
                 });
@@ -450,14 +450,14 @@ function formatUpvoteCount(count) {
 
 // --- FETCH LEADERBOARD DATA (BUSINESSES) ---
 function fetchLeaderboardData() {
-    if (!topUpvotedList) { 
+    if (!topUpvotedList) {
         console.error("topUpvotedList element not found in DOM.");
         return;
     }
 
     let leaderboardQuery = query(
         collection(db, "businesses"),
-        where("status", "==", "approved"), 
+        where("status", "==", "approved"),
         orderBy("upvoteCount", "desc"),
         orderBy("name")
     );
@@ -536,7 +536,7 @@ async function checkAndDisplayPersonListingForm() {
         }
     } catch (error) {
         console.error("Error checking person listing status:", error);
-        listPersonSection.classList.remove('hidden'); 
+        listPersonSection.classList.remove('hidden');
         personListingForm.classList.add('hidden');
         personAlreadyListedInfo.classList.add('hidden');
         editPersonForm.classList.add('hidden');
@@ -555,10 +555,10 @@ function fetchPeopleRankingData() {
     let peopleQuery = query(
         collection(db, "peopleRankings"),
         orderBy("upvoteCount", "desc"),
-        orderBy("name") 
+        orderBy("name")
     );
 
-    if (currentFilters.town) { 
+    if (currentFilters.town) {
         peopleQuery = query(peopleQuery, where("hometown", "==", currentFilters.town));
     }
 
@@ -629,7 +629,7 @@ function renderListings(containerElement, dataArray, showAllFlag, createCardFn, 
     }
 
     dataArray.slice(0, limitToDisplay).forEach((item, index) => {
-        const li = createCardFn(item, item.id, index + 1, collectionName); 
+        const li = createCardFn(item, item.id, index + 1, collectionName);
         containerElement.appendChild(li);
     });
 
@@ -640,7 +640,7 @@ function renderListings(containerElement, dataArray, showAllFlag, createCardFn, 
             viewAllContainer.classList.remove('hidden');
             const viewAllButton = viewAllContainer.querySelector('.view-all-btn');
             if (viewAllButton) {
-                viewAllButton.innerHTML = showAllFlag ? '<i class="fas fa-chevron-up mr-2"></i> Show Less' : '<i class="fas fa-chevron-down mr-2"></i> View All';
+                viewAllButton.innerHTML = showAllFlag ? '<i class="fas fa-chevron-up mr-2 text-black"></i> Show Less' : '<i class="fas fa-chevron-down mr-2 text-black"></i> View All';
             }
         } else {
             viewAllContainer.classList.add('hidden'); // Hide if 3 or fewer items
@@ -652,7 +652,7 @@ function renderListings(containerElement, dataArray, showAllFlag, createCardFn, 
 // --- CREATE BUSINESS CARD ---
 function createBusinessCard(business, businessId, rank) {
     const li = document.createElement('li');
-    li.className = 'leaderboard-item flex items-center justify-between'; 
+    li.className = 'leaderboard-item flex items-center justify-between';
     
     const imageUrl = business.imageUrl || 'https://placehold.co/50x50/E5E7EB/000000?text=Logo';
 
@@ -662,12 +662,12 @@ function createBusinessCard(business, businessId, rank) {
                 <span class="rank-text font-bold mr-3 md:mr-4 ${getRankColorClass(rank)} flex-shrink-0">${rank}.</span>
                 <img src="${imageUrl}" alt="${business.name}" class="item-image object-cover rounded-full mr-3 md:mr-4 border border-gray-300 flex-shrink-0">
                 <div class="flex-grow min-w-0">
-                    <p class="item-name font-semibold text-white">${business.name}</p>
-                    <p class="item-details text-gray-300">${business.category} • ${business.town}</p>
+                    <p class="item-name font-semibold text-black">${business.name}</p>
+                    <p class="item-details text-gray-700">${business.category} • ${business.town}</p>
                 </div>
             </div>
-            <div class="flex items-center text-gray-100 font-bold upvote-count flex-shrink-0 ml-2">
-                <i class="fas fa-arrow-up mr-1"></i>${formatUpvoteCount(business.upvoteCount || 0)}
+            <div class="flex items-center text-black font-bold upvote-count flex-shrink-0 ml-2">
+                <i class="fas fa-arrow-up mr-1 text-black"></i>${formatUpvoteCount(business.upvoteCount || 0)}
             </div>
         </a>
     `;
@@ -677,20 +677,19 @@ function createBusinessCard(business, businessId, rank) {
 // --- GENERIC CREATE ENTITY CARD (for People, Actors, Singers) ---
 function createEntityCard(entity, entityId, rank, collectionName) {
     const li = document.createElement('li');
-    li.className = 'leaderboard-item flex items-center justify-between'; 
-
-    const imageUrl = entity.imageUrl || (collectionName === 'peopleRankings' && currentLoggedInUser?.photoURL) || 'https://placehold.co/50x50/E5E7EB/000000?text=User'; 
+    li.className = 'leaderboard-item flex items-center justify-between';
+    
+    const imageUrl = entity.imageUrl || (collectionName === 'peopleRankings' && currentLoggedInUser?.photoURL) || 'https://placehold.co/50x50/E5E7EB/000000?text=User';
     
     const isUpvoted = currentLoggedInUser && entity.upvotedBy && entity.upvotedBy.includes(currentLoggedInUser.uid);
-    // Determine icon and color based on upvote status
-    const upvoteIconClass = isUpvoted ? 'fas fa-heart text-emerald-600' : 'far fa-heart text-gray-300'; // Heart icon for people/actors/singers
-    const upvoteCountColorClass = isUpvoted ? 'text-emerald-600' : 'text-gray-100'; // Make count color match icon if upvoted
-
+    // Determine icon based on upvote status, but always make it black
+    const upvoteIconClass = isUpvoted ? 'fas fa-heart text-black' : 'far fa-heart text-black';
+    
     let extraInfoHtml = '';
     if (collectionName === 'peopleRankings' && entity.instagramId) {
         extraInfoHtml = ` • IG: @${entity.instagramId}`;
     } else if ((collectionName === 'actors' || collectionName === 'singers') && entity.link) {
-        extraInfoHtml = ` • <a href="${entity.link}" target="_blank" class="text-blue-300 hover:underline">Link</a>`; 
+        extraInfoHtml = ` • <a href="${entity.link}" target="_blank" class="text-blue-500 hover:underline">Link</a>`;
     }
 
     li.innerHTML = `
@@ -698,18 +697,18 @@ function createEntityCard(entity, entityId, rank, collectionName) {
             <span class="rank-text font-bold mr-3 md:mr-4 ${getRankColorClass(rank)} flex-shrink-0">${rank}.</span>
             <img src="${imageUrl}" alt="${entity.name}" class="item-image object-cover rounded-full mr-3 md:mr-4 border border-gray-300 flex-shrink-0">
             <div class="flex-grow min-w-0">
-                <p class="item-name font-semibold text-white">${entity.name}</p>
-                <p class="item-details text-gray-300">
-                   
+                <p class="item-name font-semibold text-black">${entity.name}</p>
+                <p class="item-details text-gray-700">
+                    ${entity.bio || 'No bio'}
                     ${entity.hometown ? ` • ${entity.hometown}` : ''}
                     ${extraInfoHtml}
                 </p>
             </div>
         </div>
         <div class="flex items-center space-x-2 md:space-x-3 flex-shrink-0 ml-2">
-            <span class="upvote-clickable flex items-center font-bold cursor-pointer ${upvoteCountColorClass}" 
+            <span class="upvote-clickable flex items-center font-bold cursor-pointer text-black"
                   data-id="${entityId}" data-collection="${collectionName}" data-is-upvoted="${isUpvoted}" ${!currentLoggedInUser ? 'data-disabled="true"' : ''}>
-                <i class="${upvoteIconClass} mr-1"></i>${formatUpvoteCount(entity.upvoteCount || 0)}
+                <i class="${upvoteIconClass} mr-1"></i><span class="text-black">${formatUpvoteCount(entity.upvoteCount || 0)}</span>
             </span>
         </div>
     `;
@@ -720,7 +719,7 @@ function createEntityCard(entity, entityId, rank, collectionName) {
         upvoteClickableSpan.addEventListener('click', (e) => {
             if (!currentLoggedInUser) {
                 // If not logged in, redirect to index.html for signup/login
-                window.location.href = 'index.html'; 
+                window.location.href = 'index.html';
                 return;
             }
             const currentIsUpvoted = e.currentTarget.dataset.isUpvoted === 'true';
@@ -742,32 +741,32 @@ async function handleEntityUpvote(element, entityId, collectionName, isCurrently
     }
 
     // Disable the element to prevent multiple clicks during processing
-    element.style.pointerEvents = 'none'; 
+    element.style.pointerEvents = 'none';
     element.style.opacity = '0.6';
 
     const entityRef = doc(db, collectionName, entityId);
 
     try {
+        const iconElement = element.querySelector('i');
+        
         if (isCurrentlyUpvoted) {
             await updateDoc(entityRef, {
-                upvoteCount: Math.max(0, (await getDoc(entityRef)).data().upvoteCount - 1), 
+                upvoteCount: Math.max(0, (await getDoc(entityRef)).data().upvoteCount - 1),
                 upvotedBy: arrayRemove(currentLoggedInUser.uid)
             });
             // Update UI immediately (optimistic update or after success)
-            element.classList.remove('text-emerald-600');
-            element.classList.add('text-gray-100'); // Revert to original color
-            element.querySelector('i').className = 'far fa-heart text-gray-300 mr-1'; // Outline heart
+            iconElement.classList.remove('fas');
+            iconElement.classList.add('far');
             element.dataset.isUpvoted = 'false';
             console.log(`Upvote removed for ${collectionName} ID: ${entityId}`);
         } else {
             await updateDoc(entityRef, {
-                upvoteCount: ((await getDoc(entityRef)).data().upvoteCount || 0) + 1, 
+                upvoteCount: ((await getDoc(entityRef)).data().upvoteCount || 0) + 1,
                 upvotedBy: arrayUnion(currentLoggedInUser.uid)
             });
             // Update UI immediately
-            element.classList.remove('text-gray-100'); // Remove original color
-            element.classList.add('text-emerald-600'); // Set upvoted color
-            element.querySelector('i').className = 'fas fa-heart text-emerald-600 mr-1'; // Solid heart
+            iconElement.classList.remove('far');
+            iconElement.classList.add('fas');
             element.dataset.isUpvoted = 'true';
             console.log(`Upvote added for ${collectionName} ID: ${entityId}`);
         }
@@ -775,10 +774,9 @@ async function handleEntityUpvote(element, entityId, collectionName, isCurrently
         console.error(`Error updating ${collectionName} upvote for ID ${entityId}:`, error);
         displayMessage("Failed to update upvote. Please try again.", "error");
         // Revert UI if update failed (optional, but good for robustness)
-        element.classList.toggle('text-emerald-600');
-        element.classList.toggle('text-gray-100');
-        element.querySelector('i').classList.toggle('fas');
-        element.querySelector('i').classList.toggle('far');
+        const iconElement = element.querySelector('i');
+        iconElement.classList.toggle('fas');
+        iconElement.classList.toggle('far');
         element.dataset.isUpvoted = String(!isCurrentlyUpvoted);
     } finally {
         element.style.pointerEvents = 'auto'; // Re-enable pointer events
@@ -789,19 +787,19 @@ async function handleEntityUpvote(element, entityId, collectionName, isCurrently
 // --- RANK COLOR CLASS HELPER ---
 function getRankColorClass(rank) {
     if (rank === 1) {
-        return 'text-yellow-400'; 
+        return 'text-yellow-400';
     } else if (rank === 2) {
-        return 'text-yellow-600'; 
+        return 'text-yellow-600';
     } else if (rank === 3) {
-        return 'text-yellow-700'; 
+        return 'text-yellow-700';
     }
-    return 'text-gray-300'; 
+    return 'text-gray-700';
 }
 
 // --- CUSTOM MESSAGE BOX (instead of alert) ---
 function displayMessage(message, type = "info") {
     const messageBox = document.createElement('div');
-    messageBox.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg text-white z-[1000] 
+    messageBox.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg text-white z-[1000]
                             ${type === 'error' ? 'bg-red-600' : type === 'success' ? 'bg-emerald-600' : 'bg-gray-700'}`;
     messageBox.textContent = message;
     document.body.appendChild(messageBox);
