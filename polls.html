@@ -12,7 +12,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -63,13 +63,20 @@
       }
     }
     </script>
-
     <style>
         body {
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            /* Updated font family to Poppins */
+            font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             background-color: #F0F2F5; /* Light background for a clean, modern look */
             color: #1A1A1A; /* Dark text for readability */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
         }
+        /* Hide scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
         /* Header styles matching existing app aesthetic */
         header {
             background-color: #FFFFFF; /* White header */
@@ -322,16 +329,6 @@
         }
         .text-green-500 { color: #22C55E; } /* Green for success */
         .text-red-500 { color: #EF4444; } /* Red for error */
-
-        /* Hide scrollbar for webkit browsers */
-        ::-webkit-scrollbar {
-            display: none;
-        }
-        /* Hide scrollbar for IE, Edge and Firefox */
-        body {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-900">
@@ -359,7 +356,6 @@
                 <a href="deals.html" class="text-gray-600 hover:text-gray-900 flex items-center space-x-1">
                     <i class="fas fa-tags md:hidden"></i><span class="hidden md:inline">Deals</span>
                 </a>
-                <!-- New 'Clubs' link -->
                 <a href="clubs.html" class="text-gray-600 hover:text-gray-900 flex items-center space-x-1">
                     <i class="fas fa-users md:hidden"></i><span class="hidden md:inline">Clubs</span>
                 </a>
@@ -386,7 +382,6 @@
             <a href="deals.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-tags"></i> <span>Deals</span>
             </a>
-            <!-- New 'Clubs' link -->
             <a href="clubs.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-200 flex items-center space-x-2">
                 <i class="fas fa-users"></i> <span>Clubs</span>
             </a>
@@ -397,7 +392,6 @@
     </header>
 
     <main class="container mx-auto max-w-2xl py-8">
-        <!-- Updated H1 for SEO -->
         <h1 class="text-3xl font-bold text-center mb-8">Participate in Public & Local Polls</h1>
 
         <!-- Admin Poll Creation Section -->
