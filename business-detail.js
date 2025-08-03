@@ -104,6 +104,25 @@ async function fetchBusinessDetails(businessId) {
             const imageUrl = business.imageUrl || 'images/placeholder.jpeg'; // Placeholder for business image
             const displayImage = `<img src="${imageUrl}" alt="${business.name} Image" class="large-business-image mx-auto">`;
 
+            // NEW: Logic for the claim button
+            let claimButtonHtml = '';
+            if (currentLoggedInUser && !business.isClaimed) {
+                claimButtonHtml = `
+                    <div class="mt-6 text-center">
+                        <p class="text-sm text-gray-600 mb-2">Is this your business?</p>
+                        <a href="claim-business.html?id=${businessId}" class="inline-block bg-yellow-500 text-white font-bold py-3 px-8 rounded-full hover:bg-yellow-600 transition duration-300">
+                            Claim This Business
+                        </a>
+                    </div>
+                `;
+            } else if (business.isClaimed) {
+                claimButtonHtml = `
+                    <div class="mt-6 text-center">
+                        <p class="text-sm text-green-600 font-semibold"><i class="fas fa-check-circle mr-2"></i>Verified Owner</p>
+                    </div>
+                `;
+            }
+
             businessDetailContainer.innerHTML = `
                 ${displayImage}
                 <div class="business-info-card">
@@ -123,8 +142,7 @@ async function fetchBusinessDetails(businessId) {
                         </a>
                     </div>
                     ` : ''}
-                    
-                </div>
+                    ${claimButtonHtml} </div>
             `;
 
             const bookmarkBtn = document.getElementById('bookmark-btn');
