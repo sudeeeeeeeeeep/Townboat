@@ -1,12 +1,19 @@
 // js/business-login.js
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { 
+    getAuth, 
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { firebaseConfig } from './firebase-config.js';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements for Forms and Buttons
@@ -26,6 +33,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const signupButton = document.getElementById('business-signup-btn');
     const signupStatusMessage = document.getElementById('signup-status-message');
     const showLoginLink = document.getElementById('show-login');
+
+    const googleBusinessLoginBtn = document.getElementById('google-business-login-btn');
+
+    // --- Google Sign-In Logic ---
+    if (googleBusinessLoginBtn) {
+        googleBusinessLoginBtn.addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                console.log("Google Sign-In successful for business user:", result.user.email);
+                // After successful sign-in, onAuthStateChanged in business-dashboard.js
+                // will handle checking if they own a business and showing the dashboard.
+                window.location.href = 'business-dashboard.html';
+            } catch (error) {
+                console.error("Google Sign-In Error:", error);
+                loginStatusMessage.textContent = `Google Sign-In Failed: ${error.message}`;
+                loginStatusMessage.classList.add('text-red-500');
+            }
+        });
+    }
+
 
     // --- Form Toggle Logic ---
     function showLoginForm() {

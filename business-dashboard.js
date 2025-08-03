@@ -125,27 +125,17 @@ const claimStatusMessage = getElementByIdOrLog('claim-status-message');
 onAuthStateChanged(auth, async (user) => {
     console.log("onAuthStateChanged triggered. User:", user ? user.email : "none");
     if (user) {
-        // Check if the user is authenticated via email/password (business owner)
-        if (user.providerData.some(provider => provider.providerId === 'password')) {
-            console.log("User is a business owner (email/password). Fetching business details...");
-            currentBusinessUser = user;
-            await populateTownsForForms(); // Populate towns for both list and edit forms
-            await populateCategoriesForForms(); // Populate categories for both list and edit forms
-            await fetchOwnedBusiness(user.email); // Fetch business using email
-            if (businessLoginForm) businessLoginForm.classList.add('hidden');
-            if (dashboardContent) dashboardContent.classList.remove('hidden'); // This should unhide the main dashboard
-            console.log("Dashboard content should now be visible.");
-        } else {
-            console.log("User is NOT an email/password business owner. Redirecting.");
-            // This is a Google user or other non-email/password type trying to access business dashboard
-            alert("❌ Access Denied: Business dashboard requires an email/password login.");
-            signOut(auth).then(() => {
-                window.location.href = 'business-login.html'; // Redirect to business-specific login
-            }).catch((error) => {
-                console.error("Error signing out non-business user:", error);
-                window.location.href = 'business-login.html'; // Ensure redirect even on error
-            });
-        }
+        // MODIFIED: Removed the check for password provider.
+        // Now, any logged-in user (Google or email/password) can potentially access the dashboard.
+        // The fetchOwnedBusiness function will determine if they actually own a business.
+        console.log("User is logged in. Fetching business details...");
+        currentBusinessUser = user;
+        await populateTownsForForms();
+        await populateCategoriesForForms();
+        await fetchOwnedBusiness(user.email); // Fetch business using the user's email
+        if (businessLoginForm) businessLoginForm.classList.add('hidden');
+        if (dashboardContent) dashboardContent.classList.remove('hidden');
+        console.log("Dashboard content should now be visible.");
     } else {
         console.log("No user is logged in. Showing login form.");
         // No user is logged in
@@ -162,7 +152,7 @@ if (businessLoginForm) {
         const loginPassword = document.getElementById('business-login-password')?.value;
         const loginBtn = document.getElementById('business-login-btn');
 
-        if (!loginEmail || !loginPassword) { // Basic validation
+        if (!loginEmail || !loginPassword) {
             if (loginErrorMessage) loginErrorMessage.textContent = "Please enter both email and password.";
             return;
         }
@@ -171,7 +161,7 @@ if (businessLoginForm) {
             loginBtn.disabled = true;
             loginBtn.textContent = 'Logging In...';
         }
-        if (loginErrorMessage) loginErrorMessage.textContent = ''; // Clear previous errors
+        if (loginErrorMessage) loginErrorMessage.textContent = '';
         console.log("Attempting business login for:", loginEmail);
 
         try {
@@ -194,16 +184,13 @@ if (businessLoginForm) {
 // --- FETCH OWNED BUSINESS DETAILS ---
 async function fetchOwnedBusiness(ownerEmail) {
     console.log("fetchOwnedBusiness called for email:", ownerEmail);
-    // Clear previous content in the main business detail display area
     if (businessDetailContent) businessDetailContent.innerHTML = '<p class="text-gray-400 text-center">Loading your business details...</p>';
     
-    // Hide all main content sections initially
     if (claimStatusDisplay) claimStatusDisplay.classList.add('hidden');
     if (businessDetailsDisplay) businessDetailsDisplay.classList.add('hidden');
     if (listBusinessSection) listBusinessSection.classList.add('hidden');
     if (createDealSection) createDealSection.classList.add('hidden');
     if (myDealsSection) myDealsSection.classList.add('hidden');
-    console.log("All main sections hidden initially.");
 
     try {
         const q = query(collection(db, "businesses"), where("ownerEmail", "==", ownerEmail));
@@ -211,17 +198,15 @@ async function fetchOwnedBusiness(ownerEmail) {
 
         if (!querySnapshot.empty) {
             console.log("Business found for this owner!");
-            // Business found for this owner
             const businessDoc = querySnapshot.docs[0];
-            ownedBusinessData = { id: businessDoc.id, ...businessDoc.data() }; // Store full data
-            ownedBusinessId = ownedBusinessData.id; // Store the ID
+            ownedBusinessData = { id: businessDoc.id, ...businessDoc.data() };
+            ownedBusinessId = ownedBusinessData.id;
 
-            // NEW: Check the claim status
             if (ownedBusinessData.claimStatus === 'pending') {
                 claimStatusDisplay.classList.remove('hidden');
                 claimStatusMessage.textContent = 'Your claim for this business is currently under review.';
                 claimStatusMessage.className = 'text-lg text-yellow-400';
-                return; // Stop further execution, showing only the status
+                return;
             }
 
             if (ownedBusinessData.claimStatus === 'rejected') {
@@ -230,14 +215,12 @@ async function fetchOwnedBusiness(ownerEmail) {
                     <p class="text-lg text-red-400">Your claim for this business has been rejected.</p>
                     <p class="text-sm text-gray-400 mt-2">Please contact support for more information.</p>
                 `;
-                return; // Stop further execution
+                return;
             }
 
-            // If approved or already owned, show the full dashboard
             if (businessDetailsDisplay) businessDetailsDisplay.classList.remove('hidden');
             
-            // Populate the image
-            if (currentBusinessImage) { // Add check for currentBusinessImage
+            if (currentBusinessImage) {
                 if (ownedBusinessData.imageUrl) {
                     currentBusinessImage.src = ownedBusinessData.imageUrl;
                     currentBusinessImage.classList.remove('hidden');
@@ -247,7 +230,6 @@ async function fetchOwnedBusiness(ownerEmail) {
                 }
             }
 
-            // Populate the business details content within the dedicated container
             if (businessDetailContent) {
                 businessDetailContent.innerHTML = `
                     <h2 class="text-2xl font-bold text-emerald-400 mb-4">${ownedBusinessData.name}</h2>
@@ -263,165 +245,84 @@ async function fetchOwnedBusiness(ownerEmail) {
                     </div>
                 `;
             }
-            console.log("Business details displayed. Edit form fields will be populated when edit form is shown.");
 
-            // Show the edit button and deal sections
             if (showEditFormBtn) showEditFormBtn.classList.remove('hidden');
             if (createDealSection) createDealSection.classList.remove('hidden');
             if (myDealsSection) myDealsSection.classList.remove('hidden');
-            console.log("Edit button and deal sections unhidden.");
 
-            // Pre-fill hidden fields for deal creation
-            const dealBusinessIdInput = getElementByIdOrLog('deal-business-id');
-            const dealBusinessTownInput = getElementByIdOrLog('deal-business-town');
-            const dealBusinessCategoryInput = getElementByIdOrLog('deal-business-category');
             if (dealBusinessIdInput) dealBusinessIdInput.value = ownedBusinessId;
             if (dealBusinessTownInput) dealBusinessTownInput.value = ownedBusinessData.town || '';
             if (dealBusinessCategoryInput) dealBusinessCategoryInput.value = ownedBusinessData.category || '';
 
-            fetchMyDeals(); // Fetch and display active deals for this business
+            fetchMyDeals();
 
         } else {
             console.log("No business found linked to this owner's email. Showing list business section.");
-            // No business found linked to this owner's email
-            if (listBusinessSection) listBusinessSection.classList.remove('hidden'); // Show the "List Your Business" form
-            if (businessDetailContent) businessDetailContent.innerHTML = ''; // Clear loading message
+            if (listBusinessSection) listBusinessSection.classList.remove('hidden');
+            if (businessDetailContent) businessDetailContent.innerHTML = '';
         }
     } catch (error) {
         console.error("Error fetching owned business:", error);
         if (businessDetailContent) businessDetailContent.innerHTML = `<p class="text-red-500 text-center">Failed to load business details: ${error.message}</p>`;
-        if (listBusinessSection) listBusinessSection.classList.add('hidden'); // Hide list form in case of error
+        if (listBusinessSection) listBusinessSection.classList.add('hidden');
     }
 }
 
 // --- POPULATE TOWNS FOR FORMS ---
 async function populateTownsForForms() {
-    console.log("populateTownsForForms called.");
-    if (!listBusinessTownSelect) {
-        console.warn("listBusinessTownSelect not found.");
-        return;
-    }
+    if (!listBusinessTownSelect) return;
     const editBusinessTownSelect = getElementByIdOrLog('edit-business-town');
-
     listBusinessTownSelect.innerHTML = '<option value="">Select a Town</option>';
-    if (editBusinessTownSelect) {
-        editBusinessTownSelect.innerHTML = '<option value="">Select a Town</option>';
-    }
+    if(editBusinessTownSelect) editBusinessTownSelect.innerHTML = '<option value="">Select a Town</option>';
 
     try {
-        const townsCollectionRef = collection(db, "towns");
-        const q = query(townsCollectionRef, orderBy("name"));
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) {
-            console.warn("No towns found in the 'towns' collection.");
-            const option = document.createElement('option');
-            option.value = '';
-            option.textContent = 'No Towns Available';
-            option.disabled = true;
-            listBusinessTownSelect.appendChild(option);
-            if (editBusinessTownSelect) {
-                editBusinessTownSelect.appendChild(option.cloneNode(true));
-            }
-        } else {
-            querySnapshot.forEach((doc) => {
-                const townData = doc.data();
-                const option = document.createElement('option');
-                option.value = townData.name; 
-                option.textContent = townData.name;
-                listBusinessTownSelect.appendChild(option);
-                if (editBusinessTownSelect) {
-                    editBusinessTownSelect.appendChild(option.cloneNode(true));
-                }
-            });
-            console.log(`Populated town filter with ${querySnapshot.docs.length} towns.`);
-        }
+        const townsSnapshot = await getDocs(query(collection(db, "towns"), orderBy("name")));
+        townsSnapshot.forEach(doc => {
+            const town = doc.data();
+            const option = new Option(town.name, town.name);
+            listBusinessTownSelect.add(option.cloneNode(true));
+            if(editBusinessTownSelect) editBusinessTownSelect.add(option);
+        });
     } catch (error) {
-        console.error("Error fetching towns for forms:", error);
+        console.error("Error populating towns:", error);
     }
 }
 
 // --- POPULATE CATEGORIES FOR FORMS ---
 async function populateCategoriesForForms() {
-    console.log("populateCategoriesForForms called.");
-    if (!listBusinessCategorySelect) {
-        console.warn("listBusinessCategorySelect not found.");
-        return;
-    }
+    if (!listBusinessCategorySelect) return;
     const editBusinessCategorySelect = getElementByIdOrLog('edit-business-category');
-
     listBusinessCategorySelect.innerHTML = '<option value="">Select a Category</option>';
-    if (editBusinessCategorySelect) {
-        editBusinessCategorySelect.innerHTML = '<option value="">Select a Category</option>';
-    }
+    if (editBusinessCategorySelect) editBusinessCategorySelect.innerHTML = '<option value="">Select a Category</option>';
 
     try {
-        const categoriesCollectionRef = collection(db, "categories");
-        const q = query(categoriesCollectionRef, orderBy("name"));
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) {
-            console.warn("No categories found in the 'categories' collection.");
-            const option = document.createElement('option');
-            option.value = '';
-            option.textContent = 'No Categories Available';
-            option.disabled = true;
-            listBusinessCategorySelect.appendChild(option);
-            if (editBusinessCategorySelect) {
-                editBusinessCategorySelect.appendChild(option.cloneNode(true));
-            }
-        } else {
-            querySnapshot.forEach((doc) => {
-                const categoryData = doc.data();
-                const option = document.createElement('option');
-                option.value = categoryData.name; 
-                option.textContent = categoryData.name;
-                listBusinessCategorySelect.appendChild(option);
-                if (editBusinessCategorySelect) {
-                    editBusinessCategorySelect.appendChild(option.cloneNode(true));
-                }
-            });
-            console.log(`Populated category filter with ${querySnapshot.docs.length} categories.`);
-        }
+        const categoriesSnapshot = await getDocs(query(collection(db, "categories"), orderBy("name")));
+        categoriesSnapshot.forEach(doc => {
+            const category = doc.data();
+            const option = new Option(category.name, category.name);
+            listBusinessCategorySelect.add(option.cloneNode(true));
+            if (editBusinessCategorySelect) editBusinessCategorySelect.add(option);
+        });
     } catch (error) {
-        console.error("Error fetching categories for forms:", error);
+        console.error("Error populating categories:", error);
     }
 }
 
-
 // --- TOGGLE EDIT FORM VISIBILITY ---
-if (showEditFormBtn && editBusinessForm && editStatusMessage) {
+if (showEditFormBtn) {
     showEditFormBtn.addEventListener('click', () => {
-        console.log("Edit Business Details button clicked.");
         editBusinessForm.classList.toggle('hidden');
-        editStatusMessage.textContent = '';
-        
         if (!editBusinessForm.classList.contains('hidden')) {
-            const editBusinessNameInput = getElementByIdOrLog('edit-business-name');
-            const editBusinessCategorySelect = getElementByIdOrLog('edit-business-category');
-            const editBusinessTownSelect = getElementByIdOrLog('edit-business-town');
-            const editBusinessDescriptionTextarea = getElementByIdOrLog('edit-business-description');
-            const editBusinessAddressInput = getElementByIdOrLog('edit-business-address');
-            const editBusinessPhoneInput = getElementByIdOrLog('edit-business-phone');
+            getElementByIdOrLog('edit-business-name').value = ownedBusinessData.name || '';
+            getElementByIdOrLog('edit-business-category').value = ownedBusinessData.category || '';
+            getElementByIdOrLog('edit-business-town').value = ownedBusinessData.town || '';
+            getElementByIdOrLog('edit-business-description').value = ownedBusinessData.description || '';
+            getElementByIdOrLog('edit-business-address').value = ownedBusinessData.address || '';
+            getElementByIdOrLog('edit-business-phone').value = ownedBusinessData.phone || '';
             const editImagePreview = getElementByIdOrLog('edit-image-preview');
-
-            if (ownedBusinessData) {
-                if (editBusinessNameInput) editBusinessNameInput.value = ownedBusinessData.name || '';
-                if (editBusinessCategorySelect) editBusinessCategorySelect.value = ownedBusinessData.category || '';
-                if (editBusinessTownSelect) editBusinessTownSelect.value = ownedBusinessData.town || '';
-                if (editBusinessDescriptionTextarea) editBusinessDescriptionTextarea.value = ownedBusinessData.description || '';
-                if (editBusinessAddressInput) editBusinessAddressInput.value = ownedBusinessData.address || '';
-                if (editBusinessPhoneInput) editBusinessPhoneInput.value = ownedBusinessData.phone || '';
-                
-                if (editImagePreview) {
-                    if (ownedBusinessData.imageUrl) {
-                        editImagePreview.src = ownedBusinessData.imageUrl;
-                        editImagePreview.classList.remove('hidden');
-                    } else {
-                        editImagePreview.classList.add('hidden');
-                        editImagePreview.src = '#';
-                    }
-                }
+            if (ownedBusinessData.imageUrl) {
+                editImagePreview.src = ownedBusinessData.imageUrl;
+                editImagePreview.classList.remove('hidden');
             }
             showEditFormBtn.textContent = 'Hide Edit Form';
         } else {
@@ -451,7 +352,7 @@ if (editBusinessImageInput && editImagePreview) {
 
 
 // --- HANDLE EDIT FORM SUBMISSION ---
-if (editBusinessForm && updateBusinessBtn && editStatusMessage) {
+if (editBusinessForm) {
     editBusinessForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!ownedBusinessId) return;
@@ -609,11 +510,17 @@ function fetchMyDeals() {
                 `;
                 myDealsList.appendChild(dealCard);
             });
-
-            document.querySelectorAll('.delete-deal-btn').forEach(btn => btn.addEventListener('click', e => {
-                if (confirm("Are you sure?")) deleteDeal(e.target.dataset.id, e.target.dataset.imageUrl);
-            }));
-            document.querySelectorAll('.edit-deal-btn').forEach(btn => btn.addEventListener('click', e => showEditDealModal(e.target.dataset.id)));
+            
+            document.querySelectorAll('.edit-deal-btn').forEach(button => {
+                button.addEventListener('click', (e) => showEditDealModal(e.target.dataset.id));
+            });
+            document.querySelectorAll('.delete-deal-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    if (confirm("Are you sure you want to delete this deal?")) {
+                        deleteDeal(e.target.dataset.id, e.target.dataset.imageUrl);
+                    }
+                });
+            });
         }
     });
 }
@@ -631,10 +538,10 @@ function showEditDealModal(dealId) {
     if (deal.imageUrl) {
         editDealImagePreview.src = deal.imageUrl;
         editDealImagePreview.classList.remove('hidden');
-        currentDealImageNameP.textContent = `Current: ${deal.imageUrl.split('/').pop().split('?')[0]}`;
+        currentDealImageNameP.textContent = `Current image: ${deal.imageUrl.split('/').pop().split('?')[0]}`;
     } else {
         editDealImagePreview.classList.add('hidden');
-        currentDealImageNameP.textContent = 'No current image.';
+        currentDealImageNameP.textContent = '';
     }
     selectedEditDealImageFile = null;
     editDealImageInput.value = '';

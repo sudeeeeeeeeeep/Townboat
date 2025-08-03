@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Business Login/Signup - TownBoat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: 'Poppins', sans-serif; }
@@ -16,6 +17,22 @@
             <h1 class="text-3xl font-bold text-gray-800">TownBoat Business</h1>
             <p class="text-gray-500" id="form-title">Owner Login</p>
         </div>
+
+        <!-- NEW: Google Sign-In Button -->
+        <button 
+            id="google-business-login-btn" 
+            class="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 mb-4"
+        >
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google icon" class="w-5 h-5 mr-2">
+            Sign in with Google
+        </button>
+
+        <div class="flex items-center my-4">
+            <div class="flex-grow border-t border-gray-300"></div>
+            <span class="flex-shrink mx-4 text-gray-400 text-sm">OR</span>
+            <div class="flex-grow border-t border-gray-300"></div>
+        </div>
+
 
         <form id="business-login-form" class="">
             <div class="mb-4">
@@ -102,6 +119,6 @@
 
     </div>
 
-    <script type="module" src="business-login.js"></script>
+    <script type="module" src="js/business-login.js"></script>
 </body>
 </html>

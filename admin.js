@@ -1,35 +1,35 @@
 // js/admin.js
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { 
-    getAuth, 
-    onAuthStateChanged, 
-    signInWithEmailAndPassword, 
-    createUserWithEmailAndPassword, 
-    signOut 
+import {
+    getAuth,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
-    getFirestore, 
-    collection, 
-    query, 
-    where, 
-    orderBy, 
+    getFirestore,
+    collection,
+    query,
+    where,
+    orderBy,
     onSnapshot,
-    doc, 
-    setDoc, 
-    updateDoc, 
+    doc,
+    setDoc,
+    updateDoc,
     deleteDoc,
-    getDocs, 
-    getDoc, 
-    addDoc, 
-    serverTimestamp 
+    getDocs,
+    getDoc,
+    addDoc,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { 
-    getStorage, 
-    ref, 
-    uploadBytes, 
+import {
+    getStorage,
+    ref,
+    uploadBytes,
     getDownloadURL,
-    deleteObject 
+    deleteObject
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 import { firebaseConfig } from './firebase-config.js';
 
@@ -211,7 +211,7 @@ onAuthStateChanged(auth, async (user) => {
                 // Initialize dashboard features
                 populateAdminTownDropdowns();
                 fetchBusinesses(); // This will trigger rendering and other data fetches
-                fetchClaimRequests(); // Fetch claim requests
+                fetchClaimRequests(); // NEW: Fetch claim requests
                 populateTownFilter(); // Ensures filter is populated on load
                 fetchAnalytics(); // Ensures analytics are fetched on load
             }
