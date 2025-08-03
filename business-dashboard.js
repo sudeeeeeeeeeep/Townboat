@@ -66,22 +66,21 @@ const currentBusinessImage = getElementByIdOrLog('current-business-image'); // I
 const businessDetailContent = getElementByIdOrLog('business-detail-container'); // This is the new container for text details
 const showEditFormBtn = getElementByIdOrLog('show-edit-form-btn');
 
-// Edit Business Form Elements (Only form, button, message, preview declared globally)
+// Edit Business Form Elements
 const editBusinessForm = getElementByIdOrLog('edit-business-form');
 const updateBusinessBtn = getElementByIdOrLog('update-business-btn');
 const editStatusMessage = getElementByIdOrLog('edit-status-message');
 const editImagePreview = getElementByIdOrLog('edit-image-preview');
-// Input elements for edit form will be retrieved inside event listeners to ensure they are available
 
 // List Business DOM Elements
-const listBusinessSection = getElementByIdOrLog('list-business-section'); // New section for listing
-const listBusinessForm = getElementByIdOrLog('list-business-form'); // New form for listing
-const listBusinessTownSelect = getElementByIdOrLog('list-business-town'); // New select for town
-const listBusinessCategorySelect = getElementByIdOrLog('list-business-category'); // New select for category
-const listBusinessImageInput = getElementByIdOrLog('list-business-image'); // New image input
-const listImagePreview = getElementByIdOrLog('list-image-preview'); // New image preview
-const submitNewBusinessBtn = getElementByIdOrLog('submit-new-business-btn'); // New submit button
-const listBusinessStatusMessage = getElementByIdOrLog('list-business-status-message'); // New status message
+const listBusinessSection = getElementByIdOrLog('list-business-section');
+const listBusinessForm = getElementByIdOrLog('list-business-form');
+const listBusinessTownSelect = getElementByIdOrLog('list-business-town');
+const listBusinessCategorySelect = getElementByIdOrLog('list-business-category');
+const listBusinessImageInput = getElementByIdOrLog('list-business-image');
+const listImagePreview = getElementByIdOrLog('list-image-preview');
+const submitNewBusinessBtn = getElementByIdOrLog('submit-new-business-btn');
+const listBusinessStatusMessage = getElementByIdOrLog('list-business-status-message');
 
 // Deal Creation DOM Elements
 const createDealSection = getElementByIdOrLog('create-deal-section');
@@ -114,8 +113,12 @@ const editDealImagePreview = getElementByIdOrLog('edit-deal-image-preview');
 const currentDealImageNameP = getElementByIdOrLog('current-deal-image-name');
 const editDealStatusMessage = getElementByIdOrLog('edit-deal-status-message');
 const cancelEditDealBtn = getElementByIdOrLog('cancel-edit-deal-btn');
-const updateDealBtnEditModal = getElementByIdOrLog('update-deal-btn'); // Renamed to avoid conflict
-let selectedEditDealImageFile = null; // For deal image upload in edit form
+const updateDealBtnEditModal = getElementByIdOrLog('update-deal-btn');
+let selectedEditDealImageFile = null;
+
+// NEW: Claim Status Elements
+const claimStatusDisplay = getElementByIdOrLog('claim-status-display');
+const claimStatusMessage = getElementByIdOrLog('claim-status-message');
 
 
 // --- AUTHENTICATION CHECK ---
@@ -195,6 +198,7 @@ async function fetchOwnedBusiness(ownerEmail) {
     if (businessDetailContent) businessDetailContent.innerHTML = '<p class="text-gray-400 text-center">Loading your business details...</p>';
     
     // Hide all main content sections initially
+    if (claimStatusDisplay) claimStatusDisplay.classList.add('hidden');
     if (businessDetailsDisplay) businessDetailsDisplay.classList.add('hidden');
     if (listBusinessSection) listBusinessSection.classList.add('hidden');
     if (createDealSection) createDealSection.classList.add('hidden');
@@ -212,7 +216,24 @@ async function fetchOwnedBusiness(ownerEmail) {
             ownedBusinessData = { id: businessDoc.id, ...businessDoc.data() }; // Store full data
             ownedBusinessId = ownedBusinessData.id; // Store the ID
 
-            // Display business details section
+            // NEW: Check the claim status
+            if (ownedBusinessData.claimStatus === 'pending') {
+                claimStatusDisplay.classList.remove('hidden');
+                claimStatusMessage.textContent = 'Your claim for this business is currently under review.';
+                claimStatusMessage.className = 'text-lg text-yellow-400';
+                return; // Stop further execution, showing only the status
+            }
+
+            if (ownedBusinessData.claimStatus === 'rejected') {
+                claimStatusDisplay.classList.remove('hidden');
+                claimStatusMessage.innerHTML = `
+                    <p class="text-lg text-red-400">Your claim for this business has been rejected.</p>
+                    <p class="text-sm text-gray-400 mt-2">Please contact support for more information.</p>
+                `;
+                return; // Stop further execution
+            }
+
+            // If approved or already owned, show the full dashboard
             if (businessDetailsDisplay) businessDetailsDisplay.classList.remove('hidden');
             
             // Populate the image
@@ -251,6 +272,9 @@ async function fetchOwnedBusiness(ownerEmail) {
             console.log("Edit button and deal sections unhidden.");
 
             // Pre-fill hidden fields for deal creation
+            const dealBusinessIdInput = getElementByIdOrLog('deal-business-id');
+            const dealBusinessTownInput = getElementByIdOrLog('deal-business-town');
+            const dealBusinessCategoryInput = getElementByIdOrLog('deal-business-category');
             if (dealBusinessIdInput) dealBusinessIdInput.value = ownedBusinessId;
             if (dealBusinessTownInput) dealBusinessTownInput.value = ownedBusinessData.town || '';
             if (dealBusinessCategoryInput) dealBusinessCategoryInput.value = ownedBusinessData.category || '';
@@ -261,9 +285,7 @@ async function fetchOwnedBusiness(ownerEmail) {
             console.log("No business found linked to this owner's email. Showing list business section.");
             // No business found linked to this owner's email
             if (listBusinessSection) listBusinessSection.classList.remove('hidden'); // Show the "List Your Business" form
-            // populateTownsForForms() and populateCategoriesForForms() are already called globally
             if (businessDetailContent) businessDetailContent.innerHTML = ''; // Clear loading message
-            // All other sections remain hidden
         }
     } catch (error) {
         console.error("Error fetching owned business:", error);
@@ -279,9 +301,7 @@ async function populateTownsForForms() {
         console.warn("listBusinessTownSelect not found.");
         return;
     }
-    // Also get the edit form's town select
     const editBusinessTownSelect = getElementByIdOrLog('edit-business-town');
-
 
     listBusinessTownSelect.innerHTML = '<option value="">Select a Town</option>';
     if (editBusinessTownSelect) {
@@ -328,7 +348,6 @@ async function populateCategoriesForForms() {
         console.warn("listBusinessCategorySelect not found.");
         return;
     }
-    // Also get the edit form's category select
     const editBusinessCategorySelect = getElementByIdOrLog('edit-business-category');
 
     listBusinessCategorySelect.innerHTML = '<option value="">Select a Category</option>';
@@ -337,8 +356,8 @@ async function populateCategoriesForForms() {
     }
 
     try {
-        const categoriesCollectionRef = collection(db, "categories"); // Assuming a 'categories' collection
-        const q = query(categoriesCollectionRef, orderBy("name")); // Assuming categories have a 'name' field
+        const categoriesCollectionRef = collection(db, "categories");
+        const q = query(categoriesCollectionRef, orderBy("name"));
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
@@ -371,30 +390,25 @@ async function populateCategoriesForForms() {
 
 
 // --- TOGGLE EDIT FORM VISIBILITY ---
-if (showEditFormBtn && editBusinessForm && editStatusMessage) { // Ensure all elements exist
+if (showEditFormBtn && editBusinessForm && editStatusMessage) {
     showEditFormBtn.addEventListener('click', () => {
         console.log("Edit Business Details button clicked.");
         editBusinessForm.classList.toggle('hidden');
-        editStatusMessage.textContent = ''; // Clear status message on toggle
+        editStatusMessage.textContent = '';
         
-        // Populate edit form fields ONLY when the form is being shown
         if (!editBusinessForm.classList.contains('hidden')) {
-            // Retrieve elements here to ensure they are in the DOM
             const editBusinessNameInput = getElementByIdOrLog('edit-business-name');
             const editBusinessCategorySelect = getElementByIdOrLog('edit-business-category');
-            const editBusinessTownSelect = getElementByIdOrLog('edit-business-town'); // Changed to select
+            const editBusinessTownSelect = getElementByIdOrLog('edit-business-town');
             const editBusinessDescriptionTextarea = getElementByIdOrLog('edit-business-description');
             const editBusinessAddressInput = getElementByIdOrLog('edit-business-address');
             const editBusinessPhoneInput = getElementByIdOrLog('edit-business-phone');
-            const editBusinessImageInput = getElementByIdOrLog('edit-business-image'); // Re-get for checking value
             const editImagePreview = getElementByIdOrLog('edit-image-preview');
 
-
             if (ownedBusinessData) {
-                // Check if element exists before setting value to prevent TypeError
                 if (editBusinessNameInput) editBusinessNameInput.value = ownedBusinessData.name || '';
                 if (editBusinessCategorySelect) editBusinessCategorySelect.value = ownedBusinessData.category || '';
-                if (editBusinessTownSelect) editBusinessTownSelect.value = ownedBusinessData.town || ''; // Set value for select
+                if (editBusinessTownSelect) editBusinessTownSelect.value = ownedBusinessData.town || '';
                 if (editBusinessDescriptionTextarea) editBusinessDescriptionTextarea.value = ownedBusinessData.description || '';
                 if (editBusinessAddressInput) editBusinessAddressInput.value = ownedBusinessData.address || '';
                 if (editBusinessPhoneInput) editBusinessPhoneInput.value = ownedBusinessData.phone || '';
@@ -408,26 +422,19 @@ if (showEditFormBtn && editBusinessForm && editStatusMessage) { // Ensure all el
                         editImagePreview.src = '#';
                     }
                 }
-                console.log("Edit form populated.");
-            } else {
-                console.warn("ownedBusinessData is null. Cannot populate edit form.");
             }
             showEditFormBtn.textContent = 'Hide Edit Form';
-            console.log("Edit form shown.");
         } else {
             showEditFormBtn.textContent = 'Edit Business Details';
-            console.log("Edit form hidden.");
         }
     });
 }
 
 // --- HANDLE IMAGE SELECTION FOR EDIT FORM ---
-// This needs to be declared globally to attach the event listener
 const editBusinessImageInput = getElementByIdOrLog('edit-business-image');
-if (editBusinessImageInput && editImagePreview) { // Ensure both exist
+if (editBusinessImageInput && editImagePreview) {
     editBusinessImageInput.addEventListener('change', (e) => {
         selectedBusinessImageFile = e.target.files[0];
-        console.log("Business image selected for edit:", selectedBusinessImageFile ? selectedBusinessImageFile.name : "none");
         if (selectedBusinessImageFile) {
             const reader = new FileReader();
             reader.onload = (event) => {
@@ -444,106 +451,49 @@ if (editBusinessImageInput && editImagePreview) { // Ensure both exist
 
 
 // --- HANDLE EDIT FORM SUBMISSION ---
-if (editBusinessForm && updateBusinessBtn && editStatusMessage) { // Only check essential elements here
+if (editBusinessForm && updateBusinessBtn && editStatusMessage) {
     editBusinessForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        console.log("Edit Business Form submitted.");
-
-        if (!ownedBusinessId) {
-            alert("No business selected for update.");
-            console.error("Attempted to update business without ownedBusinessId.");
-            return;
-        }
+        if (!ownedBusinessId) return;
 
         updateBusinessBtn.disabled = true;
         updateBusinessBtn.textContent = 'Updating...';
-        editStatusMessage.textContent = ''; // Clear previous messages
+        editStatusMessage.textContent = '';
 
-        // Retrieve elements here to ensure they are in the DOM at submission time
-        const editBusinessNameInput = getElementByIdOrLog('edit-business-name');
-        const editBusinessCategorySelect = getElementByIdOrLog('edit-business-category');
-        const editBusinessTownSelect = getElementByIdOrLog('edit-business-town'); // Changed to select
-        const editBusinessDescriptionTextarea = getElementByIdOrLog('edit-business-description');
-        const editBusinessAddressInput = getElementByIdOrLog('edit-business-address');
-        const editBusinessPhoneInput = getElementByIdOrLog('edit-business-phone');
-        // editBusinessImageInput is already global and checked above for its listener
+        const name = getElementByIdOrLog('edit-business-name').value.trim();
+        const category = getElementByIdOrLog('edit-business-category').value.trim();
+        const town = getElementByIdOrLog('edit-business-town').value.trim();
+        const description = getElementByIdOrLog('edit-business-description').value.trim();
+        const address = getElementByIdOrLog('edit-business-address').value.trim();
+        const phone = getElementByIdOrLog('edit-business-phone').value.trim();
 
-        // Add null checks before accessing .value
-        const name = editBusinessNameInput?.value.trim();
-        const category = editBusinessCategorySelect?.value.trim();
-        const town = editBusinessTownSelect?.value.trim(); // Get value from select
-        const description = editBusinessDescriptionTextarea?.value.trim();
-        const address = editBusinessAddressInput?.value.trim();
-        const phone = editBusinessPhoneInput?.value.trim();
+        let newImageUrl = ownedBusinessData.imageUrl;
 
-        if (!name || !category || !town || !description || !address || !phone) {
-            editStatusMessage.textContent = "All fields are required.";
-            editStatusMessage.classList.add('text-red-500');
-            updateBusinessBtn.disabled = false;
-            updateBusinessBtn.textContent = 'Update Business Details';
-            console.warn("Edit Business Form: Missing required fields.");
-            return;
-        }
-
-        let newImageUrl = ownedBusinessData.imageUrl; // Start with current image URL
-
-        // If a new image is selected, upload it
         if (selectedBusinessImageFile) {
-            console.log("Uploading new business image...");
             try {
                 const imageRef = ref(storage, `business_images/${ownedBusinessId}/${selectedBusinessImageFile.name}`);
                 const snapshot = await uploadBytes(imageRef, selectedBusinessImageFile);
                 newImageUrl = await getDownloadURL(snapshot.ref);
-                console.log("New business image uploaded:", newImageUrl);
             } catch (error) {
-                console.error("Error uploading new business image:", error);
-                editStatusMessage.textContent = `Failed to upload business image: ${error.message}`;
-                editStatusMessage.classList.add('text-red-500');
+                editStatusMessage.textContent = `Failed to upload image: ${error.message}`;
                 updateBusinessBtn.disabled = false;
                 updateBusinessBtn.textContent = 'Update Business Details';
-                return; // Stop the update process if image upload fails
-            }
-        } else if (editBusinessImageInput?.value === '' && ownedBusinessData.imageUrl) { // Add null check for editBusinessImageInput
-            console.log("Image input cleared, attempting to delete old image.");
-            // If image input is cleared and there was an old image, remove it
-            newImageUrl = null;
-            try {
-                const oldImageRef = ref(storage, ownedBusinessData.imageUrl);
-                await deleteObject(oldImageRef);
-                console.log("Old business image deleted due to clear input.");
-            } catch (deleteError) {
-                console.warn("Could not delete old business image (might not exist or permission issue):", deleteError);
+                return;
             }
         }
 
-
         try {
-            console.log("Updating business document in Firestore...");
             await updateDoc(doc(db, "businesses", ownedBusinessId), {
-                name: name,
-                category: category,
-                town: town,
-                description: description,
-                address: address,
-                phone: phone,
-                imageUrl: newImageUrl, // Update image URL
+                name, category, town, description, address, phone, imageUrl: newImageUrl,
                 updatedAt: serverTimestamp()
             });
-
             editStatusMessage.textContent = "Business details updated successfully! ✅";
-            editStatusMessage.classList.remove('text-red-500');
-            editStatusMessage.classList.add('text-emerald-400');
-            selectedBusinessImageFile = null; // Reset selected file after upload
-            console.log("Business document updated. Re-fetching owned business details.");
-            // Re-fetch and display details to ensure UI is updated with new data
-            await fetchOwnedBusiness(currentBusinessUser.email); // Use email to refetch
-            // Optionally hide the edit form again
-            if (editBusinessForm) editBusinessForm.classList.add('hidden');
-            if (showEditFormBtn) showEditFormBtn.classList.remove('hidden');
+            selectedBusinessImageFile = null;
+            await fetchOwnedBusiness(currentBusinessUser.email);
+            editBusinessForm.classList.add('hidden');
+            showEditFormBtn.textContent = 'Edit Business Details';
         } catch (error) {
-            console.error("Error updating business document:", error);
             editStatusMessage.textContent = `Failed to update business: ${error.message}`;
-            editStatusMessage.classList.add('text-red-500');
         } finally {
             updateBusinessBtn.disabled = false;
             updateBusinessBtn.textContent = 'Update Business Details';
@@ -554,10 +504,8 @@ if (editBusinessForm && updateBusinessBtn && editStatusMessage) { // Only check 
 // --- LOGOUT BUTTON ---
 if (logoutButton) {
     logoutButton.addEventListener('click', () => {
-        console.log("Logout button clicked.");
         signOut(auth).then(() => {
-            console.log("Business user signed out.");
-            window.location.href = 'business-login.html'; // Redirect to business login
+            window.location.href = 'business-login.html';
         }).catch((error) => {
             console.error("Error signing out:", error);
             alert("Failed to log out. Please try again.");
@@ -566,10 +514,9 @@ if (logoutButton) {
 }
 
 // --- DEAL CREATION LOGIC ---
-if (dealImageInput && dealImagePreview && createDealForm && dealTitleInput && dealDescriptionInput && dealExpiryDateInput && createDealBtn && createDealStatusMessage && dealBusinessIdInput && dealBusinessTownInput && dealBusinessCategoryInput) { // Ensure all exist
+if (dealImageInput) {
     dealImageInput.addEventListener('change', (e) => {
         selectedDealImageFile = e.target.files[0];
-        console.log("Deal image selected for creation:", selectedDealImageFile ? selectedDealImageFile.name : "none");
         if (selectedDealImageFile) {
             const reader = new FileReader();
             reader.onload = (event) => {
@@ -579,61 +526,30 @@ if (dealImageInput && dealImagePreview && createDealForm && dealTitleInput && de
             reader.readAsDataURL(selectedDealImageFile);
         } else {
             dealImagePreview.classList.add('hidden');
-            dealImagePreview.src = '#';
         }
     });
+}
 
-
+if (createDealForm) {
     createDealForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        console.log("Create Deal Form submitted.");
-
-        if (!ownedBusinessId || !ownedBusinessData) {
-            createDealStatusMessage.textContent = "Error: No business linked to your account. Cannot create deal.";
-            createDealStatusMessage.classList.add('text-red-500');
-            console.error("Attempted to create deal without linked business.");
-            return;
-        }
+        if (!ownedBusinessId) return;
 
         createDealBtn.disabled = true;
         createDealBtn.textContent = 'Publishing...';
-        createDealStatusMessage.textContent = '';
 
         const title = dealTitleInput.value.trim();
         const description = dealDescriptionInput.value.trim();
-        const expiryDateStr = dealExpiryDateInput.value; // "YYYY-MM-DDTHH:MM" format
-
-        if (!title || !description || !expiryDateStr) {
-            createDealStatusMessage.textContent = "Please fill in all required deal fields.";
-            createDealStatusMessage.classList.add('text-red-500');
-            createDealBtn.disabled = false;
-            createDealBtn.textContent = 'Publish Deal';
-            console.warn("Create Deal Form: Missing required fields.");
-            return;
-        }
-
-        const expiryDate = new Date(expiryDateStr);
-        if (isNaN(expiryDate.getTime()) || expiryDate < new Date()) {
-            createDealStatusMessage.textContent = "Please enter a valid future expiry date and time.";
-            createDealStatusMessage.classList.add('text-red-500');
-            createDealBtn.disabled = false;
-            createDealBtn.textContent = 'Publish Deal';
-            console.warn("Create Deal Form: Invalid expiry date.");
-            return;
-        }
+        const expiryDate = new Date(dealExpiryDateInput.value);
 
         let dealImageUrl = null;
         if (selectedDealImageFile) {
-            console.log("Uploading new deal image...");
             try {
                 const imageRef = ref(storage, `deal_images/${ownedBusinessId}/${Date.now()}_${selectedDealImageFile.name}`);
                 const snapshot = await uploadBytes(imageRef, selectedDealImageFile);
                 dealImageUrl = await getDownloadURL(snapshot.ref);
-                console.log("Deal image uploaded:", dealImageUrl);
             } catch (error) {
-                console.error("Error uploading deal image:", error);
-                createDealStatusMessage.textContent = `Failed to upload deal image: ${error.message}`;
-                createDealStatusMessage.classList.add('text-red-500');
+                createDealStatusMessage.textContent = `Image upload failed: ${error.message}`;
                 createDealBtn.disabled = false;
                 createDealBtn.textContent = 'Publish Deal';
                 return;
@@ -641,33 +557,21 @@ if (dealImageInput && dealImagePreview && createDealForm && dealTitleInput && de
         }
 
         try {
-            console.log("Adding deal document to Firestore...");
             await addDoc(collection(db, "deals"), {
                 businessId: ownedBusinessId,
-                businessName: ownedBusinessData.name, // Store business name for easier display
-                town: ownedBusinessData.town, // Store business town
-                category: ownedBusinessData.category, // Store business category
-                title: title,
-                description: description,
-                expiryDate: expiryDate, // Store as Firestore Timestamp
-                imageUrl: dealImageUrl,
-                isActive: true, // Mark deal as active
+                businessName: ownedBusinessData.name,
+                town: ownedBusinessData.town,
+                category: ownedBusinessData.category,
+                title, description, expiryDate, imageUrl: dealImageUrl,
+                isActive: true,
                 createdAt: serverTimestamp()
             });
-
-            createDealStatusMessage.textContent = "Deal published successfully! ✅";
-            createDealStatusMessage.classList.remove('text-red-500');
-            createDealStatusMessage.classList.add('text-emerald-400');
-            createDealForm.reset(); // Clear the form
-            dealImagePreview.src = '#';
+            createDealStatusMessage.textContent = "Deal published! ✅";
+            createDealForm.reset();
             dealImagePreview.classList.add('hidden');
-            selectedDealImageFile = null; // Reset selected file
-            console.log("Deal added. Refreshing active deals list.");
-            fetchMyDeals(); // Refresh the list of active deals
+            selectedDealImageFile = null;
         } catch (error) {
-            console.error("Error adding deal document:", error);
             createDealStatusMessage.textContent = `Failed to publish deal: ${error.message}`;
-            createDealStatusMessage.classList.add('text-red-500');
         } finally {
             createDealBtn.disabled = false;
             createDealBtn.textContent = 'Publish Deal';
@@ -677,34 +581,19 @@ if (dealImageInput && dealImagePreview && createDealForm && dealTitleInput && de
 
 // --- FETCH AND DISPLAY MY ACTIVE DEALS ---
 function fetchMyDeals() {
-    console.log("fetchMyDeals called.");
-    if (!ownedBusinessId || !myDealsList || !noActiveDealsMessage) {
-        console.log("Cannot fetch deals: ownedBusinessId or DOM elements missing.");
-        return;
-    }
+    if (!ownedBusinessId || !myDealsList) return;
+    const q = query(collection(db, "deals"), where("businessId", "==", ownedBusinessId), where("isActive", "==", true), where("expiryDate", ">", new Date()), orderBy("expiryDate", "asc"));
 
-    const dealsQuery = query(
-        collection(db, "deals"),
-        where("businessId", "==", ownedBusinessId),
-        where("isActive", "==", true),
-        where("expiryDate", ">", new Date()), // Only active and unexpired deals
-        orderBy("expiryDate", "asc") // Order by soonest expiring
-    );
-
-    onSnapshot(dealsQuery, (snapshot) => {
-        console.log(`Received ${snapshot.docs.length} deal updates.`);
-        if (myDealsList) myDealsList.innerHTML = ''; // Clear previous list
-        allMyDeals = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); // Store all fetched deals
+    onSnapshot(q, (snapshot) => {
+        myDealsList.innerHTML = '';
+        allMyDeals = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         
         if (allMyDeals.length === 0) {
-            if (noActiveDealsMessage) noActiveDealsMessage.classList.remove('hidden');
-            console.log("No active deals found.");
+            noActiveDealsMessage.classList.remove('hidden');
         } else {
-            if (noActiveDealsMessage) noActiveDealsMessage.classList.add('hidden');
-            allMyDeals.forEach((deal) => {
-                const expiryDate = deal.expiryDate ? deal.expiryDate.toDate() : null;
-                const expiryText = expiryDate ? `Expires: ${expiryDate.toLocaleDateString()} ${expiryDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'No expiry date';
-
+            noActiveDealsMessage.classList.add('hidden');
+            allMyDeals.forEach(deal => {
+                const expiryText = `Expires: ${deal.expiryDate.toDate().toLocaleDateString()}`;
                 const dealCard = document.createElement('div');
                 dealCard.className = 'bg-gray-800 p-4 rounded-lg flex items-center justify-between shadow';
                 dealCard.innerHTML = `
@@ -714,265 +603,112 @@ function fetchMyDeals() {
                         <p class="text-gray-500 text-xs mt-1">${expiryText}</p>
                     </div>
                     <div class="flex space-x-2">
-                        <button class="edit-deal-btn bg-blue-600 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-700 transition duration-300" data-id="${deal.id}">Edit</button>
-                        <button class="delete-deal-btn bg-red-600 text-white px-3 py-1 rounded-md text-sm hover:bg-red-700 transition duration-300" data-id="${deal.id}" data-image-url="${deal.imageUrl || ''}">Delete</button>
+                        <button class="edit-deal-btn bg-blue-600 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-700" data-id="${deal.id}">Edit</button>
+                        <button class="delete-deal-btn bg-red-600 text-white px-3 py-1 rounded-md text-sm hover:bg-red-700" data-id="${deal.id}" data-image-url="${deal.imageUrl || ''}">Delete</button>
                     </div>
                 `;
-                if (myDealsList) myDealsList.appendChild(dealCard);
-
-                // Add event listeners for deal actions
-                dealCard.querySelector('.delete-deal-btn')?.addEventListener('click', async (e) => {
-                    const idToDelete = e.target.dataset.id;
-                    const imageUrlToDelete = e.target.dataset.imageUrl;
-                    console.log("Delete deal button clicked for ID:", idToDelete);
-                    if (confirm("Are you sure you want to delete this deal?")) {
-                        await deleteDeal(idToDelete, imageUrlToDelete);
-                    }
-                });
-                dealCard.querySelector('.edit-deal-btn')?.addEventListener('click', (e) => {
-                    console.log("Edit deal button clicked for ID:", e.target.dataset.id);
-                    showEditDealModal(e.target.dataset.id);
-                });
+                myDealsList.appendChild(dealCard);
             });
-        }
-    }, (error) => {
-        console.error("Error fetching my deals:", error);
-        if (noActiveDealsMessage) {
-            noActiveDealsMessage.textContent = 'Failed to load your deals.';
-            noActiveDealsMessage.classList.remove('hidden');
+
+            document.querySelectorAll('.delete-deal-btn').forEach(btn => btn.addEventListener('click', e => {
+                if (confirm("Are you sure?")) deleteDeal(e.target.dataset.id, e.target.dataset.imageUrl);
+            }));
+            document.querySelectorAll('.edit-deal-btn').forEach(btn => btn.addEventListener('click', e => showEditDealModal(e.target.dataset.id)));
         }
     });
 }
 
-// --- SHOW EDIT DEAL MODAL FUNCTION (NEW) ---
+// --- SHOW EDIT DEAL MODAL ---
 function showEditDealModal(dealId) {
-    console.log("showEditDealModal called for deal ID:", dealId);
-    const dealToEdit = allMyDeals.find(deal => deal.id === dealId);
-    if (!dealToEdit) {
-        alert("Deal not found for editing.");
-        console.error("Deal not found in allMyDeals for ID:", dealId);
-        return;
-    }
+    const deal = allMyDeals.find(d => d.id === dealId);
+    if (!deal || !editDealModal) return;
 
-    // Ensure modal elements exist before trying to access them
-    if (!editDealIdInput || !editDealTitleInput || !editDealDescriptionInput || !editDealExpiryDateInput || !editDealImageInput || !editDealImagePreview || !currentDealImageNameP || !editDealStatusMessage || !cancelEditDealBtn || !updateDealBtnEditModal) { // Corrected updateDealBtn reference
-        console.error("One or more edit deal modal elements not found in the DOM.");
-        alert("Error: Missing elements for deal editing. Please ensure your HTML is up to date.");
-        return;
-    }
-
-    editDealIdInput.value = dealToEdit.id;
-    editDealTitleInput.value = dealToEdit.title || '';
-    editDealDescriptionInput.value = dealToEdit.description || '';
-
-    // Format expiry date for datetime-local input
-    if (dealToEdit.expiryDate && dealToEdit.expiryDate.toDate) {
-        const date = dealToEdit.expiryDate.toDate();
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const day = date.getDate().toString().padStart(2, '0');
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        editDealExpiryDateInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
-    } else {
-        editDealExpiryDateInput.value = '';
-    }
-
-    if (dealToEdit.imageUrl) {
-        editDealImagePreview.src = dealToEdit.imageUrl;
+    editDealIdInput.value = deal.id;
+    editDealTitleInput.value = deal.title;
+    editDealDescriptionInput.value = deal.description;
+    editDealExpiryDateInput.value = new Date(deal.expiryDate.seconds * 1000).toISOString().slice(0, 16);
+    
+    if (deal.imageUrl) {
+        editDealImagePreview.src = deal.imageUrl;
         editDealImagePreview.classList.remove('hidden');
-        currentDealImageNameP.textContent = `Current: ${dealToEdit.imageUrl.split('/').pop().split('?')[0]}`;
+        currentDealImageNameP.textContent = `Current: ${deal.imageUrl.split('/').pop().split('?')[0]}`;
     } else {
-        editDealImagePreview.src = '#';
         editDealImagePreview.classList.add('hidden');
         currentDealImageNameP.textContent = 'No current image.';
     }
-    selectedEditDealImageFile = null; // Reset selected file
-    editDealImageInput.value = ''; // Clear file input value
+    selectedEditDealImageFile = null;
+    editDealImageInput.value = '';
 
-    editDealStatusMessage.textContent = ''; // Clear status message
-    editDealModal.classList.remove('hidden'); // Show the modal
-    console.log("Edit Deal Modal shown and populated.");
+    editDealStatusMessage.textContent = '';
+    editDealModal.classList.remove('hidden');
 }
 
-// --- HANDLE IMAGE SELECTION FOR EDIT DEAL FORM (NEW) ---
-if (editDealImageInput && editDealImagePreview && currentDealImageNameP) { // Ensure all exist
-    editDealImageInput.addEventListener('change', (e) => {
-        selectedEditDealImageFile = e.target.files[0];
-        console.log("Edit Deal image selected:", selectedEditDealImageFile ? selectedEditDealImageFile.name : "none");
-        if (selectedEditDealImageFile) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                editDealImagePreview.src = event.target.result;
-                editDealImagePreview.classList.remove('hidden');
-                currentDealImageNameP.textContent = `New: ${selectedEditDealImageFile.name}`;
-            };
-            reader.readAsDataURL(selectedEditDealImageFile);
-        } else {
-            // If user clears selection, revert to current image or hide
-            const dealId = editDealIdInput.value;
-            const dealToEdit = allMyDeals.find(deal => deal.id === dealId);
-            if (dealToEdit && dealToEdit.imageUrl) {
-                editDealImagePreview.src = dealToEdit.imageUrl;
-                editDealImagePreview.classList.remove('hidden');
-                currentDealImageNameP.textContent = `Current: ${dealToEdit.imageUrl.split('/').pop().split('?')[0]}`;
-            } else {
-                editDealImagePreview.src = '#';
-                editDealImagePreview.classList.add('hidden');
-                currentDealImageNameP.textContent = 'No new image selected.';
-            }
-        }
-    });
-}
-
-// --- HANDLE EDIT DEAL FORM SUBMISSION (NEW) ---
-if (editDealForm && editDealIdInput && updateDealBtnEditModal && editDealStatusMessage && editDealTitleInput && editDealDescriptionInput && editDealExpiryDateInput && editDealImageInput) { // Ensure all exist
+// --- HANDLE EDIT DEAL FORM SUBMISSION ---
+if (editDealForm) {
     editDealForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        console.log("Edit Deal Form submitted.");
-
         const dealId = editDealIdInput.value;
-        if (!dealId) {
-            editDealStatusMessage.textContent = "Error: Deal ID missing.";
-            editDealStatusMessage.classList.add('text-red-500');
-            console.error("Attempted to update deal without deal ID.");
-            return;
-        }
+        if (!dealId) return;
 
-        updateDealBtnEditModal.disabled = true; // Corrected reference
-        updateDealBtnEditModal.textContent = 'Saving...'; // Corrected reference
-        editDealStatusMessage.textContent = '';
-
-        const title = editDealTitleInput.value.trim();
-        const description = editDealDescriptionInput.value.trim();
-        const expiryDateStr = editDealExpiryDateInput.value;
-
-        if (!title || !description || !expiryDateStr) {
-            editDealStatusMessage.textContent = "Please fill in all required fields.";
-            editDealStatusMessage.classList.add('text-red-500');
-            updateDealBtnEditModal.disabled = false; // Corrected reference
-            updateDealBtnEditModal.textContent = 'Save Changes'; // Corrected reference
-            console.warn("Edit Deal Form: Missing required fields.");
-            return;
-        }
-
-        const expiryDate = new Date(expiryDateStr);
-        if (isNaN(expiryDate.getTime()) || expiryDate < new Date()) {
-            editDealStatusMessage.textContent = "Please enter a valid future expiry date and time.";
-            editDealStatusMessage.classList.add('text-red-500');
-            updateDealBtnEditModal.disabled = false; // Corrected reference
-            updateDealBtnEditModal.textContent = 'Save Changes'; // Corrected reference
-            console.warn("Edit Deal Form: Invalid expiry date.");
-            return;
-        }
+        updateDealBtnEditModal.disabled = true;
+        updateDealBtnEditModal.textContent = 'Saving...';
 
         let newDealImageUrl = allMyDeals.find(d => d.id === dealId)?.imageUrl || null;
-
         if (selectedEditDealImageFile) {
-            console.log("Uploading new deal image for edit...");
             try {
                 const imageRef = ref(storage, `deal_images/${ownedBusinessId}/${Date.now()}_${selectedEditDealImageFile.name}`);
                 const snapshot = await uploadBytes(imageRef, selectedEditDealImageFile);
                 newDealImageUrl = await getDownloadURL(snapshot.ref);
-                
-                // Delete old image if it exists and is different from the new one
                 const oldImageUrl = allMyDeals.find(d => d.id === dealId)?.imageUrl;
-                if (oldImageUrl && oldImageUrl !== newDealImageUrl) {
-                    try {
-                        await deleteObject(ref(storage, oldImageUrl));
-                        console.log("Old deal image deleted:", oldImageUrl);
-                    } catch (deleteError) {
-                        console.warn("Could not delete old deal image:", deleteError);
-                    }
-                }
+                if (oldImageUrl) await deleteObject(ref(storage, oldImageUrl)).catch(err => console.warn("Old image delete failed:", err));
             } catch (error) {
-                console.error("Error uploading new deal image:", error);
-                editDealStatusMessage.textContent = `Failed to upload image: ${error.message}`;
-                editDealStatusMessage.classList.add('text-red-500');
-                updateDealBtnEditModal.disabled = false; // Corrected reference
-                updateDealBtnEditModal.textContent = 'Save Changes'; // Corrected reference
+                editDealStatusMessage.textContent = `Image upload failed: ${error.message}`;
+                updateDealBtnEditModal.disabled = false;
+                updateDealBtnEditModal.textContent = 'Save Changes';
                 return;
-            }
-        } else if (editDealImageInput.value === '' && newDealImageUrl) {
-            console.log("Edit Deal image input cleared, attempting to delete old image.");
-            // If image input is cleared and there was an old image, remove it
-            try {
-                await deleteObject(ref(storage, newDealImageUrl));
-                console.log("Old deal image deleted due to input clear.");
-                newDealImageUrl = null;
-            } catch (deleteError) {
-                console.warn("Could not delete old deal image on clear:", deleteError);
             }
         }
 
-
         try {
-            console.log("Updating deal document in Firestore for ID:", dealId);
             await updateDoc(doc(db, "deals", dealId), {
-                title: title,
-                description: description,
-                expiryDate: expiryDate,
+                title: editDealTitleInput.value.trim(),
+                description: editDealDescriptionInput.value.trim(),
+                expiryDate: new Date(editDealExpiryDateInput.value),
                 imageUrl: newDealImageUrl,
                 updatedAt: serverTimestamp()
             });
-
-            editDealStatusMessage.textContent = "Deal updated successfully! ✅";
-            editDealStatusMessage.classList.remove('text-red-500');
-            editDealStatusMessage.classList.add('text-emerald-400');
-            selectedEditDealImageFile = null; // Reset selected file
-            if (editDealModal) editDealModal.classList.add('hidden'); // Hide modal
-            console.log("Deal updated successfully. Modal hidden.");
-            // fetchMyDeals will automatically refresh due to onSnapshot
+            editDealModal.classList.add('hidden');
         } catch (error) {
-            console.error("Error updating deal document:", error);
-            editDealStatusMessage.textContent = `Failed to update deal: ${error.message}`;
-            editDealStatusMessage.classList.add('text-red-500');
+            editDealStatusMessage.textContent = `Update failed: ${error.message}`;
         } finally {
-            updateDealBtnEditModal.disabled = false; // Corrected reference
-            updateDealBtnEditModal.textContent = 'Save Changes'; // Corrected reference
+            updateDealBtnEditModal.disabled = false;
+            updateDealBtnEditModal.textContent = 'Save Changes';
         }
     });
 }
 
-// --- CANCEL EDIT DEAL BUTTON (NEW) ---
-if (cancelEditDealBtn && editDealModal && editDealStatusMessage) { // Ensure all exist
-    cancelEditDealBtn.addEventListener('click', () => {
-        console.log("Cancel Edit Deal button clicked.");
-        editDealModal.classList.add('hidden');
-        editDealStatusMessage.textContent = '';
-    });
+// --- CANCEL EDIT DEAL ---
+if (cancelEditDealBtn) {
+    cancelEditDealBtn.addEventListener('click', () => editDealModal.classList.add('hidden'));
 }
 
-// --- DELETE DEAL FUNCTION ---
+// --- DELETE DEAL ---
 async function deleteDeal(dealId, imageUrl) {
-    console.log("deleteDeal called for ID:", dealId);
     try {
-        // Delete image from storage if it exists
         if (imageUrl) {
-            try {
-                const imageRef = ref(storage, imageUrl);
-                await deleteObject(imageRef);
-                console.log("Deal image deleted from storage.");
-            } catch (storageError) {
-                console.warn("Could not delete deal image from storage (might not exist or permission issue):", storageError);
-            }
+            await deleteObject(ref(storage, imageUrl)).catch(err => console.warn("Image delete failed:", err));
         }
-        // Delete deal document from Firestore
         await deleteDoc(doc(db, "deals", dealId));
-        alert("Deal deleted successfully! 🗑️");
-        console.log("Deal document deleted from Firestore.");
-        // UI will update via onSnapshot
+        alert("Deal deleted successfully!");
     } catch (error) {
-        console.error("Error deleting deal:", error);
         alert(`Failed to delete deal: ${error.message}`);
     }
 }
 
-// --- LIST NEW BUSINESS LOGIC (NEW SECTION) ---
-if (listBusinessImageInput && listImagePreview && listBusinessForm && submitNewBusinessBtn && listBusinessStatusMessage && listBusinessTownSelect && listBusinessCategorySelect) { // Ensure all exist
+// --- LIST NEW BUSINESS LOGIC ---
+if (listBusinessImageInput) {
     listBusinessImageInput.addEventListener('change', (e) => {
         selectedNewBusinessImageFile = e.target.files[0];
-        console.log("New Business image selected:", selectedNewBusinessImageFile ? selectedNewBusinessImageFile.name : "none");
         if (selectedNewBusinessImageFile) {
             const reader = new FileReader();
             reader.onload = (event) => {
@@ -982,64 +718,33 @@ if (listBusinessImageInput && listImagePreview && listBusinessForm && submitNewB
             reader.readAsDataURL(selectedNewBusinessImageFile);
         } else {
             listImagePreview.classList.add('hidden');
-            listImagePreview.src = '#';
         }
     });
+}
 
+if (listBusinessForm) {
     listBusinessForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        console.log("List Business Form submitted.");
-
-        if (!currentBusinessUser) {
-            listBusinessStatusMessage.textContent = "You must be logged in to list a business.";
-            listBusinessStatusMessage.classList.add('text-red-500');
-            console.error("Attempted to list business without logged-in user.");
-            return;
-        }
+        if (!currentBusinessUser) return;
 
         submitNewBusinessBtn.disabled = true;
         submitNewBusinessBtn.textContent = 'Submitting...';
-        listBusinessStatusMessage.textContent = '';
 
-        const name = document.getElementById('list-business-name')?.value.trim();
-        const category = listBusinessCategorySelect.value; // Get value from the select
-        const town = listBusinessTownSelect.value; // Get value from the select
-        const description = document.getElementById('list-business-description')?.value.trim();
-        const address = document.getElementById('list-business-address')?.value.trim();
-        const phone = document.getElementById('list-business-phone')?.value.trim();
-        const ownerEmail = currentBusinessUser.email; // Use the logged-in user's email as ownerEmail
-
-        if (!name || !category || !town || !description || !address || !phone) {
-            listBusinessStatusMessage.textContent = "Please fill in all required fields.";
-            listBusinessStatusMessage.classList.add('text-red-500');
-            submitNewBusinessBtn.disabled = false;
-            submitNewBusinessBtn.textContent = 'Submit Business for Approval';
-            console.warn("List Business Form: Missing required fields.");
-            return;
-        }
-
-        // Basic phone number validation (10 digits)
-        const phoneRegex = /^\d{10}$/;
-        if (!phoneRegex.test(phone)) {
-            listBusinessStatusMessage.textContent = "Please enter a valid 10-digit phone number.";
-            listBusinessStatusMessage.classList.add('text-red-500');
-            submitNewBusinessBtn.disabled = false;
-            submitNewBusinessBtn.textContent = 'Submit Business for Approval';
-            return;
-        }
+        const name = getElementByIdOrLog('list-business-name').value.trim();
+        const category = listBusinessCategorySelect.value;
+        const town = listBusinessTownSelect.value;
+        const description = getElementByIdOrLog('list-business-description').value.trim();
+        const address = getElementByIdOrLog('list-business-address').value.trim();
+        const phone = getElementByIdOrLog('list-business-phone').value.trim();
 
         let imageUrl = null;
         if (selectedNewBusinessImageFile) {
-            console.log("Uploading new business image for listing...");
             try {
                 const storageRef = ref(storage, `business_images/${Date.now()}_${selectedNewBusinessImageFile.name}`);
                 const uploadResult = await uploadBytes(storageRef, selectedNewBusinessImageFile);
                 imageUrl = await getDownloadURL(uploadResult.ref);
-                console.log("New business image uploaded:", imageUrl);
             } catch (error) {
-                console.error("Error uploading new business image:", error);
-                listBusinessStatusMessage.textContent = `Failed to upload image: ${error.message}`;
-                listBusinessStatusMessage.classList.add('text-red-500');
+                listBusinessStatusMessage.textContent = `Image upload failed: ${error.message}`;
                 submitNewBusinessBtn.disabled = false;
                 submitNewBusinessBtn.textContent = 'Submit Business for Approval';
                 return;
@@ -1047,40 +752,24 @@ if (listBusinessImageInput && listImagePreview && listBusinessForm && submitNewB
         }
 
         try {
-            console.log("Adding new business document to Firestore...");
             await addDoc(collection(db, "businesses"), {
-                name: name,
-                category: category,
-                town: town,
-                description: description,
-                address: address,
-                phone: phone,
-                imageUrl: imageUrl,
-                ownerEmail: ownerEmail, // Set owner email from current logged-in user
-                submittedBy: currentBusinessUser.uid, // Business owner's UID
-                status: 'pending', // New businesses submitted by owner are pending approval
+                name, category, town, description, address, phone,
+                imageUrl,
+                ownerEmail: currentBusinessUser.email,
+                submittedBy: currentBusinessUser.uid,
+                status: 'pending',
                 upvoteCount: 0, 
                 upvotedBy: [], 
                 views: 0,
                 createdAt: serverTimestamp()
             });
-
-            listBusinessStatusMessage.textContent = "✅ Business submitted successfully! It will be listed after admin approval.";
-            listBusinessStatusMessage.classList.remove('text-red-500');
-            listBusinessStatusMessage.classList.add('text-emerald-400');
-            listBusinessForm.reset(); // Clear the form
-            listImagePreview.src = '#';
+            listBusinessStatusMessage.textContent = "✅ Business submitted! Awaiting admin approval.";
+            listBusinessForm.reset();
             listImagePreview.classList.add('hidden');
-            selectedNewBusinessImageFile = null; // Reset selected file
-            console.log("New business submitted. Re-fetching owned business details.");
-            // After successful submission, re-fetch owned business to show details
+            selectedNewBusinessImageFile = null;
             await fetchOwnedBusiness(currentBusinessUser.email);
-            
         } catch (error) {
-            console.error("Error adding new business document: ", error);
-            listBusinessStatusMessage.textContent = "❌ Failed to submit business. Please try again. Check console for details.";
-            listBusinessStatusMessage.classList.add('text-red-500');
-            listBusinessStatusMessage.classList.remove('text-emerald-400');
+            listBusinessStatusMessage.textContent = `Submission failed: ${error.message}`;
         } finally {
             submitNewBusinessBtn.disabled = false;
             submitNewBusinessBtn.textContent = 'Submit Business for Approval';

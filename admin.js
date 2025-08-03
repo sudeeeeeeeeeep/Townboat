@@ -126,6 +126,10 @@ const pendingBusinessesCountEl = document.getElementById('pending-businesses-cou
 const mostViewedBusinessesList = document.getElementById('most-viewed-businesses-list');
 const businessesByTownList = document.getElementById('businesses-by-town-list');
 
+// NEW: Claim Request Elements
+const claimRequestsList = document.getElementById('claim-requests-list');
+const noClaimRequestsMsg = document.getElementById('no-claim-requests-msg');
+
 
 // --- HELPER FUNCTIONS ---
 
@@ -207,6 +211,7 @@ onAuthStateChanged(auth, async (user) => {
                 // Initialize dashboard features
                 populateAdminTownDropdowns();
                 fetchBusinesses(); // This will trigger rendering and other data fetches
+                fetchClaimRequests(); // Fetch claim requests
                 populateTownFilter(); // Ensures filter is populated on load
                 fetchAnalytics(); // Ensures analytics are fetched on load
             }
@@ -441,7 +446,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- ATTACH OTHER DASHBOARD EVENT LISTENERS ---
-    // These will only be active when adminDashboardContent is visible
     if (filterStatusSelect) {
         filterStatusSelect.addEventListener('change', () => {
             currentFilters.status = filterStatusSelect.value;
@@ -492,52 +496,33 @@ document.addEventListener('DOMContentLoaded', () => {
             let newImageUrl = null;
             const currentBusiness = allBusinesses.find(b => b.id === businessId);
             const oldImageUrl = currentBusiness ? currentBusiness.imageUrl : null;
-            const imageUrlFromInput = editImageUrlInput.value.trim(); // Get URL from input
+            const imageUrlFromInput = editImageUrlInput.value.trim();
 
-            if (selectedImageFileForEdit) { // Prioritize file upload if a file is selected
+            if (selectedImageFileForEdit) {
                 try {
                     const storageRef = ref(storage, `business_images/${Date.now()}_${selectedImageFileForEdit.name}`);
                     const uploadTask = await uploadBytes(storageRef, selectedImageFileForEdit);
                     newImageUrl = await getDownloadURL(uploadTask.ref);
-                    // If a new file is uploaded, and there was an old image (either file or URL), delete the old storage image
                     if (oldImageUrl && oldImageUrl.startsWith('gs://') && oldImageUrl !== newImageUrl) {
-                        try {
-                            await deleteObject(ref(storage, oldImageUrl));
-                            console.log("Old storage image deleted after new file upload:", oldImageUrl);
-                        } catch (deleteError) {
-                            console.warn("Could not delete old storage image after new file upload:", deleteError);
-                        }
+                        await deleteObject(ref(storage, oldImageUrl));
                     }
                 } catch (error) {
-                    console.error("Error uploading new business image:", error);
                     editStatusMessage.textContent = `Failed to upload image: ${error.message}`;
-                    editStatusMessage.classList.add('text-red-500');
                     updateBtn.disabled = false;
                     updateBtn.textContent = 'Save Changes';
                     return;
                 }
-            } else if (imageUrlFromInput) { // Use URL if no file is selected but URL is provided
+            } else if (imageUrlFromInput) {
                 newImageUrl = imageUrlFromInput;
-                // If a URL is provided, and there was an old storage image, delete it
                 if (oldImageUrl && oldImageUrl.startsWith('gs://')) {
-                    try {
-                        await deleteObject(ref(storage, oldImageUrl));
-                        console.log("Old storage image deleted due to new URL input:", oldImageUrl);
-                    } catch (deleteError) {
-                        console.warn("Could not delete old storage image on new URL input:", deleteError);
-                    }
+                    await deleteObject(ref(storage, oldImageUrl));
                 }
-            } else if (editImageInput.value === '' && imageUrlFromInput === '' && oldImageUrl) { // If both inputs are cleared and there was an old image
+            } else if (editImageInput.value === '' && imageUrlFromInput === '' && oldImageUrl) {
                 newImageUrl = null;
-                if (oldImageUrl.startsWith('gs://')) { // Only delete if it was a storage image
-                    try {
-                        await deleteObject(ref(storage, oldImageUrl));
-                        console.log("Old storage image deleted due to both inputs cleared:", oldImageUrl);
-                    } catch (deleteError) {
-                        console.warn("Could not delete old storage image on inputs clear:", deleteError);
-                    }
+                if (oldImageUrl.startsWith('gs://')) {
+                    await deleteObject(ref(storage, oldImageUrl));
                 }
-            } else { // Otherwise, keep the old image URL
+            } else {
                 newImageUrl = oldImageUrl;
             }
 
@@ -548,14 +533,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     updatedAt: serverTimestamp()
                 });
                 editStatusMessage.textContent = "Business details updated successfully! ✅";
-                editStatusMessage.classList.remove('text-red-500');
-                editStatusMessage.classList.add('text-emerald-400');
                 selectedImageFileForEdit = null;
                 editModal.classList.add('hidden');
             } catch (error) {
-                console.error("Error updating business document:", error);
                 editStatusMessage.textContent = `Failed to update business: ${error.message}`;
-                editStatusMessage.classList.add('text-red-500');
             } finally {
                 updateBtn.disabled = false;
                 updateBtn.textContent = 'Save Changes';
@@ -574,11 +555,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentImageNameP.textContent = `New: ${selectedImageFileForEdit.name}`;
                 };
                 reader.readAsDataURL(selectedImageFileForEdit);
-                editImageUrlInput.value = ''; // Clear URL input if file is selected
+                editImageUrlInput.value = '';
             } else {
-                // If file input is cleared, don't clear preview if URL is present
                 if (!editImageUrlInput.value) {
-                    editImagePreview.src = '#';
                     editImagePreview.classList.add('hidden');
                 }
                 currentImageNameP.textContent = 'No new image selected.';
@@ -597,12 +576,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentImageNameP.textContent = "Invalid image URL provided.";
                 };
                 currentImageNameP.textContent = `New URL: ${url}`;
-                editImageInput.value = ''; // Clear file input if URL is entered
+                editImageInput.value = '';
                 selectedImageFileForEdit = null;
             } else {
-                // If URL input is cleared, and no file is selected
                 if (!selectedImageFileForEdit) {
-                    editImagePreview.src = '#';
                     editImagePreview.classList.add('hidden');
                 }
                 currentImageNameP.textContent = 'No image URL.';
@@ -612,7 +589,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Delete Modal Buttons
     if (confirmDeleteBtn) {
-        // Fix: Changed 'confirmConfirmBtn' to 'confirmDeleteBtn'
         confirmDeleteBtn.addEventListener('click', async () => {
             if (!businessToDeleteId) return;
 
@@ -623,22 +599,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const businessDoc = await getDoc(doc(db, "businesses", businessToDeleteId));
                 if (businessDoc.exists()) {
                     const businessData = businessDoc.data();
-                    if (businessData.imageUrl && businessData.imageUrl.startsWith('gs://')) { // Only delete if it's a storage URL
-                        try {
-                            await deleteObject(ref(storage, businessData.imageUrl));
-                            console.log("Business image deleted from storage.");
-                        } catch (storageError) {
-                            console.warn("Failed to delete image from storage (might not exist or permission issue):", storageError);
-                        }
+                    if (businessData.imageUrl && businessData.imageUrl.startsWith('gs://')) {
+                        await deleteObject(ref(storage, businessData.imageUrl));
                     }
                     await deleteDoc(doc(db, "businesses", businessToDeleteId));
                     alert("Business deleted successfully! 🗑️");
-                } else {
-                    alert("Business not found in database.");
                 }
                 deleteConfirmModal.classList.add('hidden');
             } catch (error) {
-                console.error("Error deleting business:", error);
                 alert(`Failed to delete business: ${error.message}`);
             } finally {
                 confirmDeleteBtn.disabled = false;
@@ -666,10 +634,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     adminImagePreview.classList.remove('hidden');
                 };
                 reader.readAsDataURL(selectedImageFileForAdminAdd);
-                adminImageUrlInput.value = ''; // Clear URL input if file is selected
+                adminImageUrlInput.value = '';
             } else {
-                if (!adminImageUrlInput.value) { // Only hide if no URL is present either
-                    adminImagePreview.src = '#';
+                if (!adminImageUrlInput.value) {
                     adminImagePreview.classList.add('hidden');
                 }
             }
@@ -684,17 +651,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 adminImagePreview.classList.remove('hidden');
                 adminImagePreview.onerror = () => {
                     adminImagePreview.src = 'https://placehold.co/150x150/E5E7EB/000000?text=Invalid+URL'; 
-                    adminAddBusinessStatus.textContent = "Invalid image URL provided. Displaying placeholder.";
-                    adminAddBusinessStatus.classList.add('text-red-500');
+                    adminAddBusinessStatus.textContent = "Invalid image URL provided.";
                 };
-                adminImageInput.value = ''; // Clear file input if URL is entered
+                adminImageInput.value = '';
                 selectedImageFileForAdminAdd = null;
             } else {
-                if (!selectedImageFileForAdminAdd) { // Only hide if no file is selected either
-                    adminImagePreview.src = '#';
+                if (!selectedImageFileForAdminAdd) {
                     adminImagePreview.classList.add('hidden');
                 }
-                adminAddBusinessStatus.textContent = ''; // Clear status if URL is cleared
+                adminAddBusinessStatus.textContent = '';
             }
         });
     }
@@ -726,23 +691,20 @@ document.addEventListener('DOMContentLoaded', () => {
             let imageUrl = null;
             const imageUrlFromInput = adminImageUrlInput.value.trim();
 
-            if (selectedImageFileForAdminAdd) { // Prioritize file upload
+            if (selectedImageFileForAdminAdd) {
                 try {
                     const storageRef = ref(storage, `business_images/${Date.now()}_${selectedImageFileForAdminAdd.name}`);
                     const uploadResult = await uploadBytes(storageRef, selectedImageFileForAdminAdd);
                     imageUrl = await getDownloadURL(uploadResult.ref);
                 } catch (error) {
-                    console.error("Error uploading image:", error);
-                    adminAddBusinessStatus.textContent = "Failed to upload image. Please try again.";
-                    adminAddBusinessStatus.classList.add('text-red-500');
+                    adminAddBusinessStatus.textContent = "Failed to upload image.";
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Add Business (Approved)';
                     return;
                 }
-            } else if (imageUrlFromInput) { // Use URL if no file
+            } else if (imageUrlFromInput) {
                 imageUrl = imageUrlFromInput;
             }
-            // If neither is provided, imageUrl remains null
 
             try {
                 await addDoc(collection(db, "businesses"), {
@@ -752,30 +714,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     description: businessDescription,
                     address: businessAddress,
                     phone: businessPhone,
-                    imageUrl: imageUrl, // Will be null if neither file nor URL provided
+                    imageUrl: imageUrl,
                     ownerEmail: businessOwnerEmail,
                     submittedBy: auth.currentUser.uid,
                     createdAt: serverTimestamp(),
                     status: 'approved',
                     upvoteCount: 0, 
                     upvotedBy: [], 
-                    views: 0 
+                    views: 0,
+                    isClaimed: false,
+                    claimedBy: null,
+                    claimStatus: 'unclaimed'
                 });
 
                 adminAddBusinessStatus.textContent = "✅ Business added successfully!";
                 adminAddBusinessStatus.classList.remove('text-red-500');
                 adminAddBusinessStatus.classList.add('text-emerald-400');
                 adminAddBusinessForm.reset();
-                adminImagePreview.src = '#';
                 adminImagePreview.classList.add('hidden');
                 selectedImageFileForAdminAdd = null;
-                adminImageUrlInput.value = ''; // Clear URL input
                 
             } catch (error) {
-                console.error("Error adding business document: ", error);
-                adminAddBusinessStatus.textContent = "❌ Failed to add business. Please try again.";
-                adminAddBusinessStatus.classList.add('text-red-500');
-                adminAddBusinessStatus.classList.remove('text-emerald-400');
+                adminAddBusinessStatus.textContent = "❌ Failed to add business.";
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Add Business (Approved)';
@@ -788,7 +748,6 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchAnalytics() {
     if (!userCountEl || !totalBusinessesCountEl || !approvedBusinessesCountEl || 
         !pendingBusinessesCountEl || !mostViewedBusinessesList || !businessesByTownList) {
-        console.warn("Analytics DOM elements not found, skipping fetchAnalytics.");
         return;
     }
 
@@ -796,217 +755,127 @@ async function fetchAnalytics() {
         const businessSnapshot = await getDocs(collection(db, "businesses"));
         const allBusinessesData = businessSnapshot.docs.map(doc => doc.data());
 
-        const totalBusinesses = allBusinessesData.length;
-        const approvedBusinesses = allBusinessesData.filter(b => b.status === 'approved').length;
-        const pendingBusinesses = allBusinessesData.filter(b => b.status === 'pending').length;
+        totalBusinessesCountEl.textContent = allBusinessesData.length;
+        approvedBusinessesCountEl.textContent = allBusinessesData.filter(b => b.status === 'approved').length;
+        pendingBusinessesCountEl.textContent = allBusinessesData.filter(b => b.status === 'pending').length;
 
-        totalBusinessesCountEl.textContent = totalBusinesses;
-        approvedBusinessesCountEl.textContent = approvedBusinesses;
-        pendingBusinessesCountEl.textContent = pendingBusinesses;
+        const uids = new Set(allBusinessesData.map(b => b.submittedBy).filter(Boolean));
+        const emails = new Set(allBusinessesData.map(b => b.ownerEmail).filter(Boolean));
+        userCountEl.textContent = uids.size + emails.size;
 
-        const submittedByUids = new Set(allBusinessesData.map(b => b.submittedBy).filter(uid => uid));
-        const ownerEmails = new Set(allBusinessesData.map(b => b.ownerEmail).filter(email => email));
-        userCountEl.textContent = submittedByUids.size + ownerEmails.size;
-
-        const sortedByViews = [...allBusinessesData].sort((a, b) => (b.views || 0) - (a.views || 0));
+        const sortedByViews = allBusinessesData.sort((a, b) => (b.views || 0) - (a.views || 0));
         mostViewedBusinessesList.innerHTML = '';
-        if (sortedByViews.length > 0) {
-            sortedByViews.slice(0, 5).forEach(business => {
-                const li = document.createElement('li');
-                li.textContent = `${business.name} (${business.views || 0} views)`;
-                li.className = 'py-1 border-b border-gray-700 last:border-b-0';
-                mostViewedBusinessesList.appendChild(li);
-            });
-        } else {
-            mostViewedBusinessesList.innerHTML = '<li class="text-gray-400">No view data yet.</li>';
-        }
-
-        const businessesByTown = {};
-        allBusinessesData.forEach(b => {
-            if (b.town) {
-                businessesByTown[b.town] = (businessesByTown[b.town] || 0) + 1;
-            }
+        sortedByViews.slice(0, 5).forEach(business => {
+            const li = document.createElement('li');
+            li.textContent = `${business.name} (${business.views || 0} views)`;
+            mostViewedBusinessesList.appendChild(li);
         });
-        const sortedBusinessesByTown = Object.entries(businessesByTown).sort(([, a], [, b]) => b - a);
+
+        const businessesByTown = allBusinessesData.reduce((acc, b) => {
+            if (b.town) acc[b.town] = (acc[b.town] || 0) + 1;
+            return acc;
+        }, {});
+        const sortedTowns = Object.entries(businessesByTown).sort(([, a], [, b]) => b - a);
         businessesByTownList.innerHTML = '';
-        if (sortedBusinessesByTown.length > 0) {
-            sortedBusinessesByTown.slice(0, 5).forEach(([town, count]) => {
-                const li = document.createElement('li');
-                li.textContent = `${town}: ${count} businesses`;
-                li.className = 'py-1 border-b border-gray-700 last:border-b-0';
-                businessesByTownList.appendChild(li);
-            });
-        } else {
-            businessesByTownList.innerHTML = '<li class="text-gray-400">No town data yet.</li>';
-        }
+        sortedTowns.slice(0, 5).forEach(([town, count]) => {
+            const li = document.createElement('li');
+            li.textContent = `${town}: ${count} businesses`;
+            businessesByTownList.appendChild(li);
+        });
 
     } catch (error) {
         console.error("Error fetching analytics:", error);
-        if(userCountEl) userCountEl.textContent = 'Error';
-        if(totalBusinessesCountEl) totalBusinessesCountEl.textContent = 'Error';
-        if(approvedBusinessesCountEl) approvedBusinessesCountEl.textContent = 'Error';
-        if(pendingBusinessesCountEl) pendingBusinessesCountEl.textContent = 'Error';
-        if(mostViewedBusinessesList) mostViewedBusinessesList.innerHTML = '<li class="text-red-400">Failed to load analytics.</li>';
-        if(businessesByTownList) businessesByTownList.innerHTML = '<li class="text-red-400">Failed to load analytics.</li>';
     }
 }
 
-// --- POPULATE TOWN FILTER (for admin filters) ---
+// --- POPULATE TOWN FILTER ---
 async function populateTownFilter() {
-    if (!filterTownSelect) {
-        console.warn("Filter town select element not found, skipping population.");
-        return;
-    }
-
+    if (!filterTownSelect) return;
     try {
         const querySnapshot = await getDocs(collection(db, "businesses"));
-        const towns = new Set();
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            if (data.town) {
-                towns.add(data.town);
-            }
-        });
-
+        const towns = new Set(querySnapshot.docs.map(doc => doc.data().town).filter(Boolean));
         filterTownSelect.innerHTML = '<option value="">All Towns</option>';
-        
-        Array.from(towns).sort().forEach(town => {
-            const option = document.createElement('option');
-            option.value = town;
-            option.textContent = town;
-            filterTownSelect.appendChild(option);
+        towns.forEach(town => {
+            const option = new Option(town, town);
+            filterTownSelect.add(option);
         });
-        console.log(`[Town Filter] Populated filter with ${towns.size} unique towns.`); // New log
     } catch (error) {
         console.error("Error populating town filter:", error);
     }
 }
 
-// --- RENDERING BUSINESSES ---
+// --- BUSINESS RENDERING ---
 function fetchBusinesses() {
     let q = query(collection(db, "businesses"), orderBy("createdAt", "desc"));
-
-    if (currentFilters.status) {
-        q = query(q, where("status", "==", currentFilters.status));
-    }
-    if (currentFilters.town) {
-        q = query(q, where("town", "==", currentFilters.town));
-    }
+    if (currentFilters.status) q = query(q, where("status", "==", currentFilters.status));
+    if (currentFilters.town) q = query(q, where("town", "==", currentFilters.town));
 
     onSnapshot(q, (snapshot) => {
         allBusinesses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        console.log(`[Fetch Businesses] Fetched ${allBusinesses.length} businesses from Firestore.`); // New log
         renderBusinesses();
-        populateAdminTownDropdowns(); // Re-populate town dropdowns for add/edit forms on business data change
-        fetchAnalytics(); // Update analytics every time businesses change
-    }, (error) => {
-        console.error("Error fetching businesses:", error);
-        alert("Failed to load businesses. Please try again.");
+        populateAdminTownDropdowns();
+        fetchAnalytics();
     });
 }
 
 function renderBusinesses() {
-    if (!pendingBusinessesList || !approvedBusinessesList || !rejectedBusinessesList ||
-        !noPendingBusinessesMsg || !noApprovedBusinessesMsg || !noRejectedBusinessesMsg) {
-        console.warn("Business list or message elements not found, skipping render.");
-        return;
-    }
+    if (!pendingBusinessesList || !approvedBusinessesList || !rejectedBusinessesList) return;
 
     pendingBusinessesList.innerHTML = '';
     approvedBusinessesList.innerHTML = '';
     rejectedBusinessesList.innerHTML = '';
 
-    const filteredAndSearchedBusinesses = allBusinesses.filter(b => {
-        const matchesSearch = currentFilters.search ? 
-                              b.name.toLowerCase().includes(currentFilters.search) || 
-                              b.description.toLowerCase().includes(currentFilters.search) ||
-                              (b.address && b.address.toLowerCase().includes(currentFilters.search))
-                              : true;
-        return matchesSearch;
-    });
+    const filtered = allBusinesses.filter(b => 
+        !currentFilters.search || 
+        b.name.toLowerCase().includes(currentFilters.search) || 
+        b.description.toLowerCase().includes(currentFilters.search)
+    );
 
-    console.log(`[Render Businesses] Rendering ${filteredAndSearchedBusinesses.length} businesses after filtering/searching.`); // New log
+    const pending = filtered.filter(b => b.status === 'pending');
+    const approved = filtered.filter(b => b.status === 'approved');
+    const rejected = filtered.filter(b => b.status === 'rejected');
 
-    noPendingBusinessesMsg.style.display = 'none';
-    noApprovedBusinessesMsg.style.display = 'none';
-    noRejectedBusinessesMsg.style.display = 'none';
+    noPendingBusinessesMsg.style.display = pending.length ? 'none' : 'block';
+    noApprovedBusinessesMsg.style.display = approved.length ? 'none' : 'block';
+    noRejectedBusinessesMsg.style.display = rejected.length ? 'none' : 'block';
 
-    const pending = filteredAndSearchedBusinesses.filter(b => b.status === 'pending');
-    const approved = filteredAndSearchedBusinesses.filter(b => b.status === 'approved');
-    const rejected = filteredAndSearchedBusinesses.filter(b => b.status === 'rejected');
-
-    if (pending.length === 0) { noPendingBusinessesMsg.style.display = 'block'; }
-    if (approved.length === 0) { noApprovedBusinessesMsg.style.display = 'block'; }
-    if (rejected.length === 0) { noRejectedBusinessesMsg.style.display = 'block'; }
-
-    pending.forEach(business => {
-        pendingBusinessesList.appendChild(createBusinessCard(business));
-    });
-    approved.forEach(business => {
-        approvedBusinessesList.appendChild(createBusinessCard(business));
-    });
-    rejected.forEach(business => {
-        rejectedBusinessesList.appendChild(createBusinessCard(business));
-    });
-
-    // --- DIAGNOSTIC TEST ELEMENT ---
-    // This element will appear in the Approved Businesses list if the container is visible and appendChild works.
-    if (approvedBusinessesList && filteredAndSearchedBusinesses.length > 0) {
-        const testDiv = document.createElement('div');
-        testDiv.textContent = `DIAGNOSTIC TEST: ${filteredAndSearchedBusinesses.length} businesses processed.`;
-        testDiv.style.backgroundColor = '#FF0000'; // Red background
-        testDiv.style.color = '#FFFFFF'; // White text
-        testDiv.style.padding = '10px';
-        testDiv.style.marginTop = '20px';
-        testDiv.style.borderRadius = '8px';
-        testDiv.style.textAlign = 'center';
-        approvedBusinessesList.appendChild(testDiv);
-        console.log("Added diagnostic test div to approvedBusinessesList.");
-    }
-    // --- END DIAGNOSTIC TEST ELEMENT ---
+    pending.forEach(b => pendingBusinessesList.appendChild(createBusinessCard(b)));
+    approved.forEach(b => approvedBusinessesList.appendChild(createBusinessCard(b)));
+    rejected.forEach(b => rejectedBusinessesList.appendChild(createBusinessCard(b)));
 }
 
 function createBusinessCard(business) {
     const div = document.createElement('div');
     div.className = 'business-item bg-gray-800 p-4 rounded-lg shadow items-center text-sm md:text-base';
-    
     const imageUrl = business.imageUrl || 'https://via.placeholder.com/150?text=No+Image';
 
     div.innerHTML = `
         <div class="flex items-center space-x-3 md:col-span-2">
-            <img src="${imageUrl}" alt="${business.name}" class="w-16 h-16 object-cover rounded-md border border-gray-700">
+            <img src="${imageUrl}" alt="${business.name}" class="w-16 h-16 object-cover rounded-md">
             <div>
                 <h3 class="text-lg font-semibold text-white">${business.name}</h3>
-                <p class="text-gray-400">${business.category} <span class="mx-1">•</span> ${business.town}</p>
+                <p class="text-gray-400">${business.category} • ${business.town}</p>
             </div>
         </div>
-        <div class="mt-2 md:mt-0">
-            <p class="text-gray-300">Status: <span class="font-medium ${business.status === 'approved' ? 'text-emerald-400' : business.status === 'pending' ? 'text-yellow-400' : 'text-red-400'}">${business.status.charAt(0).toUpperCase() + business.status.slice(1)}</span></p>
-        </div>
-        <div class="mt-2 md:mt-0">
-            <p class="text-gray-300">Submitted By: ${business.ownerEmail || 'N/A'}</p>
-        </div>
+        <div><p class="text-gray-300">Status: <span class="font-medium ${business.status === 'approved' ? 'text-emerald-400' : 'text-yellow-400'}">${business.status}</span></p></div>
+        <div><p class="text-gray-300">Submitted By: ${business.ownerEmail || 'N/A'}</p></div>
         <div class="flex flex-wrap gap-2 mt-3 md:mt-0 md:justify-end">
             ${business.status === 'pending' ? `
-                <button class="approve-btn bg-emerald-600 text-white px-3 py-1 rounded-md hover:bg-emerald-700 transition duration-300 text-xs" data-id="${business.id}">Approve</button>
-                <button class="reject-btn bg-yellow-600 text-white px-3 py-1 rounded-md hover:bg-yellow-700 transition duration-300 text-xs" data-id="${business.id}">Reject</button>
+                <button class="approve-btn bg-emerald-600 text-white px-3 py-1 rounded-md" data-id="${business.id}">Approve</button>
+                <button class="reject-btn bg-yellow-600 text-white px-3 py-1 rounded-md" data-id="${business.id}">Reject</button>
             ` : ''}
-            <button class="edit-btn bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition duration-300 text-xs" data-id="${business.id}">Edit</button>
-            <button class="delete-btn bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition duration-300 text-xs" data-id="${business.id}">Delete</button>
+            <button class="edit-btn bg-blue-600 text-white px-3 py-1 rounded-md" data-id="${business.id}">Edit</button>
+            <button class="delete-btn bg-red-600 text-white px-3 py-1 rounded-md" data-id="${business.id}">Delete</button>
         </div>
     `;
 
-    div.querySelectorAll('.approve-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => handleBusinessAction(e.target, 'approved'));
-    });
-    div.querySelectorAll('.reject-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => handleBusinessAction(e.target, 'rejected'));
-    });
-    div.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => handleBusinessAction(e.target, 'edit'));
-    });
-    div.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => handleBusinessAction(e.target, 'delete'));
+    div.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const action = e.target.classList.contains('approve-btn') ? 'approved' :
+                           e.target.classList.contains('reject-btn') ? 'rejected' :
+                           e.target.classList.contains('edit-btn') ? 'edit' : 'delete';
+            handleBusinessAction(e.target, action);
+        });
     });
 
     return div;
@@ -1014,73 +883,38 @@ function createBusinessCard(business) {
 
 async function handleBusinessAction(button, actionType) {
     const businessId = button.dataset.id;
-    if (!businessId) {
-        console.error("Business ID not found for action:", actionType);
-        alert("An error occurred. Please try again.");
-        return;
-    }
+    if (!businessId) return;
 
     if (actionType === 'approved' || actionType === 'rejected') {
-        try {
-            await updateDoc(doc(db, "businesses", businessId), {
-                status: actionType,
-                updatedAt: serverTimestamp()
-            });
-            alert(`Business ${actionType} successfully!`);
-        } catch (error) {
-            console.error(`Error updating business status to ${actionType}:`, error);
-            alert(`Failed to update business status to ${actionType}.`);
-        }
-    } 
-    else if (actionType === 'edit') {
+        await updateDoc(doc(db, "businesses", businessId), { status: actionType });
+        alert(`Business ${actionType}.`);
+    } else if (actionType === 'edit') {
         const business = allBusinesses.find(b => b.id === businessId);
         if (business) {
             editBusinessIdInput.value = business.id;
-            editNameInput.value = business.name || '';
-            editCategorySelect.value = business.category || '';
-            editTownSelect.value = business.town || '';
-            editDescriptionInput.value = business.description || '';
-            editAddressInput.value = business.address || '';
-            editPhoneInput.value = business.phone || '';
-            editStatusSelect.value = business.status || 'pending';
-            editOwnerEmailInput.value = business.ownerEmail || '';
-
-            // Set the image preview based on current imageUrl
+            editNameInput.value = business.name;
+            editCategorySelect.value = business.category;
+            editTownSelect.value = business.town;
+            editDescriptionInput.value = business.description;
+            editAddressInput.value = business.address;
+            editPhoneInput.value = business.phone;
+            editStatusSelect.value = business.status;
+            editOwnerEmailInput.value = business.ownerEmail;
             if (business.imageUrl) {
                 editImagePreview.src = business.imageUrl;
                 editImagePreview.classList.remove('hidden');
-                // Display a more readable name or indicate it's a URL
-                currentImageNameP.textContent = business.imageUrl.startsWith('http') ? `Current: ${business.imageUrl.substring(0, 30)}...` : `Current: ${business.imageUrl.split('/').pop().split('?')[0]}`;
-                editImageUrlInput.value = business.imageUrl.startsWith('http') ? business.imageUrl : ''; // Populate URL input if it's a direct URL
-            } else {
-                editImagePreview.src = '#';
-                editImagePreview.classList.add('hidden');
-                currentImageNameP.textContent = 'No current image.';
-                editImageUrlInput.value = ''; // Clear URL input if no image
             }
-            selectedImageFileForEdit = null; // Clear any previously selected file
-            editImageInput.value = ''; // Clear file input
-
-            editStatusMessage.textContent = '';
             editModal.classList.remove('hidden');
-        } else {
-            alert("Business details not found for editing.");
         }
-    } 
-    else if (actionType === 'delete') {
+    } else if (actionType === 'delete') {
         businessToDeleteId = businessId;
         deleteConfirmModal.classList.remove('hidden');
     }
 }
 
-// --- POPULATE ADMIN TOWN DROPDOWNS (for Add/Edit forms) ---
+// --- POPULATE ADMIN TOWN DROPDOWNS ---
 async function populateAdminTownDropdowns() {
-    if (!adminTownSelect || !editTownSelect) {
-        console.warn("Admin town dropdowns not found, skipping population.");
-        return;
-    }
-
-    // Store current selected values to restore after repopulating
+    if (!adminTownSelect || !editTownSelect) return;
     const currentAdminTown = adminTownSelect.value;
     const currentEditTown = editTownSelect.value;
 
@@ -1088,35 +922,136 @@ async function populateAdminTownDropdowns() {
     editTownSelect.innerHTML = '<option value="">Select a Town</option>';
 
     try {
-        const townsCollectionRef = collection(db, "towns");
-        const q = query(townsCollectionRef, orderBy("name"));
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) {
-            console.warn("[Populate Towns] No towns found in the 'towns' collection.");
-            const noTownOption = document.createElement('option');
-            noTownOption.value = '';
-            noTownOption.textContent = 'No Towns Available';
-            noTownOption.disabled = true;
-            adminTownSelect.appendChild(noTownOption);
-            editTownSelect.appendChild(noTownOption.cloneNode(true));
-        } else {
-            console.log(`[Populate Towns] Found ${querySnapshot.docs.length} towns.`); // New log
-            querySnapshot.forEach((doc) => {
-                const townData = doc.data();
-                const option = document.createElement('option');
-                option.value = townData.name; 
-                option.textContent = townData.name;
-                adminTownSelect.appendChild(option);
-                editTownSelect.appendChild(option.cloneNode(true));
-            });
-        }
-        // Restore previous selections
+        const townsSnapshot = await getDocs(query(collection(db, "towns"), orderBy("name")));
+        townsSnapshot.forEach((doc) => {
+            const town = doc.data();
+            const option = new Option(town.name, town.name);
+            adminTownSelect.add(option.cloneNode(true));
+            editTownSelect.add(option);
+        });
         adminTownSelect.value = currentAdminTown;
         editTownSelect.value = currentEditTown;
-
     } catch (error) {
-        console.error("Error fetching towns for admin dropdowns:", error);
-        alert("Failed to load town options for forms. Please try again.");
+        console.error("Error fetching towns for dropdowns:", error);
+    }
+}
+
+
+// --- NEW: CLAIM REQUEST FUNCTIONS ---
+
+/**
+ * Fetches pending business claim requests from Firestore.
+ */
+function fetchClaimRequests() {
+    const q = query(collection(db, "claimRequests"), where("status", "==", "pending"), orderBy("createdAt", "desc"));
+
+    onSnapshot(q, (snapshot) => {
+        if (!claimRequestsList || !noClaimRequestsMsg) return;
+
+        if (snapshot.empty) {
+            claimRequestsList.innerHTML = '';
+            noClaimRequestsMsg.style.display = 'block';
+            return;
+        }
+        
+        noClaimRequestsMsg.style.display = 'none';
+        claimRequestsList.innerHTML = ''; // Clear previous list
+        snapshot.forEach(doc => {
+            const request = { id: doc.id, ...doc.data() };
+            claimRequestsList.appendChild(createClaimRequestCard(request));
+        });
+
+    }, (error) => {
+        console.error("Error fetching claim requests:", error);
+        if(claimRequestsList) claimRequestsList.innerHTML = '<p class="text-red-500 text-center">Failed to load claim requests.</p>';
+    });
+}
+
+/**
+ * Creates an HTML element for a single claim request.
+ * @param {object} request - The claim request data.
+ * @returns {HTMLElement} The created div element.
+ */
+function createClaimRequestCard(request) {
+    const div = document.createElement('div');
+    div.className = 'claim-item bg-gray-800 p-4 rounded-lg shadow items-center text-sm';
+
+    div.innerHTML = `
+        <div>
+            <h3 class="font-semibold text-white">${request.businessName}</h3>
+            <p class="text-gray-400">Business ID: ${request.businessId}</p>
+        </div>
+        <div>
+            <p class="text-gray-300">Requested by: ${request.requestingUserEmail}</p>
+            <p class="text-gray-400">User ID: ${request.requestingUserId}</p>
+        </div>
+        <div>
+            <p class="text-gray-300 font-semibold">Proof:</p>
+            <p class="text-gray-400 whitespace-pre-wrap">${request.proofOfOwnership}</p>
+        </div>
+        <div class="flex flex-wrap gap-2 md:justify-end">
+            <button class="approve-claim-btn bg-emerald-600 text-white px-3 py-1 rounded-md hover:bg-emerald-700 transition" data-claim-id="${request.id}" data-business-id="${request.businessId}" data-user-id="${request.requestingUserId}" data-user-email="${request.requestingUserEmail}">Approve</button>
+            <button class="reject-claim-btn bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition" data-claim-id="${request.id}" data-business-id="${request.businessId}">Reject</button>
+        </div>
+    `;
+
+    div.querySelector('.approve-claim-btn').addEventListener('click', (e) => handleClaimAction(e, 'approved'));
+    div.querySelector('.reject-claim-btn').addEventListener('click', (e) => handleClaimAction(e, 'rejected'));
+
+    return div;
+}
+
+/**
+ * Handles the approval or rejection of a claim request.
+ * @param {Event} e - The click event.
+ * @param {string} actionType - 'approved' or 'rejected'.
+ */
+async function handleClaimAction(e, actionType) {
+    const button = e.currentTarget;
+    const { claimId, businessId, userId, userEmail } = button.dataset;
+
+    button.disabled = true;
+    button.textContent = 'Processing...';
+
+    const claimRef = doc(db, "claimRequests", claimId);
+    const businessRef = doc(db, "businesses", businessId);
+
+    try {
+        if (actionType === 'approved') {
+            // Update the business document
+            await updateDoc(businessRef, {
+                isClaimed: true,
+                claimedBy: userId,
+                ownerEmail: userEmail, // Assign the business to the claiming user's email
+                claimStatus: 'approved'
+            });
+
+            // Update the claim request document
+            await updateDoc(claimRef, {
+                status: 'approved',
+                reviewedAt: serverTimestamp()
+            });
+
+            alert('Claim approved successfully!');
+
+        } else if (actionType === 'rejected') {
+            // Update the business document to allow others to claim
+            await updateDoc(businessRef, {
+                claimStatus: 'unclaimed' // Reset status
+            });
+
+            // Update the claim request document
+            await updateDoc(claimRef, {
+                status: 'rejected',
+                reviewedAt: serverTimestamp()
+            });
+
+            alert('Claim rejected.');
+        }
+    } catch (error) {
+        console.error(`Error ${actionType} claim:`, error);
+        alert(`Failed to ${actionType} the claim. Please check the console.`);
+        button.disabled = false;
+        button.textContent = actionType === 'approved' ? 'Approve' : 'Reject';
     }
 }

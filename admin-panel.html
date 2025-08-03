@@ -15,7 +15,7 @@
             outline: none;
             box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5); /* Emerald focus ring */
         }
-        .business-item {
+        .business-item, .claim-item { /* Added .claim-item */
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
@@ -26,7 +26,12 @@
                 grid-template-columns: 2fr 1fr 1fr 1.5fr 1fr; /* Name, Category, Status, Submitted By, Actions */
                 align-items: center;
             }
-            .business-item > div {
+            .claim-item { /* Grid for claim requests */
+                display: grid;
+                grid-template-columns: 2fr 1.5fr 2fr 1.5fr;
+                align-items: center;
+            }
+            .business-item > div, .claim-item > div { /* Added .claim-item */
                 padding: 0.5rem 0;
             }
         }
@@ -52,7 +57,6 @@
     <main class="container mx-auto px-4 py-8" id="admin-dashboard-content" class="hidden">
         <h1 class="text-3xl font-bold mb-6 text-center">Admin Dashboard</h1>
 
-        <!-- Analytics Section -->
         <section class="bg-gray-900 p-6 rounded-lg shadow-xl mb-8">
             <h2 class="text-2xl font-bold mb-4">Platform Overview</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
@@ -90,7 +94,6 @@
             </div>
         </section>
 
-        <!-- Admin Add Business Section -->
         <section class="bg-gray-900 p-6 rounded-lg shadow-xl mb-8">
             <h2 class="text-2xl font-bold mb-4">Add New Business (Admin Approved)</h2>
             <form id="admin-add-business-form" class="space-y-4">
@@ -118,8 +121,7 @@
                     <label for="admin-town" class="block text-gray-300 text-sm font-bold mb-2">Town:</label>
                     <select id="admin-town" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
                         <option value="">Select a Town</option>
-                        <!-- Towns will be populated by JS -->
-                    </select>
+                        </select>
                 </div>
                 <div>
                     <label for="admin-description" class="block text-gray-300 text-sm font-bold mb-2">Description:</label>
@@ -157,7 +159,6 @@
             </form>
         </section>
 
-        <!-- Business Filters -->
         <section class="bg-gray-900 p-6 rounded-lg shadow-xl mb-8">
             <h2 class="text-2xl font-bold mb-4">Filter Businesses</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -174,8 +175,7 @@
                     <label for="filter-town" class="block text-gray-300 text-sm font-bold mb-2">Filter by Town:</label>
                     <select id="filter-town" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                         <option value="">Select a Town</option>
-                        <!-- Towns will be populated by JS -->
-                    </select>
+                        </select>
                 </div>
                 <div>
                     <label for="filter-search" class="block text-gray-300 text-sm font-bold mb-2">Search Business:</label>
@@ -184,7 +184,13 @@
             </div>
         </section>
 
-        <!-- Pending Business Approvals Section -->
+        <section class="bg-gray-900 p-6 rounded-lg shadow-xl mb-8 border-2 border-yellow-500">
+            <h2 class="text-2xl font-bold mb-4 text-yellow-400">Claim Requests</h2>
+            <div id="claim-requests-list" class="space-y-4">
+                <p class="text-gray-400 text-center" id="no-claim-requests-msg">No pending claim requests.</p>
+                </div>
+        </section>
+
         <section class="bg-gray-900 p-6 rounded-lg shadow-xl mb-8">
             <h2 class="text-2xl font-bold mb-4">Pending Business Approvals</h2>
             <div id="pending-businesses-list" class="space-y-4">
@@ -192,7 +198,6 @@
             </div>
         </section>
 
-        <!-- Approved Businesses Section -->
         <section class="bg-gray-900 p-6 rounded-lg shadow-xl mb-8">
             <h2 class="text-2xl font-bold mb-4">Approved Businesses</h2>
             <div id="approved-businesses-list" class="space-y-4">
@@ -200,7 +205,6 @@
             </div>
         </section>
 
-        <!-- Rejected Businesses Section (Optional, could be combined with Approved) -->
         <section class="bg-gray-900 p-6 rounded-lg shadow-xl mb-8">
             <h2 class="text-2xl font-bold mb-4">Rejected Businesses</h2>
             <div id="rejected-businesses-list" class="space-y-4">
@@ -208,7 +212,6 @@
             </div>
         </section>
 
-        <!-- Edit Business Modal -->
         <div id="edit-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden p-4 z-50">
             <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-lg border border-gray-700 max-h-[90vh] overflow-y-auto">
                 <h3 class="text-2xl font-bold text-white mb-6">Edit Business Details</h3>
@@ -239,8 +242,7 @@
                         <label for="edit-town" class="block text-gray-300 text-sm font-bold mb-2">Town:</label>
                         <select id="edit-town" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
                             <option value="">Select a Town</option>
-                            <!-- Towns will be populated by JS -->
-                        </select>
+                            </select>
                     </div>
                     <div>
                         <label for="edit-description" class="block text-gray-300 text-sm font-bold mb-2">Description:</label>
@@ -287,7 +289,6 @@
             </div>
         </div>
 
-        <!-- Delete Confirmation Modal -->
         <div id="delete-confirm-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden p-4 z-50">
             <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-sm border border-gray-700">
                 <h3 class="text-xl font-bold text-white mb-4">Confirm Deletion</h3>
@@ -301,7 +302,6 @@
 
     </main>
 
-    <!-- JS Modules -->
-    <script type="module" src="admin.js"></script>
+    <script type="module" src="js/admin.js"></script>
 </body>
 </html>

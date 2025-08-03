@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for Icons (for hamburger menu) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -37,14 +36,12 @@
         <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
             <a href="home.html" class="text-white text-xl font-bold">TownBoat</a>
             
-            <!-- Mobile Menu Button (Hamburger) -->
             <div class="md:hidden flex items-center">
                 <button id="mobile-menu-button" class="text-white focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
             </div>
 
-            <!-- Navigation Links (Hidden on small screens, visible on md and up) -->
             <div id="nav-links" class="hidden md:flex space-x-4 items-center">
                 <a href="home.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
                     <i class="fas fa-home md:hidden"></i><span class="hidden md:inline">Feed</span>
@@ -60,13 +57,11 @@
                 </a>
             </div>
 
-            <!-- Logout Button (Always visible) -->
             <button id="logout-btn" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-600 transition duration-300">
                 <i class="fas fa-sign-out-alt md:hidden"></i><span class="hidden md:inline">Logout</span>
             </button>
         </nav>
 
-        <!-- Mobile Menu Dropdown (Hidden by default) -->
         <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-800 border-t border-gray-700 py-2">
             <a href="home.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
                 <i class="fas fa-home"></i> <span>Feed</span>
@@ -86,9 +81,8 @@
     <main class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold mb-6 text-center">Business Dashboard</h1>
 
-        <!-- Business Login Form -->
         <div id="business-login-form" class="bg-gray-900 p-8 rounded-lg shadow-xl max-w-sm mx-auto hidden">
-            <h2 class="text-2xl font-bold text-center mb-6">Business Login</h2>
+             <h2 class="text-2xl font-bold text-center mb-6">Business Login</h2>
             <p id="login-error-message" class="text-red-500 text-center text-sm mb-4"></p>
             <form>
                 <div class="mb-4">
@@ -105,9 +99,13 @@
             </form>
         </div>
 
-        <!-- Dashboard Content -->
         <div id="dashboard-content" class="hidden">
-            <!-- List Your Business Form (shown if no business is linked) -->
+            
+            <div id="claim-status-display" class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-2xl mx-auto mb-8 text-center hidden">
+                <h2 class="text-2xl font-bold mb-4">Claim Status</h2>
+                <p id="claim-status-message" class="text-lg"></p>
+            </div>
+
             <div id="list-business-section" class="bg-gray-900 p-6 rounded-lg shadow-lg max-w-2xl mx-auto mb-8 hidden">
                 <h2 class="text-2xl font-bold text-center mb-6">List Your Business</h2>
                 <p class="text-gray-300 mb-6 text-center">Fill out the form below to get your business listed on TownBoat.</p>
@@ -122,15 +120,13 @@
                         <label for="list-business-category" class="block text-gray-300 text-sm font-bold mb-2">Category:</label>
                         <select id="list-business-category" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
                             <option value="">Select a Category</option>
-                            <!-- Categories will be populated by JS -->
-                        </select>
+                            </select>
                     </div>
                     <div>
                         <label for="list-business-town" class="block text-gray-300 text-sm font-bold mb-2">Town:</label>
                         <select id="list-business-town" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-800 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
                             <option value="">Select a Town</option>
-                            <!-- Towns will be populated by JS -->
-                        </select>
+                            </select>
                     </div>
                     <div>
                         <label for="list-business-description" class="block text-gray-300 text-sm font-bold mb-2">Description:</label>
@@ -157,7 +153,6 @@
                 </form>
             </div>
 
-            <!-- Business Details Display (shown if business is linked) -->
             <div id="business-details-display" class="bg-gray-900 p-6 rounded-lg shadow-lg max-w-2xl mx-auto mb-8 hidden">
                 <h2 class="text-2xl font-bold text-center mb-6">Your Business Listing</h2>
                 
@@ -166,7 +161,6 @@
                 </div>
 
                 <div id="business-detail-container" class="space-y-2 text-gray-300 mb-6">
-                    <!-- Business details will be loaded here by JS -->
                     <p class="text-gray-400 text-center">Loading your business details...</p>
                 </div>
 
@@ -187,16 +181,14 @@
                         <label for="edit-business-category" class="block text-gray-300 text-sm font-bold mb-2">Category:</label>
                         <select id="edit-business-category" name="edit-business-category" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-900 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
                             <option value="">Select a Category</option>
-                            <!-- Categories will be populated by JS -->
-                        </select>
+                            </select>
                     </div>
 
                     <div class="mb-4">
                         <label for="edit-business-town" class="block text-gray-300 text-sm font-bold mb-2">Town/Area:</label>
                         <select id="edit-business-town" name="edit-business-town" class="shadow appearance-none border border-gray-700 rounded w-full py-3 px-4 bg-gray-900 text-white leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-emerald-500" required>
                             <option value="">Select a Town</option>
-                            <!-- Towns will be populated by JS -->
-                        </select>
+                            </select>
                     </div>
 
                     <div class="mb-4">
@@ -227,7 +219,6 @@
                 </form>
             </div>
 
-            <!-- Create New Deal Section -->
             <div id="create-deal-section" class="bg-gray-900 p-6 rounded-lg shadow-lg max-w-2xl mx-auto mb-8 hidden">
                 <h2 class="text-2xl font-bold text-center mb-6">Create a New Deal</h2>
                 <p id="create-deal-status-message" class="text-center text-sm mb-4"></p>
@@ -261,7 +252,6 @@
                 </form>
             </div>
 
-            <!-- My Active Deals Section -->
             <div id="my-deals-section" class="bg-gray-900 p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
                 <h2 class="text-2xl font-bold text-center mb-6">My Active Deals</h2>
                 <div id="my-deals-list" class="space-y-4">
@@ -269,7 +259,6 @@
                 </div>
             </div>
 
-            <!-- Edit Deal Modal (NEW) -->
             <div id="edit-deal-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden p-4 z-50">
                 <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-lg border border-gray-700 max-h-[90vh] overflow-y-auto">
                     <h3 class="text-2xl font-bold text-white mb-6">Edit Deal Details</h3>
@@ -308,7 +297,7 @@
         </div>
     </main>
 
-    <script type="module" src="business-dashboard.js"></script>
+    <script type="module" src="js/business-dashboard.js"></script>
     <script>
         // JavaScript for mobile menu toggle
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
@@ -318,5 +307,4 @@
     </script>
 </body>
 </html>
-
 
