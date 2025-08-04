@@ -12,8 +12,14 @@ import {
     doc, 
     setDoc, 
     serverTimestamp,
-    getDoc // Added to check if user profile exists
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"; // New Firestore imports
+    getDoc,
+    query,
+    collection,
+    where,
+    getDocs,
+    updateDoc,
+    increment
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig } from './firebase-config.js';
 
 // Initialize Firebase
@@ -26,6 +32,14 @@ const provider = new GoogleAuthProvider();
 
 // --- DOMContentLoaded Event Listener ---
 document.addEventListener('DOMContentLoaded', () => {
+    // --- NEW: Capture referral ID on page load and store it in sessionStorage ---
+    const urlParamsOnLoad = new URLSearchParams(window.location.search);
+    const referrerIdOnLoad = urlParamsOnLoad.get('ref');
+    if (referrerIdOnLoad) {
+        sessionStorage.setItem('referrerId', referrerIdOnLoad);
+        console.log('Referrer ID captured and stored:', referrerIdOnLoad);
+    }
+
     const googleSignInBtn = document.getElementById('google-sign-in-btn');
 
     if (googleSignInBtn) {
@@ -41,89 +55,98 @@ document.addEventListener('DOMContentLoaded', () => {
                 const userDocSnap = await getDoc(userDocRef);
 
                 if (!userDocSnap.exists()) {
+                    // --- MODIFIED: Read referrer ID from sessionStorage instead of URL ---
+                    const referrerId = sessionStorage.getItem('referrerId');
+
                     // If user document does not exist, create it.
-                    // Firestore will automatically create the 'users' collection
-                    // if it doesn't exist when the first document is written to it.
                     await setDoc(userDocRef, {
                         uid: user.uid,
                         name: user.displayName,
                         email: user.email,
-                        createdAt: serverTimestamp(), // Timestamp of first creation
-                        // hometown will be added later via set-hometown.html
+                        createdAt: serverTimestamp(),
+                        // Affiliate Program Fields
+                        isAffiliate: false, 
+                        referralPoints: 0,
+                        referredBy: referrerId || null // Store who referred this user
                     });
-                    console.log("New user profile created in Firestore for:", user.email);
+                    console.log("New user profile created in Firestore for:", user.email, "Referred by:", referrerId);
+
+                    // If referred, award a point to the referrer
+                    if (referrerId) {
+                        await awardPointToReferrer(referrerId);
+                        // --- NEW: Clean up sessionStorage after use ---
+                        sessionStorage.removeItem('referrerId');
+                    }
+
                     // Redirect new users to set-hometown.html
                     window.location.href = 'set-hometown.html';
                 } else {
-                    // If user document exists, update last login time or other relevant fields
-                    // You can also update name/email in case they changed in Google profile
+                    // If user document exists, update last login time
                     await setDoc(userDocRef, {
                         name: user.displayName,
                         email: user.email,
-                        lastLoginAt: serverTimestamp() // Update last login time
-                    }, { merge: true }); // Use merge: true to avoid overwriting existing fields like 'hometown'
-                    console.log("Existing user profile updated in Firestore for:", user.email);
+                        lastLoginAt: serverTimestamp()
+                    }, { merge: true });
+                    console.log("Existing user profile updated for:", user.email);
 
-                    // Check if hometown is already set. If not, redirect to set-hometown.html
+                    // Redirect existing users based on hometown status
                     if (!userDocSnap.data().hometown) {
                         window.location.href = 'set-hometown.html';
                     } else {
-                        // If hometown is already set, redirect to discover.html
                         window.location.href = 'discover.html';
                     }
                 }
 
             } catch (error) {
                 console.error("Error during Google Sign-In:", error);
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                const email = error.customData?.email;
-                // const credential = GoogleAuthProvider.credentialFromError(error); // Not used currently
-
-                if (errorCode === 'auth/popup-closed-by-user') {
-                    alert("Sign-in cancelled by user.");
-                } else if (errorCode === 'auth/cancelled-popup-request') {
-                    alert("Another sign-in pop-up is already open.");
-                } else if (errorCode === 'auth/account-exists-with-different-credential') {
-                    alert(`An account with this email (${email}) already exists with a different login method. Please sign in using your existing method.`);
-                } else {
-                    alert(`Google Sign-In failed: ${errorMessage}`);
-                }
+                alert(`Google Sign-In failed: ${error.message}`);
             }
         });
     }
 
-    // --- AUTHENTICATION STATE OBSERVER (for direct URL access or session persistence) ---
-    // This checks if a user is already logged in (e.g., from a previous session)
-    onAuthStateChanged(auth, async (user) => { // Made async to check hometown
+    // --- AUTHENTICATION STATE OBSERVER ---
+    onAuthStateChanged(auth, async (user) => {
         if (user) {
-            // User is signed in.
-            // If they are on the login page (index.html), check their hometown.
             if (window.location.pathname.includes('index.html')) {
                 const userDocRef = doc(db, "users", user.uid);
                 try {
                     const userDocSnap = await getDoc(userDocRef);
                     if (userDocSnap.exists() && userDocSnap.data().hometown) {
-                        // Hometown is set, redirect to home page
                         window.location.href = 'discover.html';
                     } else {
-                        // Hometown is not set, redirect to set-hometown page
                         window.location.href = 'set-hometown.html';
                     }
                 } catch (error) {
-                    console.error("Error checking user hometown on auth state change:", error);
-                    // If there's an error fetching user doc, default to discover.html or handle appropriately
-                    // This might happen if security rules prevent reading the 'users' collection before it exists.
-                    // For robustness, you might want to redirect to set-hometown.html here too,
-                    // or to a generic home page that then checks for hometown.
+                    console.error("Error checking user hometown:", error);
                     window.location.href = 'discover.html'; 
                 }
             }
-            // For other pages, this observer just confirms login.
-            // Specific page JS files will handle their own redirects if hometown is missing.
-        } else {
-            // No user is signed in. If on a protected page, they will be redirected by that page's JS.
-            // For index.html itself, this block ensures the user stays on index.html if not logged in.
         }
     });
 });
+
+/**
+ * Finds the referrer by their UID and awards them one point if they are an affiliate.
+ * @param {string} referrerId - The UID of the user who referred the new user.
+ */
+async function awardPointToReferrer(referrerId) {
+    console.log(`Attempting to award point to referrer: ${referrerId}`);
+    try {
+        // Find the user document directly by their UID
+        const referrerDocRef = doc(db, "users", referrerId);
+        const referrerDocSnap = await getDoc(referrerDocRef);
+
+        // Check if the referrer exists AND is an approved affiliate
+        if (referrerDocSnap.exists() && referrerDocSnap.data().isAffiliate === true) {
+            // Increment their referralPoints by 1
+            await updateDoc(referrerDocRef, {
+                referralPoints: increment(1)
+            });
+            console.log(`Successfully awarded 1 point to affiliate ${referrerDocSnap.data().email}`);
+        } else {
+            console.warn(`Referrer with ID "${referrerId}" not found or is not an affiliate.`);
+        }
+    } catch (error) {
+        console.error("Error awarding point to referrer:", error);
+    }
+}
