@@ -113,10 +113,25 @@
           },
           {
             "@type": "ListItem",
-            "position": 11,
+            "position": 12,
             "item": {
               "@type": "LocalBusiness",
               "name": "Auto/Taxi"
+            },
+            {
+            "@type": "ListItem",
+            "position": 11,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Tyre/Workshop"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 13,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Electronics/Repair"
             }
           }
         ]
@@ -162,6 +177,8 @@
         .category-beauty-spa { background-image: url('beautyspa.jpeg'); }
         .category-finance { background-image: url('finance.jpeg'); }
         .category-groceries { background-image: url('grocery.jpeg'); }
+        .category-tyre-workshop { background-image: url('workshop.png'); }
+        .category-electronics { background-image: url('electronics.png'); }
         .category-auto-taxi { background-image: url('autotaxi.png'); }
         /* Add more category styles as needed for other images */
 
@@ -202,9 +219,6 @@
                 <a href="club.html" class="text-black hover:text-gray-800 flex items-center space-x-1">
                     <i class="fas fa-users md:hidden"></i><span class="hidden md:inline">Clubs</span>
                 </a>
-                <a href="business-dashboard.html" class="text-gray-600 hover:text-gray-900 flex items-center space-x-1">
-    <i class="fas fa-briefcase md:hidden"></i><span class="hidden md:inline">For Business</span>
-</a>
             </div>
 
             <button id="logout-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition duration-300">
@@ -271,9 +285,13 @@
             <a href="business-list.html?category=Finance" class="category-card category-finance block p-6 rounded-lg text-center hover:bg-gray-200 transition duration-300">
                 <h3 class="font-semibold text-2xl">Finance</h3>
             </a>
+            <a href="business-list.html?category=Electronics/Repair" class="category-card category-electronics block p-6 rounded-lg text-center hover:bg-gray-200 transition duration-300">
+                <h3 class="font-semibold text-2xl">Electronics/Repair</h3>
             <a href="business-list.html?category=Groceries" class="category-card category-groceries block p-6 rounded-lg text-center hover:bg-gray-200 transition duration-300">
                 <h3 class="font-semibold text-2xl">Groceries</h3>
             </a>
+            <a href="business-list.html?category=Tyre/Workshop" class="category-card category-tyre-workshop block p-6 rounded-lg text-center hover:bg-gray-200 transition duration-300">
+                <h3 class="font-semibold text-2xl">Tyre/Workshop</h3>
             <a href="autotaxi.html" class="category-card category-auto-taxi block p-6 rounded-lg text-center hover:bg-gray-200 transition duration-300">
                 <h3 class="font-semibold text-2xl">Auto/Taxi</h3>
             </a>
@@ -294,6 +312,4 @@
     </script>
 </body>
 </html>
-
-
 
