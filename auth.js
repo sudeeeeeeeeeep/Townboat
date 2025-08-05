@@ -32,7 +32,7 @@ const provider = new GoogleAuthProvider();
 
 // --- DOMContentLoaded Event Listener ---
 document.addEventListener('DOMContentLoaded', () => {
-    // --- NEW: Capture referral ID on page load and store it in sessionStorage ---
+    // Capture referral ID on page load and store it in sessionStorage
     const urlParamsOnLoad = new URLSearchParams(window.location.search);
     const referrerIdOnLoad = urlParamsOnLoad.get('ref');
     if (referrerIdOnLoad) {
@@ -55,16 +55,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const userDocSnap = await getDoc(userDocRef);
 
                 if (!userDocSnap.exists()) {
-                    // --- MODIFIED: Read referrer ID from sessionStorage instead of URL ---
+                    // --- This is a NEW user ---
                     const referrerId = sessionStorage.getItem('referrerId');
 
-                    // If user document does not exist, create it.
+                    // Create the new user document with all necessary fields for all features
                     await setDoc(userDocRef, {
                         uid: user.uid,
                         name: user.displayName,
                         email: user.email,
                         createdAt: serverTimestamp(),
-                        // Affiliate Program Fields
+                        hometown: null, // To be set on the next page
+
+                        // Fields for "My Profile", "People", and "Chat" pages
+                        profileImageUrl: user.photoURL || null, // Use Google photo as default
+                        bio: "",
+                        interests: [],
+                        isVerified: false,
+
+                        // Fields for Affiliate Program
                         isAffiliate: false, 
                         referralPoints: 0,
                         referredBy: referrerId || null // Store who referred this user
@@ -74,14 +82,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     // If referred, award a point to the referrer
                     if (referrerId) {
                         await awardPointToReferrer(referrerId);
-                        // --- NEW: Clean up sessionStorage after use ---
-                        sessionStorage.removeItem('referrerId');
+                        sessionStorage.removeItem('referrerId'); // Clean up session storage
                     }
 
-                    // Redirect new users to set-hometown.html
+                    // Redirect all new users to set their hometown
                     window.location.href = 'set-hometown.html';
                 } else {
-                    // If user document exists, update last login time
+                    // --- This is an EXISTING user ---
+                    // Update their profile with the latest info from Google
                     await setDoc(userDocRef, {
                         name: user.displayName,
                         email: user.email,
@@ -89,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }, { merge: true });
                     console.log("Existing user profile updated for:", user.email);
 
-                    // Redirect existing users based on hometown status
+                    // Redirect existing users based on whether they have a hometown set
                     if (!userDocSnap.data().hometown) {
                         window.location.href = 'set-hometown.html';
                     } else {
@@ -107,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- AUTHENTICATION STATE OBSERVER ---
     onAuthStateChanged(auth, async (user) => {
         if (user) {
+            // If a user is already logged in and they land on the index page, redirect them.
             if (window.location.pathname.includes('index.html')) {
                 const userDocRef = doc(db, "users", user.uid);
                 try {
@@ -132,13 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
 async function awardPointToReferrer(referrerId) {
     console.log(`Attempting to award point to referrer: ${referrerId}`);
     try {
-        // Find the user document directly by their UID
         const referrerDocRef = doc(db, "users", referrerId);
         const referrerDocSnap = await getDoc(referrerDocRef);
 
-        // Check if the referrer exists AND is an approved affiliate
         if (referrerDocSnap.exists() && referrerDocSnap.data().isAffiliate === true) {
-            // Increment their referralPoints by 1
             await updateDoc(referrerDocRef, {
                 referralPoints: increment(1)
             });
