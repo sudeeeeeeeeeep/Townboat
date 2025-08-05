@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>People in Town - TownBoat</title>
+    <meta name="description" content="Connect with people in your town on TownBoat. Find friends, view profiles, and join your local Indian community. Sign up to see who's in your neighbourhood.">
+    <meta name="keywords" content="find people, local community, indian towns, connect with friends, neighbourhood, TownBoat">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://townboat.in/people.html" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://townboat.in/people.html">
+    <meta property="og:title" content="Find People in Your Town | TownBoat">
+    <meta property="og:description" content="Connect with people in your town on TownBoat. Find friends, view profiles, and join your local Indian community.">
+    <meta property="og:image" content="https://townboat.in/images/social-share-people.png"> <!-- IMPORTANT: Create and upload this image -->
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://townboat.in/people.html">
+    <meta property="twitter:title" content="Find People in Your Town | TownBoat">
+    <meta property="twitter:description" content="Connect with people in your town on TownBoat. Find friends, view profiles, and join your local Indian community.">
+    <meta property="twitter:image" content="https://townboat.in/images/social-share-people.png"> <!-- IMPORTANT: Create and upload this image -->
+
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f3f4f6; }
+        .profile-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "TownBoat",
+        "item": "https://townboat.in"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "People",
+        "item": "https://townboat.in/people.html"
+      }]
+    }
+    </script>
+</head>
+<body class="text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="home.html" class="text-2xl font-bold text-gray-900">TownBoat</a>
+            
+            <!-- Desktop Nav -->
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="discover.html" class="text-gray-600 hover:text-gray-900">Discover</a>
+                <a href="people.html" class="text-blue-600 font-semibold">People</a>
+                <a href="leaderboard.html" class="text-gray-600 hover:text-gray-900">Leaderboard</a>
+                <a href="deals.html" class="text-gray-600 hover:text-gray-900">Deals</a>
+                <a href="polls.html" class="text-gray-600 hover:text-gray-900">Polls</a>
+                <a href="club.html" class="text-gray-600 hover:text-gray-900">Clubs</a>
+                <a href="my-profile.html" class="text-gray-600 hover:text-gray-900">My Profile</a>
+                <a href="business-dashboard.html" class="text-gray-600 hover:text-gray-900">For Business</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-800 focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </nav>
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu-dropdown" class="md:hidden hidden bg-white border-t border-gray-200">
+            <a href="discover.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Discover</a>
+            <a href="people.html" class="block py-2 px-4 text-sm text-blue-600 bg-blue-50 font-semibold">People</a>
+            <a href="leaderboard.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Leaderboard</a>
+            <a href="deals.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Deals</a>
+            <a href="polls.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Polls</a>
+            <a href="club.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Clubs</a>
+            <a href="my-profile.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">My Profile</a>
+            <a href="business-dashboard.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">For Business</a>
+            <a href="#" id="logout-btn-mobile" class="block py-2 px-4 text-sm text-red-600 hover:bg-gray-100">Logout</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-6">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold">People in Your Town</h1>
+            <p id="town-name-display" class="text-gray-600 mt-2">Discover and connect with people from your neighborhood.</p>
+        </div>
+
+        <!-- Search Bar Section -->
+        <div class="mb-8 max-w-2xl mx-auto">
+            <input type="text" id="people-search" placeholder="Search by name or bio..." class="w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="text-center text-gray-500 py-10">
+            <p>Finding people in your town...</p>
+        </div>
+
+        <!-- No Users Found State -->
+        <div id="no-users-message" class="text-center text-gray-500 py-10 hidden">
+            <p>No one found matching your search.</p>
+        </div>
+        
+        <!-- People List -->
+        <div id="people-list-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Profile cards will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <script type="module" src="js/people.js"></script>
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            document.getElementById('mobile-menu-dropdown').classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - TownBoat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f3f4f6; }
+        #chat-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 60px); /* Full viewport height minus header */
+        }
+        #chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .message-bubble {
+            max-width: 75%;
+            padding: 10px 15px;
+            border-radius: 20px;
+        }
+        .sent {
+            background-color: #3B82F6;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+        .received {
+            background-color: #E5E7EB;
+            color: #1F2937;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="my-profile.html" class="text-gray-600 hover:text-gray-900">
+                <i class="fas fa-arrow-left"></i> 
+            </a>
+            <h1 id="chat-header-name" class="text-xl font-bold">Chat</h1>
+            <div id="logout-placeholder" class="w-24"></div> <!-- To balance the header -->
+        </nav>
+    </header>
+
+    <!-- Chat Container -->
+    <main id="chat-container" class="container mx-auto max-w-2xl">
+        <!-- NEW: Disappearing Message Notice -->
+        <div class="p-2 bg-yellow-100 text-yellow-800 text-center text-sm">
+            <i class="fas fa-info-circle mr-1"></i>
+            Messages will disappear 5 minutes after being read.
+        </div>
+
+        <!-- Messages Area -->
+        <div id="chat-messages" class="p-4 space-y-4 flex flex-col">
+            <!-- Messages will be loaded here -->
+        </div>
+
+        <!-- Message Input Area -->
+        <div class="p-4 bg-white border-t border-gray-200">
+            <form id="message-form" class="flex items-center space-x-2">
+                <input type="text" id="message-input" class="w-full p-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type a message..." autocomplete="off" required>
+                <button type="submit" class="bg-blue-600 text-white rounded-full w-12 h-12 flex-shrink-0 flex items-center justify-center hover:bg-blue-700 transition">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script type="module" src="js/chat.js"></script>
+</body>
+</html>
