@@ -99,7 +99,7 @@ async function loadProfileData(uid) {
         const userDocSnap = await getDoc(userDocRef);
 
         if (userDocSnap.exists()) {
-            currentUserData = userDocSnap.data();
+            currentUserData = { uid, ...userDocSnap.data() }; // Ensure UID is part of the object
             displayProfileView(currentUserData);
             loadingState.classList.add('hidden');
             profileView.classList.remove('hidden');
@@ -113,7 +113,8 @@ async function loadProfileData(uid) {
 }
 
 function displayProfileView(userData) {
-    profileImageDisplay.src = userData.profileImageUrl || 'https://placehold.co/128x128/E5E7EB/000000?text=Me';
+    // CORRECTED: Use UID as a fallback seed for the avatar if the name is missing.
+    profileImageDisplay.src = userData.profileImageUrl || `https://api.dicebear.com/8.x/bottts/svg?seed=${userData.name || userData.uid}`;
     profileNameDisplay.textContent = userData.name || 'Anonymous User';
     profileHometownDisplay.textContent = userData.hometown || 'No hometown set';
     profileBioDisplay.textContent = userData.bio || 'No bio yet. Click edit to add one!';
@@ -132,7 +133,8 @@ function displayProfileView(userData) {
 }
 
 function populateEditForm(userData) {
-    profileImagePreview.src = userData.profileImageUrl || 'https://placehold.co/128x128/E5E7EB/000000?text=Me';
+    // CORRECTED: Use UID as a fallback seed for the avatar if the name is missing.
+    profileImagePreview.src = userData.profileImageUrl || `https://api.dicebear.com/8.x/bottts/svg?seed=${userData.name || userData.uid}`;
     profileNameInput.value = userData.name || '';
     profileHometownSelect.value = userData.hometown || '';
     profileBioInput.value = userData.bio || '';
@@ -218,7 +220,7 @@ function displayConnections(connectionsToDisplay) {
 function createConnectionCard(userData, connectionId, type) {
     const div = document.createElement('div');
     div.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
-    const profileImageUrl = userData.profileImageUrl || 'https://placehold.co/40x40/E5E7EB/000000?text=:)';
+    const profileImageUrl = userData.profileImageUrl || `https://api.dicebear.com/8.x/bottts/svg?seed=${userData.name || userData.uid}`;
     let buttonsHtml = '';
     if (type === 'request') {
         buttonsHtml = `<div class="flex space-x-2"><button data-id="${connectionId}" class="accept-btn bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600">Accept</button><button data-id="${connectionId}" class="decline-btn bg-red-500 text-white px-3 py-1 rounded-md text-sm hover:bg-red-600">Decline</button></div>`;
