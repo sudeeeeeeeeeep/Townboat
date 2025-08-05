@@ -130,7 +130,7 @@ function createProfileCard(userData) {
     const card = document.createElement('div');
     card.className = 'profile-card bg-white p-4 rounded-lg shadow-md flex flex-col items-center text-center';
 
-    const profileImageUrl = userData.profileImageUrl || `https://api.dicebear.com/8.x/bottts/svg?seed=${userData.name};
+    const profileImageUrl = userData.profileImageUrl || `https://api.dicebear.com/8.x/bottts/svg?seed=${userData.name}`;
     const isVerifiedBadge = userData.isVerified ? 
         `<span class="absolute top-0 right-0 bg-blue-500 text-white text-xs rounded-full px-2 py-1" title="Verified Resident">
             <i class="fas fa-check"></i>
@@ -208,5 +208,4 @@ if (logoutButton) {
 
 if (searchInput) {
     searchInput.addEventListener('input', performSearch);
-
 }
