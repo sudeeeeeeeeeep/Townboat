@@ -16,74 +16,61 @@
 
   <!-- Custom Styles -->
   <style>
-    body { font-family: 'Poppins', sans-serif; }
-
-    .business-card {
-      background-color: #ffffff;
-      color: #000000;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    body { 
+        font-family: 'Poppins', sans-serif; 
+        background-color: #f3f4f6; /* Light gray background */
+        color: #000000;
     }
-
-    .business-card .text-xl,
-    .business-card .text-gray-400,
-    .business-card .text-gray-300,
-    .business-card .text-gray-500 {
-      color: #000000;
-    }
-
-    .business-card .upvote-btn {
-      color: #000000;
-    }
-
-    .business-card .upvote-btn.text-red-500 {
-      color: #ef4444;
-    }
-
-    .business-card .upvote-btn:hover {
-      background-color: rgba(0, 0, 0, 0.1);
-    }
-
-    .view-details-btn {
-      background-color: #000000;
-      color: #ffffff;
-    }
-
-    .view-details-btn:hover {
-      background-color: #1a1a1a;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5);
-    }
-
-    .business-image {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-right: 1rem;
-    }
-
+    
     /* Hide scrollbars */
     ::-webkit-scrollbar { display: none; }
     body {
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
+
+    /* Business List Item styles inspired by leaderboard */
+    .business-list-item {
+        background-color: #ffffff;
+        border: 1px solid #e5e7eb;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    .business-list-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    .business-image {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px; 
+      border: 2px solid #e5e7eb;
+      margin-right: 1rem; /* ADDED: This creates space between the image and the text */
+    }
+    .upvote-btn.upvoted {
+        background-color: #fee2e2; /* Light red */
+        color: #ef4444; /* Red */
+    }
+    .view-details-btn {
+      background-color: #2563eb; /* Blue */
+      color: #ffffff;
+      transition: background-color 0.2s ease-in-out;
+    }
+    .view-details-btn:hover {
+        background-color: #1d4ed8; /* Darker Blue */
+    }
   </style>
 </head>
 
-<body class="bg-black text-white">
+<body class="bg-gray-100 text-black">
 
   <!-- Responsive Navbar -->
-  <header class="bg-black sticky top-0 border-b border-gray-700 z-50">
+  <header class="bg-white sticky top-0 border-b border-gray-200 z-50">
     <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
-      <a href="home.html" class="text-white text-xl font-bold">TownBoat</a>
+      <a href="home.html" class="text-black text-xl font-bold">TownBoat</a>
 
       <div class="md:hidden flex items-center">
-        <button id="mobile-menu-button" class="text-white focus:outline-none">
+        <button id="mobile-menu-button" class="text-black focus:outline-none">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -93,65 +80,68 @@
       </div>
 
       <div id="nav-links" class="hidden md:flex space-x-4 items-center">
-        <a href="home.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
-          <i class="fas fa-home md:hidden"></i><span class="hidden md:inline">Feed</span>
-        </a>
-        <a href="discover.html" class="text-white font-semibold flex items-center space-x-1">
-          <i class="fas fa-compass md:hidden"></i><span class="hidden md:inline">Discover</span>
-        </a>
-        <a href="leaderboard.html" class="text-gray-300 hover:text-white flex items-center space-x-1">
-          <i class="fas fa-trophy md:hidden"></i><span class="hidden md:inline">Leaderboard</span>
-        </a>
+        <a href="home.html" class="text-gray-600 hover:text-black">Feed</a>
+        <a href="discover.html" class="text-black font-semibold">Discover</a>
+        <a href="leaderboard.html" class="text-gray-600 hover:text-black">Leaderboard</a>
+        <a href="deals.html" class="text-gray-600 hover:text-black">Deals</a>
+        <a href="polls.html" class="text-gray-600 hover:text-black">Polls</a>
+        <a href="club.html" class="text-gray-600 hover:text-black">Clubs</a>
+        <a href="affiliate.html" class="text-gray-600 hover:text-black">Affiliate</a>
+        <a href="business-dashboard.html" class="text-gray-600 hover:text-black">For Business</a>
       </div>
 
-      <button id="logout-btn" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-600 transition duration-300">
-        <i class="fas fa-sign-out-alt md:hidden"></i><span class="hidden md:inline">Logout</span>
+      <button id="logout-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition duration-300">
+        Logout
       </button>
     </nav>
 
-    <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-800 border-t border-gray-700 py-2">
-      <a href="home.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
-        <i class="fas fa-home"></i> <span>Feed</span>
-      </a>
-      <a href="discover.html" class="block px-4 py-2 text-white hover:bg-gray-700 flex items-center space-x-2">
-        <i class="fas fa-compass"></i> <span>Discover</span>
-      </a>
-      <a href="leaderboard.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
-        <i class="fas fa-trophy"></i> <span>Leaderboard</span>
-      </a>
+    <div id="mobile-menu-dropdown" class="md:hidden hidden bg-gray-100 border-t border-gray-200 py-2">
+      <a href="home.html" class="block px-4 py-2 text-black hover:bg-gray-200">Feed</a>
+      <a href="discover.html" class="block px-4 py-2 text-black hover:bg-gray-200">Discover</a>
+      <a href="leaderboard.html" class="block px-4 py-2 text-black hover:bg-gray-200">Leaderboard</a>
+      <a href="deals.html" class="block px-4 py-2 text-black hover:bg-gray-200">Deals</a>
+      <a href="polls.html" class="block px-4 py-2 text-black hover:bg-gray-200">Polls</a>
+      <a href="club.html" class="block px-4 py-2 text-black hover:bg-gray-200">Clubs</a>
+      <a href="affiliate.html" class="block px-4 py-2 text-black hover:bg-gray-200">Affiliate</a>
+      <a href="business-dashboard.html" class="block px-4 py-2 text-black hover:bg-gray-200">For Business</a>
     </div>
   </header>
 
   <!-- Page Content -->
-  <main class="container mx-auto px-4 py-8">
-    <h1 id="category-heading" class="text-3xl font-bold mb-6 text-center">Loading Businesses...</h1>
+  <main class="container mx-auto px-4 py-8 max-w-4xl">
+    <h1 id="category-heading" class="text-3xl font-bold mb-8 text-center">Loading Businesses...</h1>
 
-    <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label for="town-filter" class="block text-gray-400 text-sm font-bold mb-2">Filter by Town:</label>
-        <select id="town-filter" class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-          <option value="">All Towns</option>
-        </select>
-      </div>
-      <div>
-        <label for="business-search" class="block text-gray-400 text-sm font-bold mb-2">Search Business:</label>
-        <input
-          type="text"
-          id="business-search"
-          placeholder="Search by name or description..."
-          class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-        />
-      </div>
-    </div>
+    <!-- Filter Section -->
+    <section class="bg-white p-6 rounded-lg shadow-lg border border-gray-200 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label for="town-filter" class="block text-sm font-bold text-gray-700 mb-2">Filter by Town:</label>
+                <select id="town-filter" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">All Towns</option>
+                </select>
+            </div>
+            <div>
+                <label for="business-search" class="block text-sm font-bold text-gray-700 mb-2">Search Business:</label>
+                <input
+                  type="text"
+                  id="business-search"
+                  placeholder="Search by name or description..."
+                  class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+            </div>
+        </div>
+    </section>
 
-    <!-- The no-businesses-message is now outside the business-list-container -->
-    <p id="no-businesses-message" class="text-gray-500 text-center py-8" style="display: none;">
-      No businesses found in this category yet. Be the first to list one!
-    </p>
+    <!-- Business List Section -->
+    <section class="bg-white p-4 rounded-lg shadow-lg border border-gray-200">
+        <p id="no-businesses-message" class="text-gray-500 text-center py-8 hidden">
+          No businesses found in this category yet.
+        </p>
+        <div id="business-list-container" class="divide-y divide-gray-200">
+          <!-- Business cards will be rendered here by business-list.js -->
+        </div>
+    </section>
 
-    <div id="business-list-container">
-      <!-- Business cards will be rendered here by business-list.js -->
-    </div>
   </main>
 
   <!-- JS Modules -->
@@ -166,3 +156,4 @@
   </script>
 </body>
 </html>
+
