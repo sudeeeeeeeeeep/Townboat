@@ -121,13 +121,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 try {
                     const userDocSnap = await getDoc(userDocRef);
                     if (userDocSnap.exists() && userDocSnap.data().hometown) {
-                        window.location.href = 'discover.html';
+                        window.location.href = 'people.html';
                     } else {
                         window.location.href = 'set-hometown.html';
                     }
                 } catch (error) {
                     console.error("Error checking user hometown:", error);
-                    window.location.href = 'discover.html'; 
+                    window.location.href = 'people.html'; 
                 }
             }
         }
@@ -156,4 +156,3 @@ async function awardPointToReferrer(referrerId) {
         console.error("Error awarding point to referrer:", error);
     }
 }
-
