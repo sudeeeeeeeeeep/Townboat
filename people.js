@@ -38,24 +38,15 @@ const logoutButtonMobile = document.getElementById('logout-btn-mobile');
 let currentUser = null;
 let userHometown = null;
 let allUsersInTown = []; // To store all fetched users for searching
-let authReady = false; // Flag to check if initial auth state is resolved
+let existingConnectionIds = new Set(); // NEW: To store IDs of existing connections/requests
 
 // --- AUTHENTICATION CHECK ---
 onAuthStateChanged(auth, async (user) => {
     if (user) {
-        // User is signed in or session is restored.
         currentUser = user;
-        if (!authReady) {
-            authReady = true; // Mark auth as ready
-            initializePage(user);
-        }
+        initializePage(user);
     } else {
-        // This block will now only run if the user is genuinely not logged in
-        // after the initial check, or if they manually log out.
-        if (authReady) {
-            window.location.href = 'index.html';
-        }
-        // If auth is not ready yet, we wait for the next check.
+        window.location.href = 'index.html';
     }
 });
 
@@ -72,7 +63,6 @@ async function initializePage(user) {
             userHometown = userDocSnap.data().hometown;
             await fetchPeopleInTown(userHometown, user.uid);
         } else {
-            // If user is logged in but has no hometown, redirect.
             window.location.href = 'set-hometown.html';
         }
     } catch (error) {
@@ -83,18 +73,30 @@ async function initializePage(user) {
 
 
 /**
- * Fetches all users from the same town and stores them for searching.
+ * Fetches all users from the same town, filters out existing connections, and displays them.
  * @param {string} hometown - The town to search for.
  * @param {string} currentUserId - The UID of the current user.
  */
 async function fetchPeopleInTown(hometown, currentUserId) {
     try {
-        const q = query(collection(db, "users"), where("hometown", "==", hometown));
-        const querySnapshot = await getDocs(q);
+        // Step 1: Get all connections and requests involving the current user
+        const connectionsQuery = query(collection(db, "connections"), where("participants", "array-contains", currentUserId));
+        const connectionsSnapshot = await getDocs(connectionsQuery);
+        existingConnectionIds.clear();
+        connectionsSnapshot.forEach(doc => {
+            const connection = doc.data();
+            const otherUserId = connection.participants.find(id => id !== currentUserId);
+            existingConnectionIds.add(otherUserId);
+        });
 
-        allUsersInTown = querySnapshot.docs
+        // Step 2: Get all users from the same hometown
+        const usersQuery = query(collection(db, "users"), where("hometown", "==", hometown));
+        const usersSnapshot = await getDocs(usersQuery);
+
+        // Step 3: Filter out the current user and anyone they've already interacted with
+        allUsersInTown = usersSnapshot.docs
             .map(doc => ({ id: doc.id, ...doc.data() }))
-            .filter(user => user.id !== currentUserId);
+            .filter(user => user.id !== currentUserId && !existingConnectionIds.has(user.id));
 
         loadingState.classList.add('hidden');
         displayPeople(allUsersInTown);
@@ -114,6 +116,7 @@ function displayPeople(usersToDisplay) {
 
     if (usersToDisplay.length === 0) {
         noUsersMessage.classList.remove('hidden');
+        noUsersMessage.textContent = "No new people to connect with in your town right now.";
     } else {
         noUsersMessage.classList.add('hidden');
         usersToDisplay.forEach(user => {
@@ -147,7 +150,7 @@ function createProfileCard(userData) {
 
     const connectBtn = item.querySelector('.connect-btn');
     connectBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent the item click from firing
+        e.stopPropagation();
         handleConnectClick(e);
     });
 
@@ -197,7 +200,6 @@ async function handleConnectClick(e) {
 function performSearch() {
     const searchTerm = searchInput.value.toLowerCase();
     const filteredUsers = allUsersInTown.filter(user => {
-        // BUG FIX: Check if user.name and user.bio exist before calling toLowerCase()
         const nameMatch = (user.name ? user.name.toLowerCase() : '').includes(searchTerm);
         const bioMatch = (user.bio ? user.bio.toLowerCase() : '').includes(searchTerm);
         return nameMatch || bioMatch;
@@ -230,13 +232,3 @@ if(logoutButtonMobile) {
         signOut(auth).catch(error => console.error("Logout Error:", error));
     });
 }
-
-// A fallback to ensure the page doesn't get stuck on loading
-setTimeout(() => {
-    if (!authReady) {
-        authReady = true;
-        if (!auth.currentUser) {
-            window.location.href = 'index.html';
-        }
-    }
-}, 2500);
