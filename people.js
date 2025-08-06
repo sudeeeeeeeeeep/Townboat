@@ -28,55 +28,57 @@ const db = getFirestore(app);
 const loadingState = document.getElementById('loading-state');
 const noUsersMessage = document.getElementById('no-users-message');
 const peopleListContainer = document.getElementById('people-list-container');
-const townNameDisplay = document.getElementById('town-name-display');
-const logoutButton = document.getElementById('logout-btn-mobile'); // Mobile logout
 const searchInput = document.getElementById('people-search');
+const searchBtn = document.getElementById('search-btn');
+const searchContainer = document.getElementById('search-container');
+const mobileMenuButton = document.getElementById('mobile-menu-button');
+const mobileMenuDropdown = document.getElementById('mobile-menu-dropdown');
+const logoutButtonMobile = document.getElementById('logout-btn-mobile');
 
 let currentUser = null;
 let userHometown = null;
 let allUsersInTown = []; // To store all fetched users for searching
+let authReady = false; // Flag to check if initial auth state is resolved
 
 // --- AUTHENTICATION CHECK ---
 onAuthStateChanged(auth, async (user) => {
     if (user) {
+        // User is signed in or session is restored.
         currentUser = user;
-        try {
-            const userDocRef = doc(db, "users", user.uid);
-            const userDocSnap = await getDoc(userDocRef);
-
-            if (userDocSnap.exists() && userDocSnap.data().hometown) {
-                userHometown = userDocSnap.data().hometown;
-                townNameDisplay.textContent = `Discover and connect with people from ${userHometown}.`;
-                updateSEOTags(userHometown); // NEW: Update SEO tags with the town name
-                await fetchPeopleInTown(userHometown, user.uid);
-            } else {
-                window.location.href = 'set-hometown.html';
-            }
-        } catch (error) {
-            console.error("Error fetching user data:", error);
-            loadingState.textContent = "Could not load your information.";
+        if (!authReady) {
+            authReady = true; // Mark auth as ready
+            initializePage(user);
         }
     } else {
-        window.location.href = 'index.html';
+        // This block will now only run if the user is genuinely not logged in
+        // after the initial check, or if they manually log out.
+        if (authReady) {
+            window.location.href = 'index.html';
+        }
+        // If auth is not ready yet, we wait for the next check.
     }
 });
 
 /**
- * NEW: Updates the page's SEO meta tags dynamically with the town name.
- * @param {string} town - The name of the user's town.
+ * Initializes the page content after a user is confirmed.
+ * @param {object} user - The authenticated user object.
  */
-function updateSEOTags(town) {
-    document.title = `Find People & Friends in ${town} | TownBoat`;
-    
-    const description = `Connect with people in ${town} on TownBoat. Find friends, view profiles, and join your local community. Sign up to see who's in your neighbourhood.`;
-    document.querySelector('meta[name="description"]').setAttribute('content', description);
-    document.querySelector('meta[property="og:title"]').setAttribute('content', `Find People in ${town} | TownBoat`);
-    document.querySelector('meta[property="og:description"]').setAttribute('content', description);
-    document.querySelector('meta[property="twitter:title"]').setAttribute('content', `Find People in ${town} | TownBoat`);
-    document.querySelector('meta[property="twitter:description"]').setAttribute('content', description);
+async function initializePage(user) {
+    try {
+        const userDocRef = doc(db, "users", user.uid);
+        const userDocSnap = await getDoc(userDocRef);
 
-    const keywords = `find people ${town}, ${town} community, friends in ${town}, ${town} social network, people in ${town} Kerala, TownBoat ${town}`;
-    document.querySelector('meta[name="keywords"]').setAttribute('content', keywords);
+        if (userDocSnap.exists() && userDocSnap.data().hometown) {
+            userHometown = userDocSnap.data().hometown;
+            await fetchPeopleInTown(userHometown, user.uid);
+        } else {
+            // If user is logged in but has no hometown, redirect.
+            window.location.href = 'set-hometown.html';
+        }
+    } catch (error) {
+        console.error("Error fetching user data:", error);
+        loadingState.textContent = "Could not load your information.";
+    }
 }
 
 
@@ -127,32 +129,35 @@ function displayPeople(usersToDisplay) {
  * @returns {HTMLElement} The created div element for the profile card.
  */
 function createProfileCard(userData) {
-    const card = document.createElement('div');
-    card.className = 'profile-card bg-white p-4 rounded-lg shadow-md flex flex-col items-center text-center';
+    const item = document.createElement('div');
+    item.className = 'user-list-item p-4 flex items-center space-x-4 cursor-pointer';
 
-    const profileImageUrl = userData.profileImageUrl || `https://api.dicebear.com/8.x/bottts/svg?seed=${userData.name}`;
-    const isVerifiedBadge = userData.isVerified ? 
-        `<span class="absolute top-0 right-0 bg-blue-500 text-white text-xs rounded-full px-2 py-1" title="Verified Resident">
-            <i class="fas fa-check"></i>
-        </span>` : '';
+    const profileImageUrl = userData.profileImageUrl || `https://api.dicebear.com/8.x/bottts/svg?seed=${userData.name || userData.uid}`;
 
-    card.innerHTML = `
-        <div class="relative mb-4">
-            <img src="${profileImageUrl}" alt="${userData.name}" class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg">
-            ${isVerifiedBadge}
+    item.innerHTML = `
+        <img src="${profileImageUrl}" alt="${userData.name}" class="w-12 h-12 rounded-full object-cover">
+        <div class="flex-grow">
+            <h3 class="font-semibold text-gray-900">${userData.name || 'Unnamed User'}</h3>
+            <p class="text-sm text-gray-500 truncate">${userData.bio || 'No bio yet.'}</p>
         </div>
-        <h3 class="text-lg font-bold">${userData.name || 'Unnamed User'}</h3>
-        <p class="text-gray-600 text-sm h-10 overflow-hidden">${userData.bio || 'No bio yet.'}</p>
-        <button data-userid="${userData.id}" class="connect-btn mt-4 w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+        <button data-userid="${userData.id}" class="connect-btn bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition text-sm">
             Connect
         </button>
     `;
 
-    const connectBtn = card.querySelector('.connect-btn');
-    connectBtn.addEventListener('click', handleConnectClick);
+    const connectBtn = item.querySelector('.connect-btn');
+    connectBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent the item click from firing
+        handleConnectClick(e);
+    });
 
-    return card;
+    item.addEventListener('click', () => {
+        console.log("Clicked on user:", userData.name);
+    });
+
+    return item;
 }
+
 
 /**
  * Handles the click event for the "Connect" button.
@@ -166,8 +171,8 @@ async function handleConnectClick(e) {
     if (!senderId || !receiverId) return;
 
     connectBtn.disabled = true;
-    connectBtn.textContent = 'Request Sent';
-    connectBtn.classList.replace('bg-blue-600', 'bg-gray-400');
+    connectBtn.textContent = 'Sent';
+    connectBtn.classList.replace('bg-blue-500', 'bg-gray-400');
 
     try {
         await addDoc(collection(db, "connections"), {
@@ -181,7 +186,7 @@ async function handleConnectClick(e) {
         console.error("Error sending connection request:", error);
         connectBtn.disabled = false;
         connectBtn.textContent = 'Connect';
-        connectBtn.classList.replace('bg-gray-400', 'bg-blue-600');
+        connectBtn.classList.replace('bg-gray-400', 'bg-blue-500');
         alert("Failed to send connection request.");
     }
 }
@@ -192,6 +197,7 @@ async function handleConnectClick(e) {
 function performSearch() {
     const searchTerm = searchInput.value.toLowerCase();
     const filteredUsers = allUsersInTown.filter(user => {
+        // BUG FIX: Check if user.name and user.bio exist before calling toLowerCase()
         const nameMatch = (user.name ? user.name.toLowerCase() : '').includes(searchTerm);
         const bioMatch = (user.bio ? user.bio.toLowerCase() : '').includes(searchTerm);
         return nameMatch || bioMatch;
@@ -200,12 +206,37 @@ function performSearch() {
 }
 
 // --- EVENT LISTENERS ---
-if (logoutButton) {
-    logoutButton.addEventListener('click', () => {
+if (searchInput) {
+    searchInput.addEventListener('input', performSearch);
+}
+
+if (searchBtn) {
+    searchBtn.addEventListener('click', () => {
+        searchContainer.classList.toggle('hidden');
+        if (!searchContainer.classList.contains('hidden')) {
+            searchInput.focus();
+        }
+    });
+}
+
+if (mobileMenuButton) {
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenuDropdown.classList.toggle('hidden');
+    });
+}
+
+if(logoutButtonMobile) {
+    logoutButtonMobile.addEventListener('click', () => {
         signOut(auth).catch(error => console.error("Logout Error:", error));
     });
 }
 
-if (searchInput) {
-    searchInput.addEventListener('input', performSearch);
-}
+// A fallback to ensure the page doesn't get stuck on loading
+setTimeout(() => {
+    if (!authReady) {
+        authReady = true;
+        if (!auth.currentUser) {
+            window.location.href = 'index.html';
+        }
+    }
+}, 2500);
