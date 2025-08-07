@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Panel - TownBoat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .business-item, .claim-item, .affiliate-item {
+            display: grid;
+            gap: 1rem;
+            align-items: center;
+        }
+        @media (min-width: 768px) {
+            .business-item { grid-template-columns: 2fr 1fr 1fr 1.5fr 1fr; }
+            .claim-item { grid-template-columns: 2fr 1.5fr 2fr 1.5fr; }
+            .affiliate-item { grid-template-columns: 3fr 1fr 1fr; }
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <header class="bg-black sticky top-0 border-b border-gray-700 z-50">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#" class="text-white text-xl font-bold">TownBoat Data Panel</a>
+            <button id="logout-btn" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-600 transition duration-300">Logout</button>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-8" id="admin-dashboard-content">
+        <h1 class="text-3xl font-bold mb-6 text-center">Dashboard</h1>
+
+        <!-- Analytics Section -->
+        <section class="bg-gray-900 p-6 rounded-lg shadow-xl mb-8">
+            <h2 class="text-2xl font-bold mb-4">Platform Overview</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-center">
+                <!-- NEW: Total Users and Total Affiliates -->
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">Total Users</p>
+                    <p id="total-users-count" class="text-3xl font-bold text-purple-400 mt-2">0</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">Total Affiliates</p>
+                    <p id="total-affiliates-count" class="text-3xl font-bold text-pink-400 mt-2">0</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">Total Businesses</p>
+                    <p id="total-businesses-count" class="text-3xl font-bold text-blue-400 mt-2">0</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">Approved Businesses</p>
+                    <p id="approved-businesses-count" class="text-3xl font-bold text-green-400 mt-2">0</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">Pending Approvals</p>
+                    <p id="pending-businesses-count" class="text-3xl font-bold text-yellow-400 mt-2">0</p>
+                </div>
+                 <div class="bg-gray-800 p-4 rounded-lg">
+                    <p class="text-gray-400 text-sm">Business Owners</p>
+                    <p id="user-count" class="text-3xl font-bold text-emerald-400 mt-2">0</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW: Affiliate Leaderboard Section -->
+        <section class="bg-gray-900 p-6 rounded-lg shadow-xl mb-8">
+            <h2 class="text-2xl font-bold mb-4">Affiliate Leaderboard</h2>
+            <div class="space-y-2" id="affiliate-leaderboard-list">
+                <p id="no-affiliates-msg" class="text-gray-400 text-center">No affiliates found.</p>
+                <!-- Affiliate items will be loaded here -->
+            </div>
+        </section>
+
+        <!-- (Rest of the HTML file remains the same: Add Business, Filters, Claim Requests, etc.) -->
+
+    </main>
+
+    <!-- JS Modules -->
+    <script type="module" src="js/data-panel.js"></script>
+</body>
+</html>
